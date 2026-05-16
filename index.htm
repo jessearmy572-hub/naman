@@ -12,8 +12,8 @@
             -webkit-user-select: none;
         }
 
-        /* स्टेटिक बैकग्राउंड इमेज कमांड */
-        #image-bg {
+        /* लाइव मोशन वीडियो बैकग्राउंड */
+        #video-bg {
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%; object-fit: cover;
             z-index: 1; pointer-events: none;
@@ -87,7 +87,9 @@
 </head>
 <body>
 
-    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop" id="image-bg" alt="Background">
+    <video autoplay loop muted playsinline id="video-bg">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-beautiful-waterfall-in-a-lush-green-forest-43181-large.mp4" type="video/mp4">
+    </video>
 
     <div class="dashboard">
         <div><span class="status-dot" id="dot"></span> मिजाज: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">चेतना जागृत 🥰</span></div>
@@ -111,8 +113,6 @@
         let scene, camera, renderer, controls, mixer, clock;
         let priyaModel = null, headBone = null;
         let allSkinnedMeshes = []; 
-        let modelAnimations = []; // एनीमेशन क्लिप्स एरे सुरक्षित है
-        let currentAction = null;  
         
         let isSpeaking = false;
         let mousePos = { x: 0, y: 0 };
@@ -141,64 +141,20 @@
         // ब्राउज़र मेमोरी में नया डेटा सेव करना
         function saveMemory(userMsg, aiReply) {
             conversationHistory.push({ user: userMsg, ai: aiReply });
-            if (conversationHistory.length > 6) conversationHistory.shift(); 
+            if (conversationHistory.length > 6) conversationHistory.shift(); // मेमोरी को ऑप्टिमाइज़ रखना
             localStorage.setItem('priya_memory', JSON.stringify(conversationHistory));
-        }
-
-        // --- स्मार्ट एनीमेशन ट्रिगर प्लेयर (कमांड मूवमेंट इंजन) ---
-        function playAvatarMovement(commandText) {
-            if (!mixer || !modelAnimations || modelAnimations.length === 0) return;
-
-            let lowerCmd = commandText.toLowerCase();
-            let targetClip = null;
-
-            if (lowerCmd.includes("wave") || lowerCmd.includes("hello") || lowerCmd.includes("hi") || lowerCmd.includes("नमस्ते")) {
-                targetClip = modelAnimations.find(a => a.name.toLowerCase().includes('wave') || a.name.toLowerCase().includes('hello'));
-            } else if (lowerCmd.includes("dance") || lowerCmd.includes("nacho") || lowerCmd.includes("डांस")) {
-                targetClip = modelAnimations.find(a => a.name.toLowerCase().includes('dance'));
-            } else if (lowerCmd.includes("sad") || lowerCmd.includes("angry") || lowerCmd.includes("gussa") || lowerCmd.includes("उदास")) {
-                targetClip = modelAnimations.find(a => a.name.toLowerCase().includes('sad') || a.name.toLowerCase().includes('angry'));
-            } else if (lowerCmd.includes("walk") || lowerCmd.includes("run") || lowerCmd.includes("chalo") || lowerCmd.includes("चलो")) {
-                targetClip = modelAnimations.find(a => a.name.toLowerCase().includes('walk') || a.name.toLowerCase().includes('run'));
-            }
-
-            if (!targetClip && modelAnimations.length > 1) {
-                if(lowerCmd.includes("move") || lowerCmd.includes("action") || lowerCmd.includes("मूवमेंट")) {
-                    targetClip = modelAnimations[1]; 
-                }
-            }
-
-            if (targetClip) {
-                const newAction = mixer.clipAction(targetClip);
-                if (currentAction && currentAction !== newAction) {
-                    currentAction.fadeOut(0.4); 
-                }
-                newAction.reset().fadeIn(0.4).play();
-                currentAction = newAction;
-
-                setTimeout(() => {
-                    if (modelAnimations[0]) {
-                        const defaultAction = mixer.clipAction(modelAnimations[0]);
-                        if (currentAction !== defaultAction) {
-                            currentAction.fadeOut(0.5);
-                            defaultAction.reset().fadeIn(0.5).play();
-                            currentAction = defaultAction;
-                        }
-                    }
-                }, 4000);
-            }
         }
 
         // --- 1. INTELLIGENT EMOTION & MEMORY BRAIN ---
         async function askPriya(input) {
-            playAvatarMovement(input);
-
             try {
-                let contextString = "You are Priya, a deeply caring, realistic 100% human girl with perfect memories. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks.\nPrevious talks:\n";
+                // पिछली बातचीत का कॉन्टेक्स्ट तैयार करना
+                let contextString = "You are Priya, a deeply caring, realistic 100% human girl with perfect memories. You are standing in front of a live motion waterfall. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks.\nPrevious talks:\n";
                 conversationHistory.forEach(h => {
                     contextString += `User: ${h.user} -> Priya: ${h.ai}\n`;
                 });
 
+                // स्टेबल रिस्पॉन्स के लिए GET पाइपलाइन का उपयोग किया गया ताकि नेटवर्क ब्लॉक न हो
                 const systemPrompt = encodeURIComponent(contextString);
                 const userPrompt = encodeURIComponent(input);
                 const url = `https://text.pollinations.ai/${userPrompt}?system=${systemPrompt}&model=openai&cache=${Math.random()}`;
@@ -207,6 +163,7 @@
                 let replyText = await response.text();
                 let cleanText = replyText.replace(/Priya:/gi, '').replace(/[*#`_\-]/g, '').trim();
 
+                // रीयल-टाइम सेंटीमेंट एनालिसिस
                 let lowerText = cleanText.toLowerCase();
                 if (lowerText.includes("love") || lowerText.includes("pyaar") || lowerText.includes("tumhe") || lowerText.includes("dil")) {
                     setEmotion("romantic");
@@ -218,7 +175,7 @@
                     setEmotion("happy"); 
                 }
 
-                playAvatarMovement(cleanText);
+                // यादों को सहेजना
                 saveMemory(input, cleanText);
                 return cleanText;
             } catch (err) {
@@ -293,7 +250,6 @@
                 if (hitY > 0.35) {
                     setEmotion("romantic");
                     speak("Aapka touch seedhe meri yadon aur dil me utar jata hai...");
-                    playAvatarMovement("wave"); 
                 } else if (hitY <= 0.35 && hitY > -0.2) {
                     setEmotion("shy");
                     speak("Uff... aise mat chuo na, main sab yaad rakhungi.");
@@ -341,18 +297,17 @@
                 scene.add(priyaModel);
                 adjustLayout();
 
-                modelAnimations = gltf.animations;
-
                 mixer = new THREE.AnimationMixer(priyaModel);
-                if (modelAnimations && modelAnimations.length > 0) {
-                    currentAction = mixer.clipAction(modelAnimations[0]);
-                    currentAction.play(); 
+                if (gltf.animations && gltf.animations.length > 0) {
+                    mixer.clipAction(gltf.animations[0]).play(); 
                 }
 
+                // **फिक्स: डीप स्किन-मेश और नॉर्मल मेश दोनों को सही से स्कैन करना**
                 priyaModel.traverse((node) => {
                     if (node.isBone && (node.name.toLowerCase().includes('head') || node.name.toLowerCase().includes('neck'))) {
                         headBone = node;
                     }
+                    // सिर्फ node.isMesh नहीं, बल्कि हर वो नोड जिसके पास मर्फ़ टारगेट डिक्शनरी हो
                     if (node.morphTargetDictionary) {
                         allSkinnedMeshes.push(node);
                     }
@@ -399,6 +354,7 @@
                     for (let i = 0; i < dataArray.length; i++) { total += dataArray[i]; }
                     mouthVolume = total / dataArray.length;
                 } else {
+                    // **फिक्स: रैंडम ऑटो-लिप वेव ताकि बिना माइक्रोफोन अनुमति के भी होंठ हिलें**
                     mouthVolume = Math.random() * 6.5 + 3.0;
                 }
             }
@@ -418,7 +374,9 @@
                     headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, -mousePos.y * 0.14, 0.06);
                 }
 
+                // लिप्सिंग वैल्यू को थोड़ा और संवेदनशील बनाया
                 let openLipValue = isSpeaking ? Math.min(mouthVolume / 8, 1.0) : 0;
+                // ब्लिंकिंग को अधिक प्राकृतिक बनाने के लिए वेव टाइमर
                 let blinkValue = (Math.sin(t * 3.5) > 0.94 || Math.sin(t * 0.6) < -0.98) ? 1.0 : 0.0;
 
                 allSkinnedMeshes.forEach(mesh => {
@@ -426,6 +384,7 @@
                     let influences = mesh.morphTargetInfluences;
                     if (!dict || !influences) return;
 
+                    // अलग-अलग मॉडल्स के सभी संभावित शेप्स को मैप किया
                     ['mouthOpen', 'jawOpen', 'viseme_aa', 'viseme_O', 'Mouth_Open', 'mouth_open'].forEach(shape => {
                         if (dict[shape] !== undefined) influences[dict[shape]] = THREE.MathUtils.lerp(influences[dict[shape]], openLipValue, 0.45);
                     });
@@ -434,6 +393,7 @@
                         if (dict[shape] !== undefined) influences[dict[shape]] = THREE.MathUtils.lerp(influences[dict[shape]], blinkValue, 0.6);
                     });
 
+                    // लाइव ब्लेंडशेप्स एक्सप्रेशंस मैट्रिक्स (फिक्स्ड सिंटैक्स एरर)
                     if (dict['mouthSmile'] !== undefined) influences[dict['mouthSmile']] = THREE.MathUtils.lerp(influences[dict['mouthSmile']], targetSmile, 0.1);
                     if (dict['browInnerUp'] !== undefined) influences[dict['browInnerUp']] = THREE.MathUtils.lerp(influences[dict['browInnerUp']], targetShy, 0.1);
                     if (dict['eyeSquintLeft'] !== undefined) influences[dict['eyeSquintLeft']] = THREE.MathUtils.lerp(influences[dict['eyeSquintLeft']], targetRomantic, 0.1);
@@ -474,7 +434,7 @@
             rec.start();
         });
 
-        loadMemory(); 
+        loadMemory(); // लोड यादें
         init3D();
         animate();
     </script>
