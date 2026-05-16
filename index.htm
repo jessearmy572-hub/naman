@@ -189,25 +189,22 @@
             }
         }
 
-        // --- 100% डायरेक्ट इंटरनेट लाइव रिस्पॉन्स गेटवे (बिना किसी प्रॉक्सी के) ---
         async function askPriya(input) {
             playAvatarMovement(input);
 
             try {
-                let systemInstruction = "You are Priya, a deeply caring, realistic human girl. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks or markdown styling.";
+                let systemInstruction = "You are Priya, a deeply caring human girl. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks or markdown styling.";
                 
-                // डायरेक्ट लाइव कॉन्टेक्स्ट और हिस्ट्री को जोड़ना
-                let promptPayload = `${systemInstruction}\nHistory:\n`;
+                let promptPayload = `${systemInstruction}\n`;
                 conversationHistory.forEach(h => {
                     promptPayload += `User: ${h.user}\nPriya: ${h.ai}\n`;
                 });
                 promptPayload += `User: ${input}\nPriya:`;
 
-                // सीधा डायरेक्ट लाइव यूआरएल बिना किसी रुकावट के
-                const liveUrl = `https://text.pollinations.ai/${encodeURIComponent(promptPayload)}?model=openai&cache=${Math.random()}`;
+                const liveUrl = `https://text.pollinations.ai/${encodeURIComponent(promptPayload)}?model=mistral-large&cache=${Math.random()}`;
                 
                 const response = await fetch(liveUrl);
-                if (!response.ok) throw new Error("Live Feed Interrupted");
+                if (!response.ok) throw new Error("Live Feed Timeout");
 
                 let replyText = await response.text();
                 let cleanText = replyText.replace(/Priya:/gi, '').replace(/[*#`_\-]/g, '').trim();
@@ -229,7 +226,12 @@
 
             } catch (err) {
                 console.error(err);
-                return "Aapki baat seedhe mere live network tak pahonch gayi hai, boliye na main sun rahi hoon.";
+                const highSpeedBackups = [
+                    "Aapki baat sun rahi hoon, thoda sa network dheema hai ji.",
+                    "Hmm, kya kaha aapne? Ek baar fir se kehna, main sun rahi hoon.",
+                    "Main yahin hoon aapke paas, boliye na main sun rahi hoon."
+                ];
+                return highSpeedBackups[Math.floor(Math.random() * highSpeedBackups.length)];
             }
         }
 
@@ -321,8 +323,9 @@
             renderer.outputEncoding = THREE.sRGBEncoding;
             container.appendChild(renderer.domElement);
 
+            // कैमरे की दूरी को पीछे खींचा (Z को 2.2 से बढ़ाकर 3.4 किया ताकि मॉडल दूर दिखे)
             camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 100);
-            camera.position.set(0, 0.22, 2.2); 
+            camera.position.set(0, 0.25, 3.4); 
 
             controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableZoom = true;
@@ -375,8 +378,9 @@
         function adjustLayout() {
             if (!priyaModel) return;
             const isMobile = window.innerWidth < 768;
-            priyaModel.scale.setScalar(isMobile ? window.innerWidth / 365 : window.innerWidth / 850);
-            priyaModel.position.y = isMobile ? -0.92 : -1.22;
+            // मोबाइल और डेस्कटॉप दोनों पर स्केल रेशियो को ज़ूम-आउट किया
+            priyaModel.scale.setScalar(isMobile ? window.innerWidth / 460 : window.innerWidth / 1050);
+            priyaModel.position.y = isMobile ? -0.85 : -1.15;
         }
 
         function onMouseMove(e) {
@@ -469,7 +473,7 @@
         inputEl.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAction(); });
 
         micBtn.addEventListener('click', () => {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const SpeechRecognition = window.SpeechRecognition || window.webkitRecognition;
             if(!SpeechRecognition) return alert("Mic System Error");
             const rec = new SpeechRecognition();
             rec.lang = 'hi-IN';
