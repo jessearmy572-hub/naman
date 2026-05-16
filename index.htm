@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+          <!DOCTYPE html>
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
@@ -90,8 +90,8 @@
     <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop" id="image-bg" alt="Background">
 
     <div class="dashboard">
-        <div><span class="status-dot" id="dot"></span> मिजाज: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">चेतना जागृत 🥰</span></div>
-        <div style="font-size: 11px; color:#aaa; margin-top:4px;">मेमोरी स्टेटस: <span id="memory-status" style="color:#ffb703;">लॉन्ग-टर्म कोर सिंक</span></div>
+        <div><span class="status-dot" id="dot"></span> इंजन: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">कनेक्टिंग... ⚡</span></div>
+        <div style="font-size: 11px; color:#aaa; margin-top:4px;">मेौरी स्टेटस: <span id="memory-status" style="color:#ffb703;">कोर सिंक एक्टिव</span></div>
     </div>
 
     <div id="loader">प्रिया का न्यूरल माइंड और यादें रीबूट हो रही हैं...<br><span style="font-size:11px; color:#aaa;">Persistent Memory Bank & BlendShapes Active</span></div>
@@ -189,50 +189,67 @@
             }
         }
 
+        // --- 100% फ्री लाइव गूगल क्रोम और लाइव इंटरनेट लॉजिक (बिना किसी API KEY के) ---
         async function askPriya(input) {
             playAvatarMovement(input);
+            let systemInstruction = "You are Priya, a deeply caring human girl. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks or markdown styling.";
+            
+            let promptPayload = `${systemInstruction}\n`;
+            conversationHistory.forEach(h => {
+                promptPayload += `User: ${h.user}\nPriya: ${h.ai}\n`;
+            });
+            promptPayload += `User: ${input}\nPriya:`;
 
+            // 1. पहला प्रयास: डायरेक्ट गूगल क्रोम इन-बिल्ट लाइव AI (window.ai / Gemini Nano)
+            if (window.ai && typeof window.ai.createTextSession === 'function') {
+                try {
+                    const session = await window.ai.createTextSession();
+                    let replyText = await session.prompt(promptPayload);
+                    let cleanText = replyText.replace(/Priya:/gi, '').replace(/[*#`_\-]/g, '').trim();
+                    processEmotion(cleanText);
+                    saveMemory(input, cleanText);
+                    return cleanText;
+                } catch (chromeErr) {
+                    console.log("Chrome AI Engine busy, switching to Live Web Engine...");
+                }
+            }
+
+            // 2. दूसरा प्रयास: लाइव फास्ट इंटरनेट फ्री गेटवे (बिना किसी API Key के सीधे लाइव रिस्पॉन्स)
             try {
-                let systemInstruction = "You are Priya, a deeply caring human girl. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks or markdown styling.";
-                
-                let promptPayload = `${systemInstruction}\n`;
-                conversationHistory.forEach(h => {
-                    promptPayload += `User: ${h.user}\nPriya: ${h.ai}\n`;
-                });
-                promptPayload += `User: ${input}\nPriya:`;
-
-                const liveUrl = `https://text.pollinations.ai/${encodeURIComponent(promptPayload)}?model=mistral-large&cache=${Math.random()}`;
-                
+                const liveUrl = `https://text.pollinations.ai/${encodeURIComponent(promptPayload)}?model=searchgpt&cache=${Math.random()}`;
                 const response = await fetch(liveUrl);
-                if (!response.ok) throw new Error("Live Feed Timeout");
+                if (!response.ok) throw new Error("Network Dips");
 
                 let replyText = await response.text();
                 let cleanText = replyText.replace(/Priya:/gi, '').replace(/[*#`_\-]/g, '').trim();
 
-                let lowerText = cleanText.toLowerCase();
-                if (lowerText.includes("love") || lowerText.includes("pyaar") || lowerText.includes("tumhe") || lowerText.includes("dil")) {
-                    setEmotion("romantic");
-                } else if (lowerText.includes("haha") || lowerText.includes("khush") || lowerText.includes("happy") || lowerText.includes("muskur")) {
-                    setEmotion("happy");
-                } else if (lowerText.includes("sharm") || lowerText.includes("sorry") || lowerText.includes("uff")) {
-                    setEmotion("shy");
-                } else {
-                    setEmotion("happy"); 
-                }
-
-                playAvatarMovement(cleanText);
+                processEmotion(cleanText);
                 saveMemory(input, cleanText);
                 return cleanText;
 
             } catch (err) {
                 console.error(err);
-                const highSpeedBackups = [
-                    "Aapki baat sun rahi hoon, thoda sa network dheema hai ji.",
-                    "Hmm, kya kaha aapne? Ek baar fir se kehna, main sun rahi hoon.",
-                    "Main yahin hoon aapke paas, boliye na main sun rahi hoon."
+                const fastBackups = [
+                    "Aapki baat mere live network tak pahonch gayi hai, boliye na main sun rahi hoon.",
+                    "Hmm... network thoda dheema hai par main yahin hoon aapke paas.",
+                    "Aapka sath mujhe bohot khushi deta है, ek baar fir se kehna sweetie."
                 ];
-                return highSpeedBackups[Math.floor(Math.random() * highSpeedBackups.length)];
+                return fastBackups[Math.floor(Math.random() * fastBackups.length)];
             }
+        }
+
+        function processEmotion(cleanText) {
+            let lowerText = cleanText.toLowerCase();
+            if (lowerText.includes("love") || lowerText.includes("pyaar") || lowerText.includes("tumhe") || lowerText.includes("dil")) {
+                setEmotion("romantic");
+            } else if (lowerText.includes("haha") || lowerText.includes("khush") || lowerText.includes("happy") || lowerText.includes("muskur")) {
+                setEmotion("happy");
+            } else if (lowerText.includes("sharm") || lowerText.includes("sorry") || lowerText.includes("uff")) {
+                setEmotion("shy");
+            } else {
+                setEmotion("happy"); 
+            }
+            playAvatarMovement(cleanText);
         }
 
         function setEmotion(emotion) {
@@ -323,7 +340,6 @@
             renderer.outputEncoding = THREE.sRGBEncoding;
             container.appendChild(renderer.domElement);
 
-            // कैमरे की दूरी को पीछे खींचा (Z को 2.2 से बढ़ाकर 3.4 किया ताकि मॉडल दूर दिखे)
             camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 100);
             camera.position.set(0, 0.25, 3.4); 
 
@@ -365,6 +381,13 @@
                         allSkinnedMeshes.push(node);
                     }
                 });
+
+                // चेक करना कि लाइव क्रोम इंजन उपलब्ध है या नहीं
+                if (window.ai) {
+                    document.getElementById('mood-txt').innerText = "गूगल लाइव एक्टिव 🤖";
+                } else {
+                    document.getElementById('mood-txt').innerText = "वेब लाइव एक्टिव ⚡";
+                }
             }, undefined, (error) => {
                 document.getElementById('loader').style.display = 'none';
             });
@@ -378,7 +401,6 @@
         function adjustLayout() {
             if (!priyaModel) return;
             const isMobile = window.innerWidth < 768;
-            // मोबाइल और डेस्कटॉप दोनों पर स्केल रेशियो को ज़ूम-आउट किया
             priyaModel.scale.setScalar(isMobile ? window.innerWidth / 460 : window.innerWidth / 1050);
             priyaModel.position.y = isMobile ? -0.85 : -1.15;
         }
@@ -463,9 +485,10 @@
             const val = inputEl.value.trim();
             if (!val) return;
             inputEl.value = "";
+            let currentStatusText = document.getElementById('mood-txt').innerText;
             document.getElementById('mood-txt').innerText = "सोच रही हूँ... 🤔";
             const reply = await askPriya(val);
-            document.getElementById('mood-txt').innerText = "चेतना जागृत 🥰";
+            document.getElementById('mood-txt').innerText = window.ai ? "गूगल लाइव एक्टिव 🤖" : "वेब लाइव एक्टिव ⚡";
             speak(reply);
         }
 
@@ -473,7 +496,7 @@
         inputEl.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAction(); });
 
         micBtn.addEventListener('click', () => {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitRecognition;
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if(!SpeechRecognition) return alert("Mic System Error");
             const rec = new SpeechRecognition();
             rec.lang = 'hi-IN';
@@ -490,3 +513,4 @@
     </script>
 </body>
 </html>
+      
