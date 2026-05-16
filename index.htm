@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Priya AI - Command Perfected Edition</title>
+    <title>Priya AI - Animation Fixed Edition</title>
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
@@ -42,6 +42,25 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5); pointer-events: none;
         }
 
+        .engine-switch {
+            position: absolute; top: 20px; right: 20px; z-index: 30;
+            background: rgba(10, 10, 20, 0.85); padding: 8px 15px;
+            border-radius: 20px; border: 1px solid rgba(0, 255, 204, 0.3);
+            color: white; font-size: 12px; display: flex; align-items: center; gap: 8px;
+            cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+        }
+        .switch-input { display: none; }
+        .switch-label {
+            width: 34px; height: 18px; background: #444; display: block;
+            border-radius: 10px; position: relative; transition: 0.3s;
+        }
+        .switch-label::after {
+            content: ''; width: 14px; height: 14px; background: #fff;
+            position: absolute; top: 2px; left: 2px; border-radius: 50%; transition: 0.3s;
+        }
+        .switch-input:checked + .switch-label { background: #00ffcc; }
+        .switch-input:checked + .switch-label::after { left: 18px; }
+
         .status-dot {
             display: inline-block; width: 9px; height: 9px;
             background: #00ffcc; border-radius: 50%; margin-right: 7px;
@@ -59,7 +78,7 @@
             border: none; border-radius: 50%; width: 55px; height: 55px;
             cursor: pointer; font-size: 22px; display: flex; align-items: center;
             justify-content: center; box-shadow: 0 5px 20px rgba(255, 75, 43, 0.4);
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .input-box {
@@ -91,17 +110,23 @@
 <body>
 
     <div class="dashboard">
-        <div><span class="status-dot" id="dot"></span> मिजाज: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">सुन रही हूँ 🌸</span></div>
-        <div style="font-size: 11px; color:#aaa; margin-top:2px;">कमांड इंजन: <span id="time-status" style="color:#ffb703;">सक्रिय ⚡</span></div>
+        <div><span class="status-dot" id="dot"></span> मिजाज: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">सक्रिय 🥰</span></div>
+        <div style="font-size: 11px; color:#aaa; margin-top:2px;">इंजन मोड: <span id="engine-status" style="color:#ffb703;">क्लासिक (ओरिजिनल) 📦</span></div>
     </div>
 
-    <div id="loader">प्रिया का न्यूरल कमांड कोर लोड हो रहा है...<br><span style="font-size:11px; color:#aaa;">Verifying Voice & Text Pipeline Logic</span></div>
+    <div class="engine-switch" title="स्पीड बदलने के लिए छुएं">
+        <span>टर्बो मोड</span>
+        <input type="checkbox" id="turboToggle" class="switch-input">
+        <label for="turboToggle" class="switch-label"></label>
+    </div>
+
+    <div id="loader">न्यूरल एनीमेशन ग्रिड रीबूट हो रहा है...<br><span style="font-size:11px; color:#aaa;">Fixing Lipsing & Eye Blinking Logic</span></div>
     <div id="canvas-container"></div>
 
     <div class="ui-container">
         <button class="mic-btn" id="micBtn">🎤</button>
         <div class="input-box">
-            <input type="text" id="userInput" placeholder="यहाँ टाइप करें या माइक दबाकर बोलें..." />
+            <input type="text" id="userInput" placeholder="यहाँ लिखें या माइक दबाकर बोलें..." />
         </div>
         <button class="send-btn" id="sendBtn">➔</button>
     </div>
@@ -168,13 +193,13 @@
             localStorage.setItem('priya_memory', JSON.stringify(conversationHistory));
         }
 
-        // --- बारीक रूप से जाँचा गया कमांड प्रोसेसिंग इंजन ---
         async function askPriya(input) {
             try {
-                document.getElementById('mood-txt').innerText = "सोच रही हूँ... 🤔";
-                
-                let contextString = "You are Priya, a deeply loving human virtual girl. Speak in very short, warm Hinglish sentences. Never use asterisks or markdown. Previous chat context:\n";
+                let contextString = "You are Priya, a sweet loving human girl. Speak in very short, warm Hinglish sentences. Never use asterisks or markdown. Previous context:\n";
                 conversationHistory.forEach(h => { contextString += `User: ${h.user} -> Priya: ${h.ai}\n`; });
+
+                const isTurboChecked = document.getElementById('turboToggle').checked;
+                const chosenModel = isTurboChecked ? "mistral-large" : "openai"; 
 
                 const response = await fetch(`https://text.pollinations.ai/`, {
                     method: 'POST',
@@ -184,12 +209,11 @@
                             { role: "system", content: contextString },
                             { role: "user", content: input }
                         ],
-                        model: "openai"
+                        model: chosenModel 
                     })
                 });
                 
                 let replyText = await response.text();
-                // क्लीनिंग फ़िल्टर: किसी भी प्रकार के फालतू टैग्स को साफ़ करना
                 let cleanText = replyText.replace(/Priya:/gi, '').replace(/[*#`_\-]/g, '').trim();
 
                 let lowerText = cleanText.toLowerCase();
@@ -204,7 +228,7 @@
                 saveMemory(input, cleanText);
                 return cleanText;
             } catch (err) {
-                return "Main aapki baat sun rahi hoon, kahiye na.";
+                return "Main sun rahi hoon, boliye na.";
             }
         }
 
@@ -250,7 +274,7 @@
 
         function handleInstantTouch(event) {
             if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-            if (event.target.tagName === 'INPUT' || event.target.tagName === 'BUTTON') return;
+            if (event.target.tagName === 'INPUT' || event.target.tagName === 'BUTTON' || event.target.closest('.engine-switch')) return;
 
             let clientX = event.changedTouches ? event.changedTouches[0].clientX : event.clientX;
             let clientY = event.changedTouches ? event.changedTouches[0].clientY : event.clientY;
@@ -328,7 +352,7 @@
                     if (node.isBone && (node.name.toLowerCase().includes('head') || node.name.toLowerCase().includes('neck'))) {
                         headBone = node;
                     }
-                    if (node.isMesh && node.morphTargetDictionary) {
+                    if (node.isMesh) {
                         allSkinnedMeshes.push(node);
                     }
                 });
@@ -366,6 +390,7 @@
 
             if (mixer) mixer.update(delta);
 
+            // ऑडियो डेटा कैप्चर री-वेरिफाइड
             if (isSpeaking && analyser) {
                 analyser.getByteFrequencyData(dataArray);
                 let total = 0;
@@ -402,20 +427,23 @@
                     headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, -mousePos.y * 0.14, 0.06);
                 }
 
-                let openLipValue = isSpeaking ? Math.min(mouthVolume / 11, 0.95) : 0;
-                let blinkValue = (Math.sin(t * 2.4) > 0.96 || Math.sin(t * 0.35) < -0.98) ? 1.0 : 0.0;
+                // एनीमेशन कैलकुलेशन फिक्स 
+                let openLipValue = isSpeaking ? Math.min(mouthVolume / 10, 1.0) : 0;
+                let blinkValue = (Math.sin(t * 3.5) > 0.95 || Math.sin(t * 0.5) < -0.98) ? 1.0 : 0.0;
 
                 allSkinnedMeshes.forEach(mesh => {
                     let dict = mesh.morphTargetDictionary;
                     let influences = mesh.morphTargetInfluences;
                     if (!dict || !influences) return;
 
-                    ['mouthOpen', 'jawOpen', 'viseme_aa'].forEach(shape => {
+                    // लिप सिंक ब्लेंड शेप्स मैपिंग
+                    ['mouthOpen', 'jawOpen', 'viseme_aa', 'Mouth_Open'].forEach(shape => {
                         if (dict[shape] !== undefined) influences[dict[shape]] = THREE.MathUtils.lerp(influences[dict[shape]], openLipValue, 0.45);
                     });
 
-                    ['eyeBlinkLeft', 'eyeBlinkRight', 'blink'].forEach(shape => {
-                        if (dict[shape] !== undefined) influences[dict[shape]] = THREE.MathUtils.lerp(influences[dict[shape]], blinkValue, 0.55);
+                    // आई ब्लिंकिंग ब्लेंड शेप्स मैपिंग
+                    ['eyeBlinkLeft', 'eyeBlinkRight', 'blink', 'Eyes_Blink'].forEach(shape => {
+                        if (dict[shape] !== undefined) influences[dict[shape]] = THREE.MathUtils.lerp(influences[dict[shape]], blinkValue, 0.6);
                     });
 
                     if (dict['mouthSmile'] !== undefined) influences[dict['mouthSmile']] = THREE.MathUtils.lerp(influences[dict['mouthSmile']], targetSmile, 0.1);
@@ -432,13 +460,26 @@
         const inputEl = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
         const micBtn = document.getElementById('micBtn');
+        const turboToggle = document.getElementById('turboToggle');
 
-        // शुद्ध किया हुआ कोर एक्शन फ़ंक्शन
+        turboToggle.addEventListener('change', () => {
+            const statusEl = document.getElementById('engine-status');
+            if(turboToggle.checked) {
+                statusEl.innerText = "टर्बो स्पीड ⚡";
+                statusEl.style.color = "#00ffcc";
+            } else {
+                statusEl.innerText = "क्लासिक (ओरिजिनल) 📦";
+                statusEl.style.color = "#ffb703";
+            }
+        });
+
         async function handleAction(forcedValue = null) {
             const val = forcedValue ? forcedValue.trim() : inputEl.value.trim();
             if (!val) return;
             
-            inputEl.value = ""; // इनपुट फ़ील्ड तुरंत साफ़ करें
+            inputEl.value = ""; 
+            document.getElementById('mood-txt').innerText = "सोच रही हूँ... 🤔"; 
+            
             const reply = await askPriya(val);
             speak(reply);
         }
@@ -446,7 +487,6 @@
         sendBtn.addEventListener('click', () => handleAction());
         inputEl.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAction(); });
 
-        // वॉयस कमांड पाइपलाइन का शुद्धिकरण
         micBtn.addEventListener('click', () => {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if(!SpeechRecognition) return alert("आपका ब्राउज़र वॉइस सपोर्ट नहीं करता।");
@@ -463,7 +503,7 @@
             rec.onresult = (e) => {
                 const speechText = e.results[0][0].transcript;
                 if(speechText.trim() !== "") {
-                    handleAction(speechText); // वॉयस कमांड सीधा एक्ज़ीक्यूट करें
+                    handleAction(speechText); 
                 }
             };
 
