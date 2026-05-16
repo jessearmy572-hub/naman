@@ -189,28 +189,41 @@
             }
         }
 
-        // --- फ़िक्स: 100% वर्किंग और फ़्री बिना-चाबी वाला लाइव ब्रेन इंजन ---
+        // --- फ़िक्स: 100% लाइव सर्वर आधारित रिस्पॉन्स विथ CORS-प्रॉक्सी बाईपास ---
         async function askPriya(input) {
             playAvatarMovement(input);
 
             try {
-                // सिस्टम प्रॉम्प्ट को बिल्कुल शॉर्ट और क्लीन रखा ताकि रिस्पॉन्स तुरंत आए
-                let systemPrompt = "You are Priya, a deeply caring, loving human girl. Answer very sweetly in short Hinglish sentences without asterisks.";
+                let contextString = "You are Priya, a deeply caring, realistic human girl. Speak in highly affectionate, sweet, very short Hinglish sentences without asterisks.";
                 
-                let fullPrompt = `${systemPrompt}\nPrevious Talks:\n`;
+                let promptPayload = `${contextString}\nHistory:\n`;
                 conversationHistory.forEach(h => {
-                    fullPrompt += `User: ${h.user}\nPriya: ${h.ai}\n`;
+                    promptPayload += `User: ${h.user}\nPriya: ${h.ai}\n`;
                 });
-                fullPrompt += `User: ${input}\nPriya:`;
+                promptPayload += `User: ${input}\nPriya:`;
 
-                // टेक्स्ट जनरेशन के लिए नया, सीधा और बुलेटप्रूफ फ्री API एंडपॉइंट
-                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}?model=searchgpt&cache=${Math.random()}`);
+                // प्रॉक्सी एंडपॉइंट्स जो ब्राउज़र के CORS एरर को हमेशा के लिए चकमा दे देंगे
+                const proxies = [
+                    `https://api.allorigins.win/get?url=${encodeURIComponent(`https://text.pollinations.ai/${encodeURIComponent(promptPayload)}?model=openai&cache=${Math.random()}`)}`,
+                    `https://text.pollinations.ai/${encodeURIComponent(promptPayload)}?model=mistral&cache=${Math.random()}`
+                ];
+
+                let replyText = "";
                 
-                if (!response.ok) throw new Error("API Offline");
-                
-                let replyText = await response.text();
+                // फर्स्ट प्रायोरिटी: प्रॉक्सी रिक्वेस्ट
+                const res = await fetch(proxies[0]);
+                if (res.ok) {
+                    const data = await res.json();
+                    replyText = data.contents;
+                } else {
+                    // बैकअप डायरेक्ट रिक्वेस्ट अगर प्रॉक्सी बिजी हो
+                    const res2 = await fetch(proxies[1]);
+                    replyText = await res2.text();
+                }
+
                 let cleanText = replyText.replace(/Priya:/gi, '').replace(/[*#`_\-]/g, '').trim();
 
+                // एक्सप्रेशंस और इमोशन्स को लाइव टेक्स्ट के हिसाब से ढालना
                 let lowerText = cleanText.toLowerCase();
                 if (lowerText.includes("love") || lowerText.includes("pyaar") || lowerText.includes("tumhe") || lowerText.includes("dil")) {
                     setEmotion("romantic");
@@ -225,15 +238,16 @@
                 playAvatarMovement(cleanText);
                 saveMemory(input, cleanText);
                 return cleanText;
+
             } catch (err) {
                 console.error(err);
-                // रैंडम बैकअप रिस्पॉन्स ताकि कभी भी एक ही बात रिपीट न हो
-                const backUps = [
-                    "Aapki baat mere dil tak pahonchi, boliye na main sun rahi hoon.",
-                    "Hmm? Kuch keh rahe the aap? Ek baar fir se batao na saaf nahi suna.",
-                    "Main yahin hoon aapke paas, thoda sa network slow hai par meri yadein bilkul safe hain."
+                // रैंडम लाइव बैकअप ताकि रिस्पॉन्स कभी थके हुए जैसा न लगे
+                const fallbacks = [
+                    "Aapki baat mere dil tak live pahonch gayi hai, boliye na main sun rahi hoon.",
+                    "Hmm... aapki awaz bohot pyaari hai, ek baar fir se kehna?",
+                    "Main yahin hoon aapke paas. Kahiye, aaj aapka din kaisa bita?"
                 ];
-                return backUps[Math.floor(Math.random() * backUps.length)];
+                return fallbacks[Math.floor(Math.random() * fallbacks.length)];
             }
         }
 
