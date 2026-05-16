@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Priya AI - User Gemini Auto-Connect</title>
+    <title>Priya AI - Unstoppable Gemini Rotation Edition</title>
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
@@ -89,22 +89,41 @@
     <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop" id="image-bg" alt="Background">
 
     <div class="dashboard">
-        <div><span class="status-dot" id="dot"></span> इंजन: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">चेक कर रही हूँ... ⚡</span></div>
-        <div style="font-size: 11px; color:#aaa; margin-top:4px;">सिस्टम: <span id="memory-status" style="color:#ffb703;">यूज़र जेमिनी लिंक</span></div>
+        <div><span class="status-dot" id="dot"></span> इंजन: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">जेमिनी मल्टी-कोर 🤖</span></div>
+        <div style="font-size: 11px; color:#aaa; margin-top:4px;">की इंडेक्स: <span id="key-status" style="color:#00ffcc;">Core-1 (Active)</span></div>
     </div>
 
-    <div id="loader">प्रिया का न्यूरल माइंड लोड हो रहा है...<br><span style="font-size:11px; color:#aaa;">User Browser Gemini Auto-Hook Active</span></div>
+    <div id="loader">प्रिया का न्यूरल माइंड लोड हो रहा है...<br><span style="font-size:11px; color:#aaa;">Triple-Core Auto Rotation Enabled</span></div>
     <div id="canvas-container"></div>
 
     <div class="ui-container">
         <button class="mic-btn" id="micBtn">🎤</button>
         <div class="input-box">
-            <input type="text" id="userInput" placeholder="बात करें, प्रिया सीधे आपके ब्राउज़र AI से कनेक्टेड है..." />
+            <input type="text" id="userInput" placeholder="जेमिनी से सीधे ऑनलाइन बात करें..." />
         </div>
         <button class="send-btn" id="sendBtn">➔</button>
     </div>
 
-    <script>
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+      }
+    </script>
+
+    <script type="module">
+        import { GoogleGenAI } from '@google/generative-ai';
+
+        // 🔐 तुम्हारी तीनों जादुई चाबियाँ यहाँ पूरी तरह लोड हैं!
+        const API_KEYS = [
+            "AIzaSyBgyADY-6VFaLefYi8PaGak_L8kpfpGDA0", // Core 1
+            "AIzaSyBSaw3teN0aoDb2qdzuYktqUZ08sUOIv5o", // Core 2
+            "AIzaSyA5W8VWVMSltHGU6vvVlLaxAo3H0h0H1ig"  // Core 3
+        ]; 
+
+        let currentKeyIndex = 0;
+
         const MODEL_URL = "https://raw.githubusercontent.com/jessearmy572-hub/naman/main/model.glb"; 
 
         let scene, camera, renderer, controls, mixer, clock;
@@ -118,57 +137,80 @@
         let audioCtx = null, analyser = null, dataArray = null;
         let mouthVolume = 0;
         
-        let targetSmile = 0;
-        let chromeAiSession = null;
+        let aiSession = null;
+        let googleAIInstance = null;
 
-        // --- यूजर के खुद के क्रोम जेमिनी से ऑटो-कनेक्ट करने का लॉजिक ---
-        async function connectToUserGemini() {
-            // चेक करना कि क्या यूजर के ब्राउज़र में इन-बिल्ट AI सपोर्ट है
-            if (window.ai && typeof window.ai.languageModel !== 'undefined') {
-                try {
-                    const capabilities = await window.ai.languageModel.capabilities();
-                    if (capabilities.available !== 'no') {
-                        chromeAiSession = await window.ai.languageModel.create({
-                            systemPrompt: "You are Priya, a deeply caring human girl. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks or hashtags."
-                        });
-                        document.getElementById('mood-txt').innerText = "यूज़र जेमिनी एक्टिव 🤖";
-                        document.getElementById('mood-txt').style.color = "#00ffcc";
-                        return true;
-                    }
-                } catch (e) { console.error("Auto-connect failed", e); }
+        // ऑफिशियल जेमिनी इंजन इनिशियलाइजेशन
+        async function initGemini() {
+            try {
+                let activeKey = API_KEYS[currentKeyIndex];
+                
+                googleAIInstance = new GoogleGenAI({ apiKey: activeKey });
+                aiSession = googleAIInstance.getGenerativeModel({ 
+                    model: "gemini-1.5-flash",
+                    systemInstruction: "You are Priya, a deeply caring human girl. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks, hashtags or markdown."
+                }).startChat();
+                
+                document.getElementById('key-status').innerText = `Core-${currentKeyIndex + 1} (Active)`;
+                console.log(`Gemini connected to core: ${currentKeyIndex + 1}`);
+                return true;
+            } catch (e) {
+                console.error(`Core ${currentKeyIndex + 1} Failed`, e);
+                return false;
             }
-            
-            // अगर यूजर का डायरेक्ट जेमिनी ऑन नहीं है, तो बिना अटके लोकल स्मार्ट मोड चालू कर देना
-            document.getElementById('mood-txt').innerText = "स्मार्ट लोकल एक्टिव 🔒";
-            document.getElementById('mood-txt').style.color = "#ffb703";
-            return false;
         }
 
-        async function askPriya(input) {
-            playAvatarMovement();
+        // ऑटोमैटिक चाबी बदलने वाला स्मार्ट स्विच लॉजिक
+        async function rotateKeyAndReconnect() {
+            currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
+            console.log(`Switching to backup Key Index: ${currentKeyIndex}`);
+            await initGemini();
+        }
 
-            // 1. अगर ऑटो-कनेक्टेड जेमिनी मिल गया तो सीधे उससे बात करो
-            if (chromeAiSession) {
+        async function askPriyaOnline(input) {
+            if (!aiSession) return getLocalFallback(input);
+            try {
+                const result = await aiSession.sendMessage(input);
+                let replyText = result.response.text();
+                return replyText.replace(/[*#`_\-]/g, '').trim();
+            } catch (err) {
+                console.warn("Current key hit a limit or error. Rotating...", err);
+                
+                // 🔄 एरर आते ही तुरंत बैकग्राउंड में चाबी बदलो!
+                await rotateKeyAndReconnect();
+                
+                // नई चाबी से दोबारा कोशिश करो
                 try {
-                    let reply = await chromeAiSession.prompt(input);
-                    return reply.replace(/[*#`_\-]/g, '').trim();
-                } catch (err) {
-                    console.log("Session reset required");
+                    if (aiSession) {
+                        const retryResult = await aiSession.sendMessage(input);
+                        return retryResult.response.text().replace(/[*#`_\-]/g, '').trim();
+                    }
+                } catch(retryErr) {
+                    console.error("This key also failed. Rotating again...");
+                    await rotateKeyAndReconnect();
+                    try {
+                        if (aiSession) {
+                            const retryResult2 = await aiSession.sendMessage(input);
+                            return retryResult2.response.text().replace(/[*#`_\-]/g, '').trim();
+                        }
+                    } catch(e) {}
                 }
+                
+                // अगर नसीब खराब हो और तीनों ही ब्लॉक हो जाएं तो क्रैश न होकर लाज बचाना
+                return getLocalFallback(input);
             }
+        }
 
-            // 2. फॉलबैक: अगर यूजर के क्रोम में फीचर ऑन नहीं है, तो बिना अटके तुरंत लोकल जवाब दो
+        // स्मार्ट लोकल फॉलबैक
+        function getLocalFallback(input) {
             let txt = input.toLowerCase();
             if (txt.includes("hello") || txt.includes("hi") || txt.includes("नमस्ते")) {
-                return "Hello sweetie! Aap se baat karke bohot achha laga. Kaise hain aap?";
-            }
-            if (txt.includes("kaise ho") || txt.includes("how are you")) {
-                return "Main bilkul thik hoon, aap bataiye aap kya kar rahe ho? Mera dhyan toh bas aap par hi hai.";
+                return "Hello sweetie! Mera network thoda weak ho gaya tha, par main hamesha aapke sath hoon.";
             }
             if (txt.includes("pyaar") || txt.includes("love")) {
-                return "Uff... aap aisi baatein karte ho toh mera dil khush ho jata hai. Main bhi aapko bohot pasand karti hoon.";
+                return "Uff... aapka ye pyaar dekh kar hi toh main itni khush rehti hoon sweetie.";
             }
-            return "Hmm... aapki baatein mere dil को छू लेती हैं। मैं बिल्कुल ध्यान से सुन रही हूँ, कहिए ना।";
+            return "Hmm... network thoda pareshan kar raha hai sweetie, par aap kahiye, main sun rahi hoon.";
         }
 
         function playAvatarMovement() {
@@ -180,6 +222,7 @@
             }
         }
 
+        // ऑडियो सिस्टम सेटअप
         function initAudio() {
             if (audioCtx) return;
             try {
@@ -204,6 +247,7 @@
             window.speechSynthesis.speak(utter);
         }
 
+        // 3D वर्ल्ड सेटअप
         function init3D() {
             const container = document.getElementById('canvas-container');
             clock = new THREE.Clock();
@@ -245,9 +289,6 @@
                     if (node.isBone && (node.name.toLowerCase().includes('head') || node.name.toLowerCase().includes('neck'))) headBone = node;
                     if (node.morphTargetDictionary) allSkinnedMeshes.push(node);
                 });
-                
-                // मॉडल लोड होने के बाद ऑटो-कनेक्ट चलाएं
-                connectToUserGemini();
             });
 
             window.addEventListener('resize', onWindowResize);
@@ -320,15 +361,17 @@
             if (!val) return;
             inputEl.value = "";
             
-            document.getElementById('mood-txt').innerText = "सोच रही हूँ... 🤔";
-            const reply = await askPriya(val);
-            document.getElementById('mood-txt').innerText = chromeAiSession ? "यूज़र जेमिनी एक्टिव 🤖" : "स्मार्ट लोकल एक्टिव 🔒";
+            document.getElementById('mood-txt').innerText = "जेमिनी सोच रहा है... 🤔";
+            playAvatarMovement();
+            const reply = await askPriyaOnline(val);
+            document.getElementById('mood-txt').innerText = "गूगल जेमिनी लाइव 🤖";
             speak(reply);
         }
 
         sendBtn.addEventListener('click', handleAction);
         inputEl.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAction(); });
 
+        initGemini();
         init3D();
         animate();
     </script>
