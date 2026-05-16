@@ -3,58 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Priya AI - nv1 Realistic Core</title>
+    <title>Priya AI - nv1 Core</title>
     <style>
-        :root { --glow: #00f2ff; --panel: rgba(0, 0, 0, 0.85); }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #050508; font-family: 'Inter', sans-serif; }
-        
-        /* Level 1: Background & Atmosphere */
-        #main-aura { 
-            position: absolute; width: 100%; height: 100%; z-index: 1; 
-            background: radial-gradient(circle at center, rgba(0,242,255,0.1) 0%, #000 80%);
+        :root { --glow: #00f2ff; --glass: rgba(10, 10, 20, 0.9); }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #020205; font-family: 'Segoe UI', sans-serif; }
+
+        /* Level 1: Background & Aura */
+        #dynamic-bg {
+            position: absolute; width: 100%; height: 100%; z-index: 1;
+            background: radial-gradient(circle at center, rgba(0,242,255,0.08) 0%, #000 80%);
+            transition: background 1s ease;
         }
 
         #canvas-container { width: 100%; height: 100%; position: absolute; z-index: 2; touch-action: none; }
 
-        /* HUD & Status Engine */
-        .hud-top {
+        /* Level 6: HUD Status */
+        .hud {
             position: absolute; top: 25px; left: 25px; z-index: 10;
-            background: var(--panel); padding: 12px 18px; border-radius: 12px;
-            border-left: 3px solid var(--glow); color: white; backdrop-filter: blur(10px);
+            background: var(--glass); padding: 12px 20px; border-radius: 15px;
+            border-left: 4px solid var(--glow); color: white; backdrop-filter: blur(10px);
         }
-        .status-dot { width: 8px; height: 8px; background: var(--glow); border-radius: 50%; display: inline-block; margin-right: 8px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .live-dot { width: 8px; height: 8px; background: var(--glow); border-radius: 50%; display: inline-block; margin-right: 8px; animation: blink 1.2s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        /* Level 3: Interaction Dock */
-        .ui-dock {
+        /* Level 3: Input Dock */
+        .dock {
             position: absolute; bottom: 30px; width: 100%; display: flex; justify-content: center; z-index: 100;
         }
-        .glass-input {
-            background: var(--panel); border: 1px solid rgba(0,242,255,0.3);
-            width: 88%; max-width: 500px; display: flex; align-items: center;
-            padding: 8px 15px; border-radius: 50px; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        .input-bar {
+            background: var(--glass); border: 1px solid rgba(0, 242, 255, 0.3);
+            width: 90%; max-width: 500px; display: flex; align-items: center;
+            padding: 8px 15px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         input { flex: 1; background: none; border: none; color: white; height: 45px; font-size: 16px; outline: none; }
-        .action-icon { background: none; border: none; color: var(--glow); font-size: 22px; cursor: pointer; padding: 5px; transition: 0.2s; }
-        .action-icon:active { transform: scale(0.9); }
+        .btn { background: none; border: none; color: var(--glow); font-size: 22px; cursor: pointer; padding: 5px; transition: transform 0.2s; }
+        .btn:active { transform: scale(0.9); }
     </style>
 </head>
 <body>
 
-<div id="main-aura"></div>
+<div id="dynamic-bg"></div>
 
-<div class="hud-top">
-    <div><span class="status-dot"></span><b id="sys-label">nv1 CORE: ONLINE</b></div>
-    <div id="sub-label" style="font-size: 10px; opacity: 0.6; margin-top: 4px;">SENSORS: STABLE</div>
+<div class="hud">
+    <div><span class="live-dot"></span><b id="sys-status">nv1: STANDBY</b></div>
+    <div id="sensor-status" style="font-size: 10px; opacity: 0.6; margin-top: 4px;">SENSORS: ONLINE</div>
 </div>
 
 <div id="canvas-container"></div>
 
-<div class="ui-dock">
-    <div class="glass-input">
-        <button class="action-icon" id="micBtn">🎤</button>
+<div class="dock">
+    <div class="input-bar">
+        <button class="btn" id="micBtn">🎤</button>
         <input type="text" id="userInput" placeholder="कमांड दें या बात करें...">
-        <button class="action-icon" id="sendBtn" style="color:white">➔</button>
+        <button class="btn" id="sendBtn" style="color:white">➔</button>
     </div>
 </div>
 
@@ -62,37 +63,34 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 
 <script>
-    // Realistic Model URL
     const MODEL_URL = "https://raw.githubusercontent.com/jessearmy572-hub/naman/main/model.glb";
-    let scene, camera, renderer, mixer, clock, priya, head;
+    let scene, camera, renderer, mixer, clock, model, head;
     let morphs = [], isSpeaking = false, mouse = {x:0, y:0};
 
-    // --- Speech Recognition ---
+    // --- Core Logic ---
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.lang = 'hi-IN';
-    recognition.continuous = false;
 
-    // --- nv1 Command Brain ---
-    async function engine(input) {
+    async function processCommand(input) {
         const text = input.toLowerCase();
-        document.getElementById('sys-label').innerText = "nv1 CORE: THINKING";
-        
-        // Device Commands
+        document.getElementById('sys-status').innerText = "nv1: THINKING";
+
+        // Level 7: Device Control
         if (text.includes("battery") || text.includes("बैटरी")) {
             const b = await navigator.getBattery();
             return `आपकी बैटरी अभी ${Math.floor(b.level * 100)}% है।`;
         }
         if (text.includes("vibrate") || text.includes("वाइब्रेट")) {
             if (navigator.vibrate) navigator.vibrate(200);
-            return "डिवाइस वाइब्रेशन सफल।";
+            return "वाइब्रेशन एक्टिवेट कर दिया गया है।";
         }
         if (text.includes("time") || text.includes("समय")) {
             return `अभी ${new Date().toLocaleTimeString('hi-IN')} हो रहे हैं।`;
         }
 
-        // Social Intent
-        if (text.match(/(kaise ho|how are you|kya haal)/)) return "मैं बहुत अच्छी हूँ! आप कैसे हैं?";
-        if (text.match(/(kaun ho|who are you|intro)/)) return "मैं प्रिया हूँ, आपका nv1 इंटेलिजेंट अवतार।";
+        // Level 9: Emotion/General Chat
+        if (text.match(/(kaise ho|how are you|kya haal)/)) return "मैं बहुत अच्छी हूँ! आप बताइए, मैं आपकी क्या सेवा कर सकती हूँ?";
+        if (text.match(/(kaun ho|who are you|pari chay)/)) return "मैं प्रिया हूँ, आपकी एडवांस्ड AI असिस्टेंट।";
         
         return "जी, मैं आपकी बात समझ रही हूँ।";
     }
@@ -103,40 +101,32 @@
         camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
         camera.position.set(0, 0, 3.2);
 
-        // Realistic Renderer Setup
         renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.outputEncoding = THREE.sRGBEncoding; // For realistic colors
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        // Advanced Lighting for Realistic Skin/Texture
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
-        scene.add(ambientLight);
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(1, 1, 2);
-        scene.add(directionalLight);
+        scene.add(new THREE.AmbientLight(0xffffff, 2.0));
 
-        // Load Realistic Avatar
         new THREE.GLTFLoader().load(MODEL_URL, (gltf) => {
-            priya = gltf.scene;
-            scene.add(priya);
-            mixer = new THREE.AnimationMixer(priya);
+            model = gltf.scene;
+            scene.add(model);
+            mixer = new THREE.AnimationMixer(model);
             if(gltf.animations.length > 0) mixer.clipAction(gltf.animations[0]).play();
 
-            priya.traverse(n => {
+            model.traverse(n => {
                 if (n.name.toLowerCase().includes('head')) head = n;
                 if (n.morphTargetDictionary) morphs.push(n);
             });
             resize();
-            speak("nv1 कोर सक्रिय। अवतार ऑनलाइन है।");
+            speak("nv1 सिस्टम सक्रिय है। मैं तैयार हूँ।");
         });
 
-        // Touch Sensing
+        // Level 5: Touch Response
         window.addEventListener('touchstart', () => {
             if(navigator.vibrate) navigator.vibrate(30);
-            document.getElementById('sub-label').innerText = "SENSORS: TOUCH DETECTED";
-            setTimeout(() => document.getElementById('sub-label').innerText = "SENSORS: STABLE", 2000);
+            document.getElementById('sensor-status').innerText = "SENSORS: TOUCH DETECTED";
+            setTimeout(() => document.getElementById('sensor-status').innerText = "SENSORS: ONLINE", 2000);
         });
 
         window.addEventListener('mousemove', e => {
@@ -148,13 +138,13 @@
     }
 
     function resize() {
-        if (!priya) return;
+        if (!model) return;
         const mob = window.innerWidth < 768;
         renderer.setSize(window.innerWidth, window.innerHeight);
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
-        priya.scale.setScalar(mob ? 0.9 : 1.3);
-        priya.position.y = mob ? -0.85 : -1.35;
+        model.scale.setScalar(mob ? 0.9 : 1.3);
+        model.position.y = mob ? -0.85 : -1.35;
     }
 
     function animate() {
@@ -163,14 +153,13 @@
         const el = clock.getElapsedTime();
         if (mixer) mixer.update(dt);
 
-        if (priya) {
-            // Smooth Head Tracking
+        if (model) {
+            // Level 4: Motion
             if (head) {
-                head.rotation.y = THREE.MathUtils.lerp(head.rotation.y, mouse.x * 0.45, 0.08);
-                head.rotation.x = THREE.MathUtils.lerp(head.rotation.x, -mouse.y * 0.2, 0.08);
+                head.rotation.y = THREE.MathUtils.lerp(head.rotation.y, mouse.x * 0.45, 0.1);
+                head.rotation.x = THREE.MathUtils.lerp(head.rotation.x, -mouse.y * 0.2, 0.1);
             }
             
-            // Natural Behaviors (Blink & Lip Sync)
             let blink = (Math.sin(el * 4) > 0.98 || Math.sin(el * 0.5) < -0.99) ? 1 : 0;
             let talk = isSpeaking ? Math.abs(Math.sin(el * 18)) * 0.6 : 0;
 
@@ -190,17 +179,15 @@
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(t);
         u.lang = 'hi-IN';
-        u.pitch = 1.0;
-        u.onstart = () => { isSpeaking = true; document.getElementById('sys-label').innerText = "nv1 CORE: SPEAKING"; };
-        u.onend = () => { isSpeaking = false; document.getElementById('sys-label').innerText = "nv1 CORE: ONLINE"; };
+        u.onstart = () => { isSpeaking = true; document.getElementById('sys-status').innerText = "nv1: SPEAKING"; };
+        u.onend = () => { isSpeaking = false; document.getElementById('sys-status').innerText = "nv1: STANDBY"; };
         window.speechSynthesis.speak(u);
     }
 
-    // Interaction Events
     document.getElementById('sendBtn').onclick = async () => {
         const val = document.getElementById('userInput').value;
         if(val) {
-            const res = await engine(val);
+            const res = await processCommand(val);
             speak(res);
             document.getElementById('userInput').value = "";
         }
@@ -208,13 +195,13 @@
 
     document.getElementById('micBtn').onclick = () => {
         recognition.start();
-        document.getElementById('sys-label').innerText = "nv1 CORE: LISTENING";
+        document.getElementById('sys-status').innerText = "nv1: LISTENING";
     };
 
     recognition.onresult = async (e) => {
         const t = e.results[0][0].transcript;
         document.getElementById('userInput').value = t;
-        const res = await engine(t);
+        const res = await processCommand(t);
         speak(res);
         document.getElementById('userInput').value = "";
     };
