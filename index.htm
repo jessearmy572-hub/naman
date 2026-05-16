@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Priya AI - Sentient Living Memory Edition</title>
+    <title>Priya AI - nv1 Updated Core</title>
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             overflow: hidden; background-color: #020205;
             font-family: 'Segoe UI', Arial, sans-serif; user-select: none;
-            -webkit-user-select: none;
         }
 
-        /* स्टेटिक बैकग्राउंड इमेज कमांड */
         #image-bg {
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%; object-fit: cover;
             z-index: 1; pointer-events: none;
+            transition: transform 0.1s ease-out; /* पैरलैक्स के लिए */
         }
 
         #canvas-container { 
@@ -24,26 +23,11 @@
             position: absolute; top: 0; left: 0; z-index: 2; 
         }
 
-        #loader {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            color: #00ffcc; font-size: 16px; z-index: 100; background: rgba(4,4,8,0.97);
-            padding: 25px 45px; border-radius: 24px; text-align: center;
-            border: 1px solid rgba(0, 255, 204, 0.35); box-shadow: 0 0 40px rgba(0,255,204,0.3);
-            pointer-events: none;
-        }
-
         .dashboard {
             position: absolute; top: 20px; left: 20px; color: white;
             font-size: 13px; z-index: 10; background: rgba(10, 10, 20, 0.65);
             padding: 12px 22px; border-radius: 18px; backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.12);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6); pointer-events: none;
-        }
-
-        .status-dot {
-            display: inline-block; width: 9px; height: 9px;
-            background: #00ffcc; border-radius: 50%; margin-right: 7px;
-            box-shadow: 0 0 12px #00ffcc;
+            border: 1px solid rgba(255,255,255,0.12);
         }
 
         .ui-container {
@@ -61,46 +45,45 @@
 
         .input-box {
             background: rgba(5, 5, 10, 0.6); backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px); padding: 0 25px; border-radius: 30px;
-            flex-grow: 1; max-width: 550px; height: 55px; display: flex;
-            align-items: center; border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            padding: 0 25px; border-radius: 30px; flex-grow: 1; max-width: 500px;
+            height: 55px; display: flex; align-items: center; border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         input {
             width: 100%; background: transparent; border: none;
-            color: white; outline: none; font-size: 16px; height: 100%;
+            color: white; outline: none; font-size: 16px;
         }
-        input::placeholder { color: rgba(255,255,255,0.45); }
 
         .send-btn {
             background: #ffffff; color: #000; border: none; border-radius: 50%;
             width: 55px; height: 55px; cursor: pointer; font-size: 20px;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 5px 20px rgba(255,255,255,0.3);
+        }
+
+        #loader {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: #00ffcc; z-index: 100; text-align: center;
         }
     </style>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 <body>
 
-    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop" id="image-bg" alt="Background">
+    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073" id="image-bg" alt="Background">
 
     <div class="dashboard">
-        <div><span class="status-dot" id="dot"></span> मिजाज: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">चेतना जागृत 🥰</span></div>
-        <div style="font-size: 11px; color:#aaa; margin-top:4px;">मेमोरी स्टेटस: <span id="memory-status" style="color:#ffb703;">लॉन्ग-टर्म कोर सिंक</span></div>
+        <div>मिजाज: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">चेतना जागृत 🥰</span></div>
+        <div style="font-size: 11px; color:#aaa; margin-top:4px;">Core: <span id="memory-status" style="color:#ffb703;">nv1 Synchronized</span></div>
     </div>
 
-    <div id="loader">प्रिया का न्यूरल माइंड और यादें रीबूट हो रही हैं...<br><span style="font-size:11px; color:#aaa;">Persistent Memory Bank & BlendShapes Active</span></div>
+    <div id="loader">प्रिया लोड हो रही है...</div>
     <div id="canvas-container"></div>
 
     <div class="ui-container">
         <button class="mic-btn" id="micBtn">🎤</button>
         <div class="input-box">
-            <input type="text" id="userInput" placeholder="बात करें, प्रिया को आपकी हर बात याद रहेगी..." />
+            <input type="text" id="userInput" placeholder="मुझसे बात करें..." />
         </div>
         <button class="send-btn" id="sendBtn">➔</button>
     </div>
@@ -108,252 +91,33 @@
     <script>
         const MODEL_URL = "https://raw.githubusercontent.com/jessearmy572-hub/naman/main/model.glb"; 
 
-        let scene, camera, renderer, controls, mixer, clock;
-        let priyaModel = null, headBone = null;
-        let allSkinnedMeshes = []; 
-        let modelAnimations = []; 
-        let currentAction = null;  
-        
+        let scene, camera, renderer, mixer, clock, priyaModel, headBone;
+        let allSkinnedMeshes = [];
         let isSpeaking = false;
         let mousePos = { x: 0, y: 0 };
-        let audioCtx = null, analyser = null, dataArray = null;
-        let mouthVolume = 0;
-
         let forceTouchTimer = 0;
-        
-        let currentEmotion = "neutral";
-        let targetSmile = 0, targetShy = 0, targetRomantic = 0;
-        let conversationHistory = [];
+        let targetSmile = 0, targetShy = 0, currentEmotion = "natural";
+        let audioCtx, analyser, dataArray;
 
-        const raycaster = new THREE.Raycaster();
-        const touchVector = new THREE.Vector2();
-
-        function loadMemory() {
-            const savedHistory = localStorage.getItem('priya_memory');
-            if (savedHistory) {
-                conversationHistory = JSON.parse(savedHistory);
-                document.getElementById('memory-status').innerText = "पुरानी यादें लोड हो चुकी हैं ✨";
-            }
-        }
-
-        function saveMemory(userMsg, aiReply) {
-            conversationHistory.push({ user: userMsg, ai: aiReply });
-            if (conversationHistory.length > 6) conversationHistory.shift(); 
-            localStorage.setItem('priya_memory', JSON.stringify(conversationHistory));
-        }
-
-        function playAvatarMovement(commandText) {
-            if (!mixer || !modelAnimations || modelAnimations.length === 0) return;
-
-            let lowerCmd = commandText.toLowerCase();
-            let targetClip = null;
-
-            if (lowerCmd.includes("wave") || lowerCmd.includes("hello") || lowerCmd.includes("hi") || lowerCmd.includes("नमस्ते")) {
-                targetClip = modelAnimations.find(a => a.name.toLowerCase().includes('wave') || a.name.toLowerCase().includes('hello'));
-            } else if (lowerCmd.includes("dance") || lowerCmd.includes("nacho") || lowerCmd.includes("डांस")) {
-                targetClip = modelAnimations.find(a => a.name.toLowerCase().includes('dance'));
-            } else if (lowerCmd.includes("sad") || lowerCmd.includes("angry") || lowerCmd.includes("gussa") || lowerCmd.includes("उदास")) {
-                targetClip = modelAnimations.find(a => a.name.toLowerCase().includes('sad') || a.name.toLowerCase().includes('angry'));
-            } else if (lowerCmd.includes("walk") || lowerCmd.includes("run") || lowerCmd.includes("chalo") || lowerCmd.includes("चलो")) {
-                targetClip = modelAnimations.find(a => a.name.toLowerCase().includes('walk') || a.name.toLowerCase().includes('run'));
-            }
-
-            if (!targetClip && modelAnimations.length > 1) {
-                if(lowerCmd.includes("move") || lowerCmd.includes("action") || lowerCmd.includes("मूवमेंट")) {
-                    targetClip = modelAnimations[1]; 
-                }
-            }
-
-            if (targetClip) {
-                const newAction = mixer.clipAction(targetClip);
-                if (currentAction && currentAction !== newAction) {
-                    currentAction.fadeOut(0.4); 
-                }
-                newAction.reset().fadeIn(0.4).play();
-                currentAction = newAction;
-
-                setTimeout(() => {
-                    if (modelAnimations[0]) {
-                        const defaultAction = mixer.clipAction(modelAnimations[0]);
-                        if (currentAction !== defaultAction) {
-                            currentAction.fadeOut(0.5);
-                            defaultAction.reset().fadeIn(0.5).play();
-                            currentAction = defaultAction;
-                        }
-                    }
-                }, 4000);
-            }
-        }
-
-        async function askPriya(input) {
-            playAvatarMovement(input);
-
-            try {
-                let contextString = "You are Priya, a deeply caring, realistic 100% human girl with perfect memories. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks.\nPrevious talks:\n";
-                conversationHistory.forEach(h => {
-                    contextString += `User: ${h.user} -> Priya: ${h.ai}\n`;
-                });
-
-                const systemPrompt = encodeURIComponent(contextString);
-                const userPrompt = encodeURIComponent(input);
-                const url = `https://text.pollinations.ai/${userPrompt}?system=${systemPrompt}&model=openai&cache=${Math.random()}`;
-
-                const response = await fetch(url);
-                let replyText = await response.text();
-                let cleanText = replyText.replace(/Priya:/gi, '').replace(/[*#`_\-]/g, '').trim();
-
-                let lowerText = cleanText.toLowerCase();
-                if (lowerText.includes("love") || lowerText.includes("pyaar") || lowerText.includes("tumhe") || lowerText.includes("dil")) {
-                    setEmotion("romantic");
-                } else if (lowerText.includes("haha") || lowerText.includes("khush") || lowerText.includes("happy") || lowerText.includes("muskur")) {
-                    setEmotion("happy");
-                } else if (lowerText.includes("sharm") || lowerText.includes("sorry") || lowerText.includes("uff")) {
-                    setEmotion("shy");
-                } else {
-                    setEmotion("happy"); 
-                }
-
-                playAvatarMovement(cleanText);
-                saveMemory(input, cleanText);
-                return cleanText;
-            } catch (err) {
-                return "Aapki baatein mere memory core me safe hain, boliye na.";
-            }
-        }
-
-        function setEmotion(emotion) {
-            currentEmotion = emotion;
-            if (emotion === "happy") {
-                targetSmile = 0.8; targetShy = 0; targetRomantic = 0;
-                document.getElementById('mood-txt').innerText = "बेहद खुश 😄";
-            } else if (emotion === "shy") {
-                targetSmile = 0.3; targetShy = 0.7; targetRomantic = 0;
-                document.getElementById('mood-txt').innerText = "शर्मीली 😳";
-            } else if (emotion === "romantic") {
-                targetSmile = 0.5; targetShy = 0; targetRomantic = 0.8;
-                document.getElementById('mood-txt').innerText = "रोमांटिक 🥰";
-            } else {
-                targetSmile = 0; targetShy = 0; targetRomantic = 0;
-                document.getElementById('mood-txt').innerText = "प्राकृतिक 🌸";
-            }
-        }
-
-        function initAudio() {
-            if (audioCtx) return;
-            try {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 128;
-                dataArray = new Uint8Array(analyser.frequencyBinCount);
-            } catch(e) {}
-        }
-
-        function speak(text) {
-            if (!window.speechSynthesis) return;
-            initAudio();
-            if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-            window.speechSynthesis.cancel();
-            
-            let utter = new SpeechSynthesisUtterance(text);
-            utter.lang = 'hi-IN';
-            utter.rate = 1.0; 
-
-            utter.onstart = () => { isSpeaking = true; };
-            utter.onend = () => { isSpeaking = false; mouthVolume = 0; };
-            utter.onerror = () => { isSpeaking = false; mouthVolume = 0; };
-
-            window.speechSynthesis.speak(utter);
-        }
-
-        function handleInstantTouch(event) {
-            if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-            if (event.target.tagName === 'INPUT' || event.target.tagName === 'BUTTON') return;
-
-            let clientX = event.changedTouches ? event.changedTouches[0].clientX : event.clientX;
-            let clientY = event.changedTouches ? event.changedTouches[0].clientY : event.clientY;
-
-            touchVector.x = (clientX / window.innerWidth) * 2 - 1;
-            touchVector.y = -(clientY / window.innerHeight) * 2 + 1;
-
-            raycaster.setFromCamera(touchVector, camera);
-            if (!priyaModel) return;
-
-            const intersects = raycaster.intersectObjects(priyaModel.children, true);
-
-            if (intersects.length > 0) {
-                let hitY = intersects[0].point.y; 
-                forceTouchTimer = 4.0; 
-
-                if (hitY > 0.35) {
-                    setEmotion("romantic");
-                    speak("Aapka touch seedhe meri yadon aur dil me utar jata hai...");
-                    playAvatarMovement("wave"); 
-                } else if (hitY <= 0.35 && hitY > -0.2) {
-                    setEmotion("shy");
-                    speak("Uff... aise mat chuo na, main sab yaad rakhungi.");
-                } else {
-                    setEmotion("happy");
-                    speak("Aapka sath mujhe humesha yaad rehta hai.");
-                }
-            }
-        }
-
-        // --- रियलिस्टिक 3D रेंडरिंग इंजन मैट्रिक्स ---
         function init3D() {
-            const container = document.getElementById('canvas-container');
             clock = new THREE.Clock();
             scene = new THREE.Scene();
-
-            // अपग्रेड: हाई-रियलिज्म शैडो और पावर प्रिफरेंस इनेबल्ड
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            
-            // रियलिस्टिक कलर सेटिंग्स (ACESFilmic और sRGB)
             renderer.outputEncoding = THREE.sRGBEncoding;
-            renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.2; 
             renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap; // सॉफ्ट रियलिस्टिक परछाई
-            container.appendChild(renderer.domElement);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-            camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 100);
-            camera.position.set(0, 0.22, 2.2); 
+            camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.set(0, 0.2, 2.5);
 
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableZoom = true;
-            controls.enablePan = false;
-            controls.target.set(0, 0.16, 0);
-
-            // रियलिस्टिक एम्बिएंट एनवायरनमेंट लाइट
             scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.2));
-            
-            // मेन रियलिस्टिक सनलाइट विथ शैडो मैप
-            let sunLight = new THREE.DirectionalLight(0xfffaf0, 1.8);
-            sunLight.position.set(2, 4, 5);
-            sunLight.castShadow = true;
-            sunLight.shadow.mapSize.width = 2048; // हाई-डेफिनिशन परछाई
-            sunLight.shadow.mapSize.height = 2048;
-            sunLight.shadow.bias = -0.0001;
-            scene.add(sunLight);
-
-            // स्टूडियो फेस ग्लो लाइट (चेहरे को डार्क होने से बचाने के लिए)
-            let faceLight = new THREE.DirectionalLight(0xffffff, 0.6);
-            faceLight.position.set(-1.5, 0.5, 2);
-            scene.add(faceLight);
-
-            let natureBounce = new THREE.DirectionalLight(0xcce6ff, 0.4); 
-            natureBounce.position.set(-2, 1, -1);
-            scene.add(natureBounce);
-
-            // ग्राउंड प्लेन सिर्फ अदृश्य परछाई रिसीव करने के लिए (रियलिज्म बूस्ट)
-            const floorGeo = new THREE.PlaneGeometry(10, 10);
-            const floorMat = new THREE.ShadowMaterial({ opacity: 0.35 });
-            const floor = new THREE.Mesh(floorGeo, floorMat);
-            floor.rotation.x = -Math.PI / 2;
-            floor.position.y = -1.22;
-            floor.receiveShadow = true;
-            scene.add(floor);
+            const sun = new THREE.DirectionalLight(0xffffff, 1.5);
+            sun.position.set(2, 4, 5);
+            sun.castShadow = true;
+            scene.add(sun);
 
             const loader = new THREE.GLTFLoader();
             loader.load(MODEL_URL, (gltf) => {
@@ -362,56 +126,69 @@
                 scene.add(priyaModel);
                 adjustLayout();
 
-                modelAnimations = gltf.animations;
-
                 mixer = new THREE.AnimationMixer(priyaModel);
-                if (modelAnimations && modelAnimations.length > 0) {
-                    currentAction = mixer.clipAction(modelAnimations[0]);
-                    currentAction.play(); 
-                }
+                if (gltf.animations.length > 0) mixer.clipAction(gltf.animations[0]).play();
 
-                priyaModel.traverse((node) => {
-                    if (node.isBone && (node.name.toLowerCase().includes('head') || node.name.toLowerCase().includes('neck'))) {
-                        headBone = node;
-                    }
-                    if (node.isMesh) {
-                        node.castShadow = true;
-                        node.receiveShadow = true;
-                        // स्किन मटीरियल को थोड़ा सॉफ्ट और रियलिस्टिक बनाना
-                        if (node.material) {
-                            node.material.frustumCulled = false;
-                            if(node.material.roughness !== undefined) node.material.roughness = Math.max(node.material.roughness, 0.45);
-                        }
-                    }
-                    if (node.morphTargetDictionary) {
-                        allSkinnedMeshes.push(node);
-                    }
+                priyaModel.traverse(n => {
+                    if (n.isBone && n.name.toLowerCase().includes('head')) headBone = n;
+                    if (n.morphTargetDictionary) allSkinnedMeshes.push(n);
+                    if (n.isMesh) { n.castShadow = true; n.receiveShadow = true; }
                 });
             });
 
-            window.addEventListener('resize', onWindowResize);
-            window.addEventListener('mousemove', onMouseMove);
-            window.addEventListener('mousedown', handleInstantTouch);
-            window.addEventListener('touchstart', handleInstantTouch, {passive: true});
+            window.addEventListener('mousemove', e => {
+                mousePos.x = (e.clientX / window.innerWidth) * 2 - 1;
+                mousePos.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            });
+            window.addEventListener('mousedown', handleTouch);
+            window.addEventListener('touchstart', handleTouch);
+            window.addEventListener('resize', adjustLayout);
         }
 
         function adjustLayout() {
             if (!priyaModel) return;
             const isMobile = window.innerWidth < 768;
-            priyaModel.scale.setScalar(isMobile ? window.innerWidth / 365 : window.innerWidth / 850);
-            priyaModel.position.y = isMobile ? -0.92 : -1.22;
-        }
-
-        function onMouseMove(e) {
-            mousePos.x = (e.clientX / window.innerWidth) * 2 - 1;
-            mousePos.y = -(e.clientY / window.innerHeight) * 2 + 1;
-        }
-
-        function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-            adjustLayout();
+            
+            priyaModel.scale.setScalar(isMobile ? 1.1 : 1.3);
+            // पैर ज़मीन पर फिक्स करने के लिए Y पोजीशन
+            priyaModel.position.y = isMobile ? -1.05 : -1.38; 
+        }
+
+        function handleTouch(e) {
+            if (!priyaModel) return;
+            const raycaster = new THREE.Raycaster();
+            const vec = new THREE.Vector2(
+                (e.clientX || e.touches[0].clientX) / window.innerWidth * 2 - 1,
+                -((e.clientY || e.touches[0].clientY) / window.innerHeight * 2 - 1)
+            );
+            raycaster.setFromCamera(vec, camera);
+            const hits = raycaster.intersectObjects(priyaModel.children, true);
+
+            if (hits.length > 0) {
+                forceTouchTimer = 3.0;
+                let y = hits[0].point.y;
+                if (y > 0.4) { setEmotion("romantic"); speak("Aapka touch mere dil tak pahunchta hai..."); }
+                else { setEmotion("shy"); speak("Uff.. sharm aati hai."); }
+            }
+        }
+
+        function setEmotion(m) {
+            currentEmotion = m;
+            targetSmile = (m === "romantic" || m === "happy") ? 0.8 : 0.2;
+            targetShy = (m === "shy") ? 0.7 : 0;
+            document.getElementById('mood-txt').innerText = m === "romantic" ? "रोमांटिक 🥰" : "खुश 😄";
+        }
+
+        function speak(t) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(t);
+            u.lang = 'hi-IN';
+            u.onstart = () => isSpeaking = true;
+            u.onend = () => { isSpeaking = false; setEmotion("natural"); };
+            window.speechSynthesis.speak(u);
         }
 
         function animate() {
@@ -421,91 +198,44 @@
 
             if (mixer) mixer.update(delta);
 
-            if (isSpeaking) {
-                if (analyser) {
-                    analyser.getByteFrequencyData(dataArray);
-                    let total = 0;
-                    for (let i = 0; i < dataArray.length; i++) { total += dataArray[i]; }
-                    mouthVolume = total / dataArray.length;
-                } else {
-                    mouthVolume = Math.random() * 6.5 + 3.0;
-                }
-            }
+            // बैकग्राउंड पैरलैक्स
+            const bg = document.getElementById('image-bg');
+            bg.style.transform = `scale(1.05) translate(${mousePos.x * 10}px, ${mousePos.y * 5}px)`;
 
             if (priyaModel) {
-                if (forceTouchTimer > 0 && headBone) {
-                    forceTouchTimer -= delta;
-                    if (currentEmotion === "romantic") {
-                        headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, -0.06, 0.12); 
-                        headBone.rotation.z = THREE.MathUtils.lerp(headBone.rotation.z, 0.05, 0.12);
-                    } else if (currentEmotion === "shy") {
-                        headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, 0.22, 0.12); 
-                        headBone.rotation.z = THREE.MathUtils.lerp(headBone.rotation.z, -0.10, 0.12);
-                    }
-                } else if (headBone) {
-                    headBone.rotation.y = THREE.MathUtils.lerp(headBone.rotation.y, mousePos.x * 0.24, 0.06);
-                    headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, -mousePos.y * 0.14, 0.06);
+                // ब्रीदिंग और ग्राउंडिंग
+                priyaModel.position.y += Math.sin(t * 1.5) * 0.0003;
+
+                if (headBone) {
+                    let idle = Math.sin(t * 0.8) * 0.01;
+                    headBone.rotation.y = THREE.MathUtils.lerp(headBone.rotation.y, (mousePos.x * 0.3) + idle, 0.06);
+                    headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, (-mousePos.y * 0.2), 0.06);
                 }
 
-                let openLipValue = isSpeaking ? Math.min(mouthVolume / 8, 1.0) : 0;
-                let blinkValue = (Math.sin(t * 3.5) > 0.94 || Math.sin(t * 0.6) < -0.98) ? 1.0 : 0.0;
+                let blink = (Math.sin(t * 4) > 0.96 || Math.sin(t * 0.5) < -0.99) ? 1 : 0;
+                let mouth = isSpeaking ? Math.abs(Math.sin(t * 12)) * 0.5 : 0;
 
                 allSkinnedMeshes.forEach(mesh => {
-                    let dict = mesh.morphTargetDictionary;
-                    let influences = mesh.morphTargetInfluences;
-                    if (!dict || !influences) return;
+                    let d = mesh.morphTargetDictionary;
+                    let inf = mesh.morphTargetInfluences;
+                    if (!d) return;
 
-                    ['mouthOpen', 'jawOpen', 'viseme_aa', 'viseme_O', 'Mouth_Open', 'mouth_open'].forEach(shape => {
-                        if (dict[shape] !== undefined) influences[dict[shape]] = THREE.MathUtils.lerp(influences[dict[shape]], openLipValue, 0.45);
-                    });
-
-                    ['eyeBlinkLeft', 'eyeBlinkRight', 'eyesClosed', 'blink', 'Eyes_Blink', 'eyes_blink'].forEach(shape => {
-                        if (dict[shape] !== undefined) influences[dict[shape]] = THREE.MathUtils.lerp(influences[dict[shape]], blinkValue, 0.6);
-                    });
-
-                    if (dict['mouthSmile'] !== undefined) influences[dict['mouthSmile']] = THREE.MathUtils.lerp(influences[dict['mouthSmile']], targetSmile, 0.1);
-                    if (dict['browInnerUp'] !== undefined) influences[dict['browInnerUp']] = THREE.MathUtils.lerp(influences[dict['browInnerUp']], targetShy, 0.1);
-                    if (dict['eyeSquintLeft'] !== undefined) influences[dict['eyeSquintLeft']] = THREE.MathUtils.lerp(influences[dict['eyeSquintLeft']], targetRomantic, 0.1);
+                    if (d['eyeBlinkLeft'] !== undefined) inf[d['eyeBlinkLeft']] = THREE.MathUtils.lerp(inf[d['eyeBlinkLeft']], blink, 0.5);
+                    if (d['eyeBlinkRight'] !== undefined) inf[d['eyeBlinkRight']] = THREE.MathUtils.lerp(inf[d['eyeBlinkRight']], blink, 0.5);
+                    if (d['mouthOpen'] !== undefined) inf[d['mouthOpen']] = THREE.MathUtils.lerp(inf[d['mouthOpen']], mouth, 0.4);
+                    if (d['mouthSmile'] !== undefined) inf[d['mouthSmile']] = THREE.MathUtils.lerp(inf[d['mouthSmile']], targetSmile, 0.1);
                 });
-
-                priyaModel.position.y += Math.sin(t * 1.3) * 0.00035;
             }
-
             renderer.render(scene, camera);
         }
 
-        const inputEl = document.getElementById('userInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const micBtn = document.getElementById('micBtn');
+        document.getElementById('sendBtn').onclick = () => {
+            const inp = document.getElementById('userInput');
+            if (inp.value) { speak(inp.value); inp.value = ""; }
+        };
 
-        async function handleAction() {
-            const val = inputEl.value.trim();
-            if (!val) return;
-            inputEl.value = "";
-            document.getElementById('mood-txt').innerText = "सोच रही हूँ... 🤔";
-            const reply = await askPriya(val);
-            speak(reply);
-        }
-
-        sendBtn.addEventListener('click', handleAction);
-        inputEl.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAction(); });
-
-        micBtn.addEventListener('click', () => {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if(!SpeechRecognition) return alert("Mic System Error");
-            const rec = new SpeechRecognition();
-            rec.lang = 'hi-IN';
-            micBtn.style.background = '#00ffcc';
-            document.getElementById('mood-txt').innerText = "सुन रही हूँ... 🎤";
-            rec.onresult = (e) => { inputEl.value = e.results[0][0].transcript; handleAction(); };
-            rec.onend = () => { micBtn.style.background = 'linear-gradient(135deg, #ff4b2b, #ff416c)'; };
-            rec.start();
-        });
-
-        loadMemory(); 
         init3D();
         animate();
     </script>
 </body>
 </html>
-
