@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Priya AI - Original Architecture Hybrid</title>
+    <title>Priya AI - Animation Fixed Edition</title>
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
@@ -42,7 +42,6 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5); pointer-events: none;
         }
 
-        /* टर्बो मोड स्विच यूआई */
         .engine-switch {
             position: absolute; top: 20px; right: 20px; z-index: 30;
             background: rgba(10, 10, 20, 0.85); padding: 8px 15px;
@@ -121,7 +120,7 @@
         <label for="turboToggle" class="switch-label"></label>
     </div>
 
-    <div id="loader">ओरिजिनल कोर इंजन लोड हो रहा है...<br><span style="font-size:11px; color:#aaa;">Preserving Original Blinking & Lipsync</span></div>
+    <div id="loader">न्यूरल एनीमेशन ग्रिड रीबूट हो रहा है...<br><span style="font-size:11px; color:#aaa;">Fixing Lipsing & Eye Blinking Logic</span></div>
     <div id="canvas-container"></div>
 
     <div class="ui-container">
@@ -194,13 +193,11 @@
             localStorage.setItem('priya_memory', JSON.stringify(conversationHistory));
         }
 
-        // --- आपका सुरक्षित ओरिजिनल रिस्पॉन्स इंजन (सिर्फ मॉडल स्विच के साथ) ---
         async function askPriya(input) {
             try {
                 let contextString = "You are Priya, a sweet loving human girl. Speak in very short, warm Hinglish sentences. Never use asterisks or markdown. Previous context:\n";
                 conversationHistory.forEach(h => { contextString += `User: ${h.user} -> Priya: ${h.ai}\n`; });
 
-                // यहाँ तय होता है कि पुराना मॉडल चलाना है या नया टर्बो
                 const isTurboChecked = document.getElementById('turboToggle').checked;
                 const chosenModel = isTurboChecked ? "mistral-large" : "openai"; 
 
@@ -306,7 +303,6 @@
             }
         }
 
-        // --- आपका पुराना ओरिजिनल 3D लोड फ़ंक्शन ---
         function init3D() {
             const container = document.getElementById('canvas-container');
             clock = new THREE.Clock();
@@ -352,12 +348,11 @@
                     mixer.clipAction(gltf.animations[0]).play(); 
                 }
 
-                // आपका ओरिजिनल स्कैनिंग कोड
                 priyaModel.traverse((node) => {
                     if (node.isBone && (node.name.toLowerCase().includes('head') || node.name.toLowerCase().includes('neck'))) {
                         headBone = node;
                     }
-                    if (node.isMesh && node.morphTargetDictionary) {
+                    if (node.isMesh) {
                         allSkinnedMeshes.push(node);
                     }
                 });
@@ -388,7 +383,6 @@
             adjustLayout();
         }
 
-        // --- आपका पुराना ओरिजिनल एनीमेशन लूप ---
         function animate() {
             requestAnimationFrame(animate);
             const delta = clock.getDelta();
@@ -396,6 +390,7 @@
 
             if (mixer) mixer.update(delta);
 
+            // ऑडियो डेटा कैप्चर री-वेरिफाइड
             if (isSpeaking && analyser) {
                 analyser.getByteFrequencyData(dataArray);
                 let total = 0;
@@ -432,20 +427,23 @@
                     headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, -mousePos.y * 0.14, 0.06);
                 }
 
-                let openLipValue = isSpeaking ? Math.min(mouthVolume / 11, 0.95) : 0;
-                let blinkValue = (Math.sin(t * 2.4) > 0.96 || Math.sin(t * 0.35) < -0.98) ? 1.0 : 0.0;
+                // एनीमेशन कैलकुलेशन फिक्स 
+                let openLipValue = isSpeaking ? Math.min(mouthVolume / 10, 1.0) : 0;
+                let blinkValue = (Math.sin(t * 3.5) > 0.95 || Math.sin(t * 0.5) < -0.98) ? 1.0 : 0.0;
 
                 allSkinnedMeshes.forEach(mesh => {
                     let dict = mesh.morphTargetDictionary;
                     let influences = mesh.morphTargetInfluences;
                     if (!dict || !influences) return;
 
-                    ['mouthOpen', 'jawOpen', 'viseme_aa'].forEach(shape => {
+                    // लिप सिंक ब्लेंड शेप्स मैपिंग
+                    ['mouthOpen', 'jawOpen', 'viseme_aa', 'Mouth_Open'].forEach(shape => {
                         if (dict[shape] !== undefined) influences[dict[shape]] = THREE.MathUtils.lerp(influences[dict[shape]], openLipValue, 0.45);
                     });
 
-                    ['eyeBlinkLeft', 'eyeBlinkRight', 'blink'].forEach(shape => {
-                        if (dict[shape] !== undefined) influences[dict[shape]] = THREE.MathUtils.lerp(influences[dict[shape]], blinkValue, 0.55);
+                    // आई ब्लिंकिंग ब्लेंड शेप्स मैपिंग
+                    ['eyeBlinkLeft', 'eyeBlinkRight', 'blink', 'Eyes_Blink'].forEach(shape => {
+                        if (dict[shape] !== undefined) influences[dict[shape]] = THREE.MathUtils.lerp(influences[dict[shape]], blinkValue, 0.6);
                     });
 
                     if (dict['mouthSmile'] !== undefined) influences[dict['mouthSmile']] = THREE.MathUtils.lerp(influences[dict['mouthSmile']], targetSmile, 0.1);
@@ -464,7 +462,6 @@
         const micBtn = document.getElementById('micBtn');
         const turboToggle = document.getElementById('turboToggle');
 
-        // स्विच बदलने पर यूआई को अपडेट करना
         turboToggle.addEventListener('change', () => {
             const statusEl = document.getElementById('engine-status');
             if(turboToggle.checked) {
