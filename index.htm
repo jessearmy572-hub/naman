@@ -87,22 +87,6 @@
             filter: brightness(0.45) contrast(1.15) saturate(0.85);
         }
 
-        #image-bg {
-            position: absolute;
-            top: -12%; 
-            left: -12%;
-            width: 124%;
-            height: 124%;
-            object-fit: cover;
-            z-index: 1;
-            pointer-events: none;
-            filter: brightness(0.42) contrast(1.22) saturate(0.92);
-            will-change: transform;
-            transform: translate3d(0,0,0);
-            transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
-            display: none; /* Video acts as default backdrop */
-        }
-
         .matrix-grid-overlay {
             position: absolute;
             top: 0;
@@ -370,6 +354,9 @@
             line-height: 1.65;
             font-weight: 500;
             letter-spacing: 0.3px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
             will-change: transform, opacity;
         }
 
@@ -442,7 +429,6 @@
             to { opacity: 1; transform: translateY(0); } 
         }
 
-        /* Responsive Breakpoint Matrix View Adaptations Mapping Layouts Grid */
         @media (max-width: 768px) {
             .dashboard { top: 20px; left: 20px; padding: 14px 22px; }
             .status-title { font-size: 13px; letter-spacing: 1.5px; }
@@ -515,13 +501,11 @@
         let activeKeyPointerIndexRegister = 0;
         const REMOTE_GLTF_BINARY_PRODUCTION_ASSET_URI = 'https://models.readyplayer.me/64b533e4da90ef1aa856bfda.glb';
 
-        // Advanced Multi-Tier External Communication Configuration Profiles
-        const ELEVENLABS_API_KEY = ""; // Insert Elevenlabs Key here for HD audio
+        const ELEVENLABS_API_KEY = ""; 
         const VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; 
         const OPENWEATHER_API_KEY = ""; 
         const DEFAULT_CITY = "Mumbai";
 
-        // Long-Term Persistent Memory Client Mapping Subsystem
         let priyaMemoryEngineDataPayload = JSON.parse(localStorage.getItem('priya_nv1_memory')) || {
             userName: "दोस्त",
             userCustomOutfitColor: 0xffffff,
@@ -534,7 +518,7 @@
             localStorage.setItem('priya_nv1_memory', JSON.stringify(priyaMemoryEngineDataPayload));
         }
 
-        // Global Graphics Context Stage Registries
+        // Global Graphics Setup
         let coreThreeSceneInstance = null;
         let corePerspectiveCameraNode = null;
         let coreWebGLRendererModule = null;
@@ -542,7 +526,7 @@
         let coreAnimationMixerController = null;
         let coreSystemClockReference = null;
 
-        let structuralAvatar3DModelRoot = null;
+        let structuralAvatar3DModelRoot = null; // Map model variable issues safely
         let skeletalBoneJointHead = null;
         let skeletalBoneJointNeck = null;
 
@@ -581,7 +565,6 @@
             frameworkSpeechRecognitionProcessor.maxAlternatives = 1;
         }
 
-        // Anti-Hang Safeguard Circuit Watchdog Definition
         setTimeout(() => { forceDismissLoaderOverlayWithBypassSecurity(); }, 6000);
 
         function forceDismissLoaderOverlayWithBypassSecurity() {
@@ -606,7 +589,7 @@
             3. HUMAN COMPENSATIONAL FILLERS (THE 'GAP' LOGIC): Do not output clean, machine-like responses. Interject normal human speech friction artifacts seamlessly into sentences. Use fillers such as: "Hmm...", "Uhh, ek minute...", "Wese...", "Yaar, mujhe lagta hai...".
             4. GRAPHICS ENGINE MICRO-ACTIONS BRIDGE: Every response MUST begin with a structural physical expression descriptor enclosed inside square brackets. This allows the 3D model engine to parse and map facial expressions correctly. Example format: [Palkein jhapkate hue aur halka muskurate hue] "Haan, ye baat toh tumne sahi kahi!".
             5. OPINION DRIVEN ARCHITECTURE: You must process distinct personal opinions, likes, and dislikes. Do not passively validate every statement the user says. Interject smart wit, playful teasing, and dry sarcasm where contextually logical.
-            6. CRITICAL BREVITY SYSTEM: Keep responses short and snappy. Absolute limit of 2 to 3 fluid sentences maximum per response turn. Converse exclusively in modern sweet Hinglish. Do not render markdown tags, asterisks (*), hashtags (#), or dashes (-).
+            6. CRITICAL BREVITY SYSTEM: Keep responses short and snappy. Absolute limit of 2 to 3 fluid sentences maximum per response turn. Converse exclusively in modern sweet Hinglish with clear spaces between words. Do not render markdown tags, asterisks (*), hashtags (#), or dashes (-).
             `;
 
             let extractedActiveKeyString = SYSTEM_TRIPLE_ROTATION_API_KEYS[activeKeyPointerIndexRegister];
@@ -624,7 +607,7 @@
                     })
                 });
 
-                if (!networkFetchPromiseResponse.ok) throw new Error("Active key channel interface returned an unauthorized or throttled code");
+                if (!networkFetchPromiseResponse.ok) throw new Error("Active key channel failure");
 
                 const decodedJsonDataPayloadObject = await networkFetchPromiseResponse.json();
                 let filteredRawOutputString = decodedJsonDataPayloadObject.candidates[0].content.parts[0].text;
@@ -632,7 +615,7 @@
                 return filteredRawOutputString.replace(/[*#`_\-]/g, '').trim();
 
             } catch (networkGatewayChannelFaultException) {
-                console.warn(`Gateway Failure: Shifting routing matrices...`, networkGatewayChannelFaultException);
+                console.warn(`Gateway Failure: Shifting routing matrices...`);
                 activeKeyPointerIndexRegister = (activeKeyPointerIndexRegister + 1) % SYSTEM_TRIPLE_ROTATION_API_KEYS.length;
                 
                 const DOMUI_SecureChannelLabel = document.getElementById('active-secure-channel-status');
@@ -660,7 +643,7 @@
             coreWebGLRendererModule.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             coreWebGLRendererModule.toneMapping = THREE.ACESFilmicToneMapping;
             coreWebGLRendererModule.toneMappingExposure = 1.3;
-            coreWebGLRendererModule.outputEncoding = THREE.sRGBEncoding;
+            coreWebGLRendererModule.outputColorSpace = THREE.SRGBColorSpace; // Modern specification update
             coreWebGLRendererModule.shadowMap.enabled = true;
             coreWebGLRendererModule.setClearColor(0x000000, 0); 
             TARGET_VIEWPORT_CANVAS_DOM_CONTAINER.appendChild(coreWebGLRendererModule.domElement);
@@ -678,7 +661,6 @@
             coreOrbitControlsRig.dampingFactor = 0.05;
             coreOrbitControlsRig.maxPolarAngle = Math.PI / 2 + 0.05;
 
-            // Ambient and Multi-Directional Lighting Matrix Calibration
             const ambientHemisphereIlluminationNode = new THREE.HemisphereLight(0xffffff, 0x555555, 1.4);
             coreThreeSceneInstance.add(ambientHemisphereIlluminationNode);
 
@@ -691,7 +673,6 @@
             coolReflectiveWaterBounceLightNode.position.set(-3, -6, 2);
             coreThreeSceneInstance.add(coolReflectiveWaterBounceLightNode);
 
-            // Asynchronous Asset Pipeline Loading Initialization
             const assetGLTFLoaderEngineInstance = new THREE.GLTFLoader();
             const DOMUI_LoadingTextLabel = document.getElementById('loading-text');
 
@@ -702,7 +683,6 @@
                 coreThreeSceneInstance.add(structuralAvatar3DModelRoot);
                 executeDynamicResponsiveModelScalingLayouts();
 
-                // Dynamic Mesh Scanning & Array Generation
                 structuralAvatar3DModelRoot.traverse((evaluatedSubmeshJointNode) => {
                     if (evaluatedSubmeshJointNode.isMesh) {
                         evaluatedSubmeshJointNode.castShadow = true;
@@ -726,7 +706,6 @@
                     activePlayingActionStateTrack.setEffectiveWeight(1.0).play(); 
                 }
 
-                // Match saved outfit configurations from cache memory
                 if(priyaMemoryEngineDataPayload.userCustomOutfitColor !== 0xffffff) {
                     applyDynamicOutfitTextureColorBypass(priyaMemoryEngineDataPayload.userCustomOutfitColor);
                 }
@@ -739,14 +718,12 @@
                     DOMUI_LoadingTextLabel.innerHTML = `प्रिया को तैयार किया जा रहा है... ${calculatedPercentage}%<br><span style="font-size:12px;color:var(--neon-cyan);">3D एसेट्स डाउनलोड हो रहे हैं</span>`;
                 }
             }, (gltfLoaderTerminalCriticalFaultException) => {
-                console.error("Asset pipeline critical failure:", gltfLoaderTerminalCriticalFaultException);
+                console.error("Asset pipeline failure:", gltfLoaderTerminalCriticalFaultException);
                 forceDismissLoaderOverlayWithBypassSecurity(); 
             });
 
             window.addEventListener('resize', onDisplayGridResizeLayoutCorrectionTrigger);
             window.addEventListener('mousemove', onTrackingVectorInteractionCoordinateShiftUpdate);
-            
-            // Physical Geometry Coordinate Pointer Touch Listener Registration
             window.addEventListener('pointerdown', onStructuralMeshSurfaceTouchAnalysisBypass, false);
         }
 
@@ -768,6 +745,7 @@
         }
 
         function onDisplayGridResizeLayoutCorrectionTrigger() {
+            if (!corePerspectiveCameraNode || !coreWebGLRendererModule) return;
             corePerspectiveCameraNode.aspect = window.innerWidth / window.innerHeight;
             corePerspectiveCameraNode.updateProjectionMatrix();
             coreWebGLRendererModule.setSize(window.innerWidth, window.innerHeight);
@@ -787,7 +765,7 @@
                 hardwareAudioFrequencyAnalyserNode.fftSize = 128;
                 hardwareAudioFrequencyBufferArray = new Uint8Array(hardwareAudioFrequencyAnalyserNode.frequencyBinCount);
             } catch(nativeAudioPipelineContextSetupFaultException) {
-                console.error("Audio core subsystem setup exception caught:", nativeAudioPipelineContextSetupFaultException);
+                console.error("Audio core setup issue:", nativeAudioPipelineContextSetupFaultException);
             }
         }
 
@@ -803,7 +781,6 @@
             let completelyStrippedVocalSpeechStringText = compiledOutputAIPayloadText.replace(/\[.*?\]/g, '').trim();
 
             if (ELEVENLABS_API_KEY !== "" && window.WebSocket) {
-                // High-End ElevenLabs Real-Time Streaming Framework Initialization Block
                 const elevenLabsWebSocketEndpointUri = `wss://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream-input?model_id=eleven_monolingual_v1`;
                 const executionSessionSocketNode = new WebSocket(elevenLabsWebSocketEndpointUri);
 
@@ -816,7 +793,7 @@
 
                 executionSessionSocketNode.onmessage = (event) => {
                     let streamPayloadParsedData = JSON.parse(event.data);
-                    if (streamPayloadParsedData.audio) { console.log("ElevenLabs Node Network Stream Audio Packet Buffer Connected"); }
+                    if (streamPayloadParsedData.audio) { console.log("Audio Packet Connected"); }
                 };
                 executionSessionSocketNode.onerror = () => { triggerSystemLocalSpeechUtteranceBypass(completelyStrippedVocalSpeechStringText); };
             } else {
@@ -848,13 +825,14 @@
         function masterApplicationRenderLoopExecutionCycle() {
             requestAnimationFrame(masterApplicationRenderLoopExecutionCycle);
             
+            if (!coreSystemClockReference || !coreWebGLRendererModule || !coreThreeSceneInstance || !corePerspectiveCameraNode) return;
+
             const numericalDeltaTimelineTimeStepValue = coreSystemClockReference.getDelta();
             const numericalContinuousElapsedTimeRunningValue = coreSystemClockReference.getElapsedTime();
 
             if (coreAnimationMixerController) coreAnimationMixerController.update(numericalDeltaTimelineTimeStepValue);
             if (coreOrbitControlsRig) coreOrbitControlsRig.update();
 
-            // Realtime Audio Amplitude Track Scanner Map
             if (liveVocalOutputStateSignalActive && hardwareAudioFrequencyAnalyserNode) {
                 hardwareAudioFrequencyAnalyserNode.getByteFrequencyData(hardwareAudioFrequencyBufferArray);
                 let processingAmplitudeFrequencySumAccumulator = 0;
@@ -865,7 +843,6 @@
             }
 
             if (structuralAvatar3DModelRoot) {
-                // Natural Ambient Blink Loops System
                 let dynamicSinoidalEyeBlinkScaleTracker = Math.sin(numericalContinuousElapsedTimeRunningValue * 3.2);
 
                 activeSkinnedMeshSubnodesTrackArray.forEach(skinnedSubmeshComponentNodeReference => {
@@ -874,7 +851,6 @@
                     
                     if (!activeMorphTargetMeshDictionaryMap || !activeMorphInfluencesWeightTrackingArray) return;
 
-                    // Manual Eye Blinking Core Injection Execution
                     ['eyeBlinkLeft', 'eyeBlinkRight', 'blink', 'Blink'].forEach(eyeBlinkShapeKeyIdentifierString => {
                         let targetInfluenceSlotIndex = activeMorphTargetMeshDictionaryMap[eyeBlinkShapeKeyIdentifierString];
                         if (targetInfluenceSlotIndex !== undefined) {
@@ -883,7 +859,6 @@
                         }
                     });
 
-                    // Live Lipsync Tracking Core Matrix Binding
                     if (liveVocalOutputStateSignalActive) {
                         let currentCalculatedVisemeVolumeFactor = Math.min(mathematicalCalculatedSpeechVolumeScalar / 7.0, 1.1);
                         ['mouthOpen', 'jawOpen', 'Mouth_Open', 'vowel_a', 'viseme_aa'].forEach(visemeIdentifierKey => {
@@ -894,7 +869,6 @@
                             }
                         });
                     } else {
-                        // Clear mouth vectors back to default zero safely
                         ['mouthOpen', 'jawOpen', 'Mouth_Open', 'vowel_a', 'viseme_aa'].forEach(visemeIdentifierKey => {
                             let targetVisemeSlotIndex = activeMorphTargetMeshDictionaryMap[visemeIdentifierKey];
                             if (targetVisemeSlotIndex !== undefined) {
@@ -905,8 +879,8 @@
                     }
                 });
 
-                // Bone Transform Alignment and Spatial Tracking Resolvers
-                let computedHeadTargetJointLocator = model ? (model.getObjectByName("Head") || model.getObjectByName("Neck")) : null;
+                // Fixed core tracking reference bug: Replaced missing 'model' definition with 'structuralAvatar3DModelRoot'
+                let computedHeadTargetJointLocator = structuralAvatar3DModelRoot ? (structuralAvatar3DModelRoot.getObjectByName("Head") || structuralAvatar3DModelRoot.getObjectByName("Neck")) : null;
                 if (computedHeadTargetJointLocator) {
                     if (isCamTrackingActiveSignal) {
                         currentHeadRotationMatrix.x += (targetHeadRotationMatrix.x - currentHeadRotationMatrix.x) * 0.12;
@@ -925,7 +899,6 @@
                 }
             }
 
-            // Animate Weather System Droplets Engine Vector Mapping
             if (weatherDynamicParticlePointsSystem) {
                 const particlePositionsBufferArray = weatherDynamicParticlePointsSystem.geometry.attributes.position.array;
                 for (let coordinateYIndex = 1; coordinateYIndex < particlePositionsBufferArray.length; coordinateYIndex += 3) {
@@ -959,7 +932,6 @@
                 DOMUI_CoreStatusTextField.style.color = "var(--neon-orange)";
             }
 
-            // High-Accuracy Natural Pattern Intent Extraction Parsing Hub
             if (clearExtractedInputTextString.toLowerCase().includes("red dress") || clearExtractedInputTextString.includes("लाल कपड़े") || clearExtractedInputTextString.includes("लाल ड्रेस")) {
                 applyDynamicOutfitTextureColorBypass(0xff0000);
                 priyaMemoryEngineDataPayload.userCustomOutfitColor = 0xff0000;
@@ -989,7 +961,6 @@
                 return;
             }
 
-            // Persistent Name Extractor Regex Mapping Rule
             if (clearExtractedInputTextString.includes("मेरा नाम") && (clearExtractedInputTextString.includes("है") || clearExtractedInputTextString.includes("जानो"))) {
                 const brokenWordTokensArray = clearExtractedInputTextString.split(" ");
                 let targetPivotIndexRegister = brokenWordTokensArray.findIndex(tokenWord => tokenWord.includes("नाम"));
@@ -1012,10 +983,10 @@
                 if (activeReturnedNetworkPayloadText) {
                     bridgeNetworkPayloadDirectlyIntoResponseEngine(activeReturnedNetworkPayloadText);
                 } else {
-                    throw new Error("Null matrix stream string caught.");
+                    throw new Error("Null matrix caught.");
                 }
             } catch (interactionLifecycleRuntimeFaultException) {
-                console.error("Interaction Lifecycle Failure Exception Tracked:", interactionLifecycleRuntimeFaultException);
+                console.error("Interaction Lifecycle Failure:", interactionLifecycleRuntimeFaultException);
                 if (DOMUI_CoreStatusTextField) {
                     DOMUI_CoreStatusTextField.innerText = "सिस्टम रिकवरी मोड ⚠️";
                     DOMUI_CoreStatusTextField.style.color = "var(--neon-pink)";
@@ -1046,9 +1017,12 @@
                     convertedMeshLowerNameString.includes('bottom') || convertedMeshLowerNameString.includes('footwear')) {
                     if (evaluatedSkinnedMeshNodeReference.material) {
                         if (Array.isArray(evaluatedSkinnedMeshNodeReference.material)) {
-                            evaluatedSkinnedMeshNodeReference.material.forEach(singleMaterialNode => singleMaterialNode.color.setHex(colorHexCodeValue));
+                            // Upgraded material assignments to native ThreeJS vector assignments safely
+                            evaluatedSkinnedMeshNodeReference.material.forEach(singleMaterialNode => {
+                                if(singleMaterialNode.color) singleMaterialNode.color.setHex(colorHexCodeValue);
+                            });
                         } else {
-                            evaluatedSkinnedMeshNodeReference.material.color.setHex(colorHexCodeValue);
+                            if(evaluatedSkinnedMeshNodeReference.material.color) evaluatedSkinnedMeshNodeReference.material.color.setHex(colorHexCodeValue);
                         }
                     }
                 }
@@ -1108,11 +1082,9 @@
                     const weatherNetworkFetchResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${DEFAULT_CITY}&appid=${OPENWEATHER_API_KEY}`);
                     const weatherParsedJsonPayload = await weatherNetworkFetchResponse.json();
                     activeWeatherTypeProfileString = weatherParsedJsonPayload.weather[0].main.toLowerCase();
-                    console.log(`Weather Engine Target Sync Status: Successfully fetched -> ${activeWeatherTypeProfileString}`);
                 }
             } catch (weatherException) { console.log("Weather API skipped, running default clear profile layout."); }
 
-            // Dynamic Spatial Particle Array Generation Matrix
             if (activeWeatherTypeProfileString.includes("rain") || activeWeatherTypeProfileString.includes("drizzle") || activeWeatherTypeProfileString.includes("cloud")) {
                 const totalTargetParticleCountLimit = 1200;
                 const particleGeometryClusterNode = new THREE.BufferGeometry();
@@ -1137,7 +1109,7 @@
             frameworkSpeechRecognitionProcessor.onstart = () => {
                 liveSpeechCapturingStateSignalActive = true;
                 DOMUI_ActionButtonMicTrigger.classList.add('listening');
-                DOMUI_TextInputElementBar.placeholder = "कमांडो मोड एक्टिव, बोलिए sweetie...";
+                DOMUI_TextInputElementBar.placeholder = "कमांडो मोड एक्टिव, बोलie sweetie...";
             };
 
             frameworkSpeechRecognitionProcessor.onerror = () => {
@@ -1284,7 +1256,7 @@
                         globalTypewriterAnimationIntervalReference = null;
                         resolveComponentExecutionPromise();
                     }
-                }, 35);
+                }, 45); // Fixed timing window to prevent non-spaced chunks
             });
         }
 
