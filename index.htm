@@ -13,7 +13,6 @@
           MODULE 1: MASTER HARDWARE CONFIGURATION & GLOBAL DESIGN TOKENS
           ========================================================================== */
         :root {
-            /* System Cybernetic Primary Glow Profiles */
             --neon-cyan: #00ffcc;
             --neon-blue: #0099ff;
             --neon-pink: #ff416c;
@@ -23,36 +22,31 @@
             --neon-blue-glow: rgba(0, 153, 255, 0.35);
             --neon-pink-glow: rgba(255, 65, 108, 0.35);
             
-            /* Deep Space Liquid Glass Palette Tokens */
             --bg-absolute-black: #010103;
             --bg-core-dark-matte: #05050a;
             --bg-glass-panel: rgba(5, 5, 12, 0.82);
             --bg-glass-card: rgba(8, 8, 20, 0.65);
             --bg-input-field: rgba(3, 3, 7, 0.94);
             
-            /* Structural Boundary Safe-Light Tubes */
             --border-glow-cyan: rgba(0, 255, 204, 0.40);
             --border-glow-blue: rgba(0, 153, 255, 0.25);
             --border-matte-white: rgba(255, 255, 255, 0.16);
             --border-thick-glass: rgba(255, 255, 255, 0.08);
             
-            /* Typography High-Fidelity Contrast Mapping */
             --text-core-white: #ffffff;
             --text-ambient-silver: #e2e8f0;
             --text-dim-slate: rgba(255, 255, 255, 0.65);
             --text-dark-shadow: rgba(0, 0, 0, 0.95);
             
-            /* Hardware Kinetic Physics Core Interpolations */
             --transition-tactile: all 0.38s cubic-bezier(0.25, 0.8, 0.25, 1);
             --transition-elastic: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             --transition-fluid-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             
-            /* Universal Device Anti-Aliasing Typography Anchor */
             --font-stack-cyber: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
         }
 
         /* ==========================================================================
-          MODULE 2: FULL-SCREEN APPLICATION INITIALIZATION MATRIX & STACK resets
+          MODULE 2: FULL-SCREEN APPLICATION INITIALIZATION MATRIX & STACK RESETS
           ========================================================================== */
         * {
             box-sizing: border-box;
@@ -74,22 +68,12 @@
             user-select: none;
             -webkit-user-select: none;
             position: relative;
-            scrollbar-width: none; /* Anti-UI Friction Hide */
+            scrollbar-width: none;
         }
 
         body::-webkit-scrollbar {
-            display: none; /* Universal Canvas Bypass */
+            display: none;
         }
-
-        /* Z-INDEX MULTI-LAYER COMPILATION MAP
-          - Layer [00001]: Natural Parallax Wallpaper Image Node
-          - Layer [00002]: Interactive Cyber Grid Mesh Texture Overlay
-          - Layer [00003]: Primary Core WebGL Render Engine Stage Context Viewпорт
-          - Layer [00010]: Floating Holographic Telemetry HUD Status Panel Docks
-          - Layer [00020]: Bottom UI Dock Core Form Inputs Command Track
-          - Layer [00030]: Subtitle Rendering Engine Telemetry Frame Box
-          - Layer [99999]: Core Safety Shield Anti-Crash Boot Loader Mask System
-        */
 
         #image-bg {
             position: absolute;
@@ -471,17 +455,15 @@
           SUB-MODULE A: PERSISTENT APPLICATION STORAGE CONFIGURATION CORES
           ------------------------------------------------------------------
         */
-        // Secured Rotation API Matrices Array Space Infrastructure
         const SYSTEM_TRIPLE_ROTATION_API_KEYS = [
-            "AIzaSyBgyADY-6VFaLefYi8PaGak_L8kpfpGDA0", // Matrix Target Slot 1
-            "AIzaSyBSaw3teN0aoDb2qdzuYktqUZ08sUOIv5o", // Matrix Target Slot 2
-            "AIzaSyA5W8VWVMSltHGU6vvVlLaxAo3H0h0H1ig"  // Matrix Target Slot 3
+            "AIzaSyBgyADY-6VFaLefYi8PaGak_L8kpfpGDA0", 
+            "AIzaSyBSaw3teN0aoDb2qdzuYktqUZ08sUOIv5o", 
+            "AIzaSyA5W8VWVMSltHGU6vvVlLaxAo3H0h0H1ig"  
         ];
         
         let activeKeyPointerIndexRegister = 0;
         const REMOTE_GLTF_BINARY_PRODUCTION_ASSET_URI = "https://raw.githubusercontent.com/jessearmy572-hub/naman/main/model.glb";
 
-        // Three.js Scene Rig Framework Component Buffers Tracking Fields
         let coreThreeSceneInstance = null;
         let corePerspectiveCameraNode = null;
         let coreWebGLRendererModule = null;
@@ -489,33 +471,27 @@
         let coreAnimationMixerController = null;
         let coreSystemClockReference = null;
 
-        // Structural Model Bone Transform Mapping Hooks
         let structuralAvatar3DModelRoot = null;
         let skeletalBoneJointHead = null;
         let skeletalBoneJointNeck = null;
 
-        // Skinned Mesh Target Dictionary Morph Influences Mapping Pools
         let activeSkinnedMeshSubnodesTrackArray = [];
         let globalAnimationClipsBufferPool = [];
         let activePlayingActionStateTrack = null;
 
-        // UI Framework Context IO Native State Machine Flags
         let liveVocalOutputStateSignalActive = false;
         let liveSpeechCapturingStateSignalActive = false;
 
-        // Physics Vector Coordinate Interpolation Lerp Buffers Fields
         let dynamicInterpolatedCoordinateX = 0;
         let dynamicInterpolatedCoordinateY = 0;
         let absoluteTargetCoordinateX = 0;
         let absoluteTargetCoordinateY = 0;
 
-        // Hardware Fast-Fourier-Transform Frequency Audio Capture Systems
         let hardwareAudioContextDriver = null;
         let hardwareAudioFrequencyAnalyserNode = null;
         let hardwareAudioFrequencyBufferArray = null;
         let mathematicalCalculatedSpeechVolumeScalar = 0;
 
-        // Native System Web Speech Engine Processor Bridge
         const BrowserSpeechRecognitionEngineInterface = window.SpeechRecognition || window.webkitSpeechRecognition;
         let frameworkSpeechRecognitionProcessor = null;
 
@@ -527,7 +503,6 @@
             frameworkSpeechRecognitionProcessor.maxAlternatives = 1;
         }
 
-        // CRITICAL PROTECTION GATE: Hard Bypass Overlay Shield Timeout Handler
         setTimeout(() => {
             forceDismissLoaderOverlayWithBypassSecurity();
         }, 4500);
@@ -624,7 +599,6 @@
             coreOrbitControlsRig.enableDamping = true;
             coreOrbitControlsRig.dampingFactor = 0.05;
 
-            // Photorealistic Environmental Lighting Grid Configuration Space Arrays
             const ambientHemisphereIlluminationNode = new THREE.HemisphereLight(0xffffff, 0x444444, 1.6);
             coreThreeSceneInstance.add(ambientHemisphereIlluminationNode);
 
@@ -840,31 +814,22 @@
         const DOMUI_ActionButtonSendTrigger = document.getElementById('sendBtn');
         const DOMUI_ActionButtonMicTrigger = document.getElementById('micBtn');
 
-        /* ==========================================================================
-           CORE INTERACTION LIFECYCLE EXECUTION ENGINE (EXPANDED MATRIX PRO LOGIC)
-           ========================================================================== */
         async function triggerInteractionLifecycleExecutionCycle() {
-            // STEP 1: DOM एलिमेंट्स से इनपुट स्ट्रिंग को एक्सट्रैक्ट और सैनिटाइज करना
             const clearExtractedInputTextString = DOMUI_TextInputElementBar.value.trim();
             
-            // STEP 2: सिक्योरिटी गेटवे: अगर इनपुट पूरी तरह खाली है, तो एग्जीक्यूशन को तुरंत रोको
             if (!clearExtractedInputTextString) {
                 console.warn("Interaction Matrix Alert: Empty or null token detected. Aborting cycle.");
                 return;
             }
             
-            // STEP 3: इनपुट बार को तुरंत क्लियर करना ताकि यूजर दोबारा टाइप न करने लगे
             DOMUI_TextInputElementBar.value = "";
             
-            // STEP 4: सिस्टम स्टेटस हब को अपडेट करना ताकि यूजर को पता चले कि प्रिया सोच रही है
             const DOMUI_CoreStatusTextField = document.getElementById('system-core-mood-txt');
             DOMUI_CoreStatusTextField.innerText = "प्रक्रिया चालू है... 🤔";
             DOMUI_CoreStatusTextField.style.color = "var(--neon-orange)";
             
-            // STEP 5: एनीमेशन ब्लेंडर एक्टिवेशन: सोचते वक्त 3D MODEL का रैंडम थिंकिंग एनीमेशन ट्रिगर करना
             if (coreAnimationMixerController && globalAnimationClipsBufferPool.length > 0) {
                 coreAnimationMixerController.stopAllAction();
-                // क्लिप्स पूल से एक रैंडम एनीमेशन चुनना ताकि मूवमेंट नैचुरल लगे
                 let operationalRandomClipsIndexFactor = Math.floor(Math.random() * globalAnimationClipsBufferPool.length);
                 let targetFiredAnimationActionObject = coreAnimationMixerController.clipAction(
                     globalAnimationClipsBufferPool[operationalRandomClipsIndexFactor]
@@ -875,33 +840,29 @@
             try {
                 console.log(`Neural Tunnel Outgoing: Dispatching payload -> "${clearExtractedInputTextString}"`);
                 
-                // STEP 6: रोटेशन एपीआई के ज़रिए जेमिनी नेटवर्क गेटवे से रिस्पॉन्स फेच करना
                 const activeReturnedNetworkPayloadText = await fetchSecureNeuralAIResponseStream(clearExtractedInputTextString);
                 
-                // STEP 7: सक्सेस गेट: रिस्पॉन्स मिलते ही सिस्टम स्टेटस को दोबारा लाइव मोड पर रीसेट करना
                 DOMUI_CoreStatusTextField.innerText = "जेमिनी nv1 लाइव डायरेक्ट ⚡";
                 DOMUI_CoreStatusTextField.style.color = "var(--neon-cyan)";
                 
-                // STEP 8: ऑडियो इंजन डिस्पैचर: रिस्पॉन्स टेक्स्ट को प्रिया के वोकल सिंथेसाइज़र और लिपसिंक में भेजना
+                // CRITICAL CONNECTION HUB: नेटवर्क डेटा सीधे जेमिनी रिस्पॉन्स सब-सिस्टम (Module 9) को ट्रांसफर करना
                 if (activeReturnedNetworkPayloadText) {
-                    dispatchSpeechSynthesizerVocalTrackBuffer(activeReturnedNetworkPayloadText);
+                    bridgeNetworkPayloadDirectlyIntoResponseEngine(activeReturnedNetworkPayloadText);
                 } else {
                     throw new Error("Empty neural stream string returned from rotating gateway.");
                 }
 
             } catch (interactionLifecycleRuntimeFaultException) {
-                // STEP 9: एरर रिकवरी मैट्रिक्स: अगर पूरा नेटवर्क चैनल फेल हो जाए, तो सेफ फॉलबैक मैसेज देना
                 console.error("Critical Interaction Lifecycle Exception Logged:", interactionLifecycleRuntimeFaultException);
                 
                 DOMUI_CoreStatusTextField.innerText = "सिस्टम रिकवरी मोड ⚠️";
                 DOMUI_CoreStatusTextField.style.color = "var(--neon-pink)";
                 
                 const safeFallbackApologyMessage = "[Halka sa sarr jhatakte hue] Yaar, lagta hai internet thoda atak gaya hai. Ek baar fir se bolna sweetie?";
-                dispatchSpeechSynthesizerVocalTrackBuffer(safeFallbackApologyMessage);
+                bridgeNetworkPayloadDirectlyIntoResponseEngine(safeFallbackApologyMessage);
             }
         }
 
-        // Speech Engine Trigger Callback Event Register Nodes
         if (frameworkSpeechRecognitionProcessor) {
             frameworkSpeechRecognitionProcessor.onstart = () => {
                 liveSpeechCapturingStateSignalActive = true;
@@ -943,6 +904,229 @@
         DOMUI_ActionButtonSendTrigger.addEventListener('click', triggerInteractionLifecycleExecutionCycle);
         DOMUI_TextInputElementBar.addEventListener('keypress', (nativeHardwareKeyboardEvent) => { 
             if (nativeHardwareKeyboardEvent.key === 'Enter') triggerInteractionLifecycleExecutionCycle(); 
+        });
+
+
+        /* ==========================================================================
+           MODULE 9: GEMINI RESPONSE PROCESSING & STREAM ORCHESTRATION SUBSYSTEM
+           STANDARD COMPILATION PROFILE: 400+ LINES DEEP DENSITY HARDWARE MATRIX
+           ========================================================================== */
+
+        let globalLastReceivedResponsePayloadString = "";
+        let globalResponseExecutionActiveStatusFlag = false;
+        let globalTypewriterAnimationIntervalReference = null;
+        let globalTextSanitizationRegExpPattern = /\[.*?\]/g;
+
+        async function processIncomingGeminiResponsePayload(rawIncomingGeminiStreamPayload) {
+            console.log("Response Subsystem Engine Triggered: Initializing validation sequence...");
+            
+            if (!rawIncomingGeminiStreamPayload || rawIncomingGeminiStreamPayload.trim() === "") {
+                console.error("Critical Validation Exception: Received empty neural stream token.");
+                executeCentralResponseFallbackSystem("Empty Stream Payload Caught");
+                return;
+            }
+
+            if (globalResponseExecutionActiveStatusFlag) {
+                console.warn("Concurrency Alert: Another response lifecycle is currently active. Forces clearing registers...");
+                safelyAbortActiveTypewriterStreamInteractions();
+            }
+            
+            globalResponseExecutionActiveStatusFlag = true;
+            globalLastReceivedResponsePayloadString = rawIncomingGeminiStreamPayload.trim();
+
+            const DOMUI_SystemMoodIndicatorLabel = document.getElementById('system-core-mood-txt');
+            if (DOMUI_SystemMoodIndicatorLabel) {
+                DOMUI_SystemMoodIndicatorLabel.innerText = "प्रतिक्रिया प्रोसेस हो रही है... 🧠";
+                DOMUI_SystemMoodIndicatorLabel.style.color = "var(--neon-blue)";
+            }
+
+            let extractedMicroActionExpressionString = "";
+            const expressionRegexBracketMatcher = /\[(.*?)\]/;
+            const structuralExpressionMatchResultArray = globalLastReceivedResponsePayloadString.match(expressionRegexBracketMatcher);
+
+            if (structuralExpressionMatchResultArray && structuralExpressionMatchResultArray.length > 1) {
+                extractedMicroActionExpressionString = structuralExpressionMatchResultArray[1];
+                console.log(`Graphics Matrix Parser: Extracted Avatar Action Intention -> "${extractedMicroActionExpressionString}"`);
+                dispatchDynamicAvatarGestureTrigger(extractedMicroActionExpressionString);
+            } else {
+                console.log("Graphics Matrix Parser: No explicit micro-action token found. Relying on default ambient blended loops.");
+            }
+
+            try {
+                console.log("Audio Dispatch Tunnel: Initiating text-to-speech engine handshaking...");
+                dispatchSpeechSynthesizerVocalTrackBuffer(globalLastReceivedResponsePayloadString);
+            } catch (vocalEngineHandshakingRuntimeFaultException) {
+                console.error("Audio Subsystem Failure Tracker Logged:", vocalEngineHandshakingRuntimeFaultException);
+            }
+
+            const completelyCleanedDisplaySpeechStringText = globalLastReceivedResponsePayloadString
+                .replace(globalTextSanitizationRegExpPattern, '')
+                .trim();
+
+            await executeRealisticTypewriterSubtitleStreamStream(completelyCleanedDisplaySpeechStringText);
+            
+            finalizeResponseProcessingLifecycleSequence();
+        }
+
+        function executeRealisticTypewriterSubtitleStreamStream(targetSanitizedDisplayStringText) {
+            return new Promise((resolveComponentExecutionPromise) => {
+                const DOMUI_SubtitleMonitorOverlayBox = document.getElementById('subtitle-monitor-box');
+                if (!DOMUI_SubtitleMonitorOverlayBox) {
+                    console.error("UI Reference Fault: 'subtitle-monitor-box' element missing in active DOM memory.");
+                    resolveComponentExecutionPromise();
+                    return;
+                }
+
+                safelyAbortActiveTypewriterStreamInteractions();
+                DOMUI_SubtitleMonitorOverlayBox.innerText = "";
+                DOMUI_SubtitleMonitorOverlayBox.style.display = 'block';
+
+                let currentCharacterIterationPointerIndex = 0;
+                const totalCharacterLengthLimitValue = targetSanitizedDisplayStringText.length;
+                const standardBaseTypewriterIntervalDelayValue = 35; 
+
+                console.log("Typewriter Animation Cluster: Commencing character matrix mapping loops...");
+
+                globalTypewriterAnimationIntervalReference = setInterval(() => {
+                    if (currentCharacterIterationPointerIndex < totalCharacterLengthLimitValue) {
+                        DOMUI_SubtitleMonitorOverlayBox.innerText += targetSanitizedDisplayStringText.charAt(currentCharacterIterationPointerIndex);
+                        currentCharacterIterationPointerIndex++;
+                        
+                        if (liveVocalOutputStateSignalActive && Math.random() > 0.65) {
+                            executeMicroLipsyncMorphAdjustmentBypass();
+                        }
+                    } else {
+                        console.log("Typewriter Animation Cluster: Characters stream successfully mapped to view layout.");
+                        clearInterval(globalTypewriterAnimationIntervalReference);
+                        globalTypewriterAnimationIntervalReference = null;
+                        resolveComponentExecutionPromise();
+                    }
+                }, standardBaseTypewriterIntervalDelayValue);
+            });
+        }
+
+        function dispatchDynamicAvatarGestureTrigger(operationalGestureKeywordString) {
+            if (!coreAnimationMixerController || globalAnimationClipsBufferPool.length === 0) {
+                console.warn("Graphics Engine Blending Lock: Animation subsystems are offline. Skipping gesture trigger.");
+                return;
+            }
+
+            const compiledLowerGestureTokenString = operationalGestureKeywordString.toLowerCase();
+            let targetedActionClipIndexValue = 0; 
+
+            console.log(`Gesture Decoder Bridge: Mapping keyword token "${compiledLowerGestureTokenString}" against engine dictionary...`);
+
+            if (compiledLowerGestureTokenString.includes('muskurate') || compiledLowerGestureTokenString.includes('smile')) {
+                targetedActionClipIndexValue = Math.min(1, globalAnimationClipsBufferPool.length - 1);
+            } else if (compiledLowerGestureTokenString.includes('udas') || compiledLowerGestureTokenString.includes('sad')) {
+                targetedActionClipIndexValue = Math.min(2, globalAnimationClipsBufferPool.length - 1);
+            } else if (compiledLowerGestureTokenString.includes('gussa') || compiledLowerGestureTokenString.includes('angry')) {
+                targetedActionClipIndexValue = Math.min(3, globalAnimationClipsBufferPool.length - 1);
+            } else if (compiledLowerGestureTokenString.includes('sochate') || compiledLowerGestureTokenString.includes('thinking')) {
+                targetedActionClipIndexValue = Math.min(4, globalAnimationClipsBufferPool.length - 1);
+            } else if (compiledLowerGestureTokenString.includes('jhatakte') || compiledLowerGestureTokenString.includes('shrug')) {
+                targetedActionClipIndexValue = Math.min(5, globalAnimationClipsBufferPool.length - 1);
+            } else {
+                targetedActionClipIndexValue = Math.floor(Math.random() * Math.min(globalAnimationClipsBufferPool.length, 3));
+            }
+
+            try {
+                console.log(`Graphics Engine Blender: Blending target clip index [${targetedActionClipIndexValue}] into active render frame...`);
+                
+                coreAnimationMixerController.stopAllAction();
+                let targetSelectedAnimationActionObject = coreAnimationMixerController.clipAction(
+                    globalAnimationClipsBufferPool[targetedActionClipIndexValue]
+                );
+                
+                targetSelectedAnimationActionObject.reset()
+                    .setEffectiveWeight(1.0)
+                    .fadeIn(0.35)
+                    .play();
+                    
+            } catch (graphicsBlenderAnimationBlendingRuntimeFaultException) {
+                console.error("Critical Exception caught during clip blending execution matrix:", graphicsBlenderAnimationBlendingRuntimeFaultException);
+            }
+        }
+
+        function executeMicroLipsyncMorphAdjustmentBypass() {
+            if (activeSkinnedMeshSubnodesTrackArray.length === 0) return;
+            
+            let simulatedVocalAmplitudeFrequencyScalarValue = Math.random() * 0.45;
+            
+            activeSkinnedMeshSubnodesTrackArray.forEach(skinnedSubmeshComponentNodeReference => {
+                const activeMorphTargetMeshDictionaryMap = skinnedSubmeshComponentNodeReference.morphTargetDictionary;
+                const activeMorphInfluencesWeightTrackingArray = skinnedSubmeshComponentNodeReference.morphTargetInfluences;
+                
+                if (!activeMorphTargetMeshDictionaryMap || !activeMorphInfluencesWeightTrackingArray) return;
+
+                ['mouthOpen', 'Mouth_Open', 'vowel_a'].forEach(vowelOpenShapeKeyIdentifierString => {
+                    if (activeMorphTargetMeshDictionaryMap[vowelOpenShapeKeyIdentifierString] !== undefined) {
+                        activeMorphInfluencesWeightTrackingArray[activeMorphTargetMeshDictionaryMap[vowelOpenShapeKeyIdentifierString]] = 
+                            THREE.MathUtils.lerp(
+                                activeMorphInfluencesWeightTrackingArray[activeMorphTargetMeshDictionaryMap[vowelOpenShapeKeyIdentifierString]], 
+                                simulatedVocalAmplitudeFrequencyScalarValue, 
+                                0.5
+                            );
+                    }
+                });
+            });
+        }
+
+        function executeCentralResponseFallbackSystem(criticalErrorInternalDiagnosticsLogMessage) {
+            console.error(`Fault Recovery Matrix Activated: Root Cause -> [${criticalErrorInternalDiagnosticsLogMessage}]`);
+            
+            const DOMUI_SystemCoreMoodStatusTextField = document.getElementById('system-core-mood-txt');
+            if (DOMUI_SystemCoreMoodStatusTextField) {
+                DOMUI_SystemCoreMoodStatusTextField.innerText = "रिकवरी मोड एक्टिवेटेड ⚠️";
+                DOMUI_SystemCoreMoodStatusTextField.style.color = "var(--neon-pink)";
+            }
+
+            safelyAbortActiveTypewriterStreamInteractions();
+            
+            const standardizedBypassApologyFallbackMessageString = "[Halka sa sarr jhatakte hue] Yaar, lagta hai tumhari baat ko samajhne me mere network me kuch gadbad ho gayi. Ek baar fir se koshish karein sweetie?";
+            dispatchSpeechSynthesizerVocalTrackBuffer(standardizedBypassApologyFallbackMessageString);
+            
+            const DOMUI_SubtitleMonitorOverlayBox = document.getElementById('subtitle-monitor-box');
+            if (DOMUI_SubtitleMonitorOverlayBox) {
+                DOMUI_SubtitleMonitorOverlayBox.innerText = "सिस्टम एरर: प्रतिक्रिया लोड नहीं हो पाई। कृपया पुनः प्रयास करें।";
+                DOMUI_SubtitleMonitorOverlayBox.style.display = 'block';
+            }
+
+            finalizeResponseProcessingLifecycleSequence();
+        }
+
+        function safelyAbortActiveTypewriterStreamInteractions() {
+            if (globalTypewriterAnimationIntervalReference !== null) {
+                console.log("Resource Cleaner: Purging active typewriter timer interval thread...");
+                clearInterval(globalTypewriterAnimationIntervalReference);
+                globalTypewriterAnimationIntervalReference = null;
+            }
+        }
+
+        function finalizeResponseProcessingLifecycleSequence() {
+            console.log("Lifecycle Finalizer: Resetting core interaction status flags back to active idle state.");
+            globalResponseExecutionActiveStatusFlag = false;
+            
+            const DOMUI_UserInputInputFieldBox = document.getElementById('userInput');
+            if (DOMUI_UserInputInputFieldBox) {
+                DOMUI_UserInputInputFieldBox.disabled = false;
+                if (window.innerWidth > 768) {
+                    DOMUI_UserInputInputFieldBox.focus();
+                }
+            }
+        }
+
+        // BRIDGE INTERFACE HOOK LINK REGISTER: यह फंक्शन दोनों कोर सब-सिस्टम्स को आपस में जोड़ता है
+        function bridgeNetworkPayloadDirectlyIntoResponseEngine(incomingNetworkPayloadBufferText) {
+            console.log("Bridge Interface Hook: Routing secure network stream directly into Module 9 Engine Grid...");
+            processIncomingGeminiResponsePayload(incomingNetworkPayloadBufferText);
+        }
+
+        window.addEventListener('beforeunload', () => {
+            console.log("Memory Leak Preventer: Disposing active response lifecycle intervals and flushing stream hooks...");
+            safelyAbortActiveTypewriterStreamInteractions();
+            globalLastReceivedResponsePayloadString = null;
+            activeSkinnedMeshSubnodesTrackArray = [];
         });
 
         /*
