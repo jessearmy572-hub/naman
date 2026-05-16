@@ -111,7 +111,7 @@
         let scene, camera, renderer, controls, mixer, clock;
         let priyaModel = null, headBone = null;
         let allSkinnedMeshes = []; 
-        let modelAnimations = []; 
+        let modelAnimations = []; // एनीमेशन क्लिप्स एरे सुरक्षित है
         let currentAction = null;  
         
         let isSpeaking = false;
@@ -121,6 +121,7 @@
 
         let forceTouchTimer = 0;
         
+        // --- इमोशन और लॉन्ग-टर्म मेमोरी वेरिएबल्स ---
         let currentEmotion = "neutral";
         let targetSmile = 0, targetShy = 0, targetRomantic = 0;
         let conversationHistory = [];
@@ -128,6 +129,7 @@
         const raycaster = new THREE.Raycaster();
         const touchVector = new THREE.Vector2();
 
+        // ब्राउज़र मेमोरी से पुराना डेटा लोड करना
         function loadMemory() {
             const savedHistory = localStorage.getItem('priya_memory');
             if (savedHistory) {
@@ -136,12 +138,14 @@
             }
         }
 
+        // ब्राउज़र मेमोरी में नया डेटा सेव करना
         function saveMemory(userMsg, aiReply) {
             conversationHistory.push({ user: userMsg, ai: aiReply });
             if (conversationHistory.length > 6) conversationHistory.shift(); 
             localStorage.setItem('priya_memory', JSON.stringify(conversationHistory));
         }
 
+        // --- स्मार्ट एनीमेशन ट्रिगर प्लेयर (कमांड मूवमेंट इंजन) ---
         function playAvatarMovement(commandText) {
             if (!mixer || !modelAnimations || modelAnimations.length === 0) return;
 
@@ -185,6 +189,7 @@
             }
         }
 
+        // --- 1. INTELLIGENT EMOTION & MEMORY BRAIN ---
         async function askPriya(input) {
             playAvatarMovement(input);
 
@@ -265,6 +270,7 @@
             window.speechSynthesis.speak(utter);
         }
 
+        // --- 2. ADVANCED GEOMETRY TOUCH TRACKER ---
         function handleInstantTouch(event) {
             if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
             if (event.target.tagName === 'INPUT' || event.target.tagName === 'BUTTON') return;
@@ -298,23 +304,16 @@
             }
         }
 
-        // --- रियलिस्टिक 3D रेंडरिंग इंजन मैट्रिक्स ---
+        // --- 3D RENDERING MATRIX ---
         function init3D() {
             const container = document.getElementById('canvas-container');
             clock = new THREE.Clock();
             scene = new THREE.Scene();
 
-            // अपग्रेड: हाई-रियलिज्म शैडो और पावर प्रिफरेंस इनेबल्ड
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            
-            // रियलिस्टिक कलर सेटिंग्स (ACESFilmic और sRGB)
             renderer.outputEncoding = THREE.sRGBEncoding;
-            renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.2; 
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap; // सॉफ्ट रियलिस्टिक परछाई
             container.appendChild(renderer.domElement);
 
             camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 100);
@@ -325,35 +324,15 @@
             controls.enablePan = false;
             controls.target.set(0, 0.16, 0);
 
-            // रियलिस्टिक एम्बिएंट एनवायरनमेंट लाइट
-            scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.2));
+            scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.4));
             
-            // मेन रियलिस्टिक सनलाइट विथ शैडो मैप
-            let sunLight = new THREE.DirectionalLight(0xfffaf0, 1.8);
-            sunLight.position.set(2, 4, 5);
-            sunLight.castShadow = true;
-            sunLight.shadow.mapSize.width = 2048; // हाई-डेफिनिशन परछाई
-            sunLight.shadow.mapSize.height = 2048;
-            sunLight.shadow.bias = -0.0001;
+            let sunLight = new THREE.DirectionalLight(0xfffaf0, 1.5);
+            sunLight.position.set(1.5, 4, 4.5);
             scene.add(sunLight);
 
-            // स्टूडियो फेस ग्लो लाइट (चेहरे को डार्क होने से बचाने के लिए)
-            let faceLight = new THREE.DirectionalLight(0xffffff, 0.6);
-            faceLight.position.set(-1.5, 0.5, 2);
-            scene.add(faceLight);
-
-            let natureBounce = new THREE.DirectionalLight(0xcce6ff, 0.4); 
+            let natureBounce = new THREE.DirectionalLight(0xcce6ff, 0.5); 
             natureBounce.position.set(-2, 1, -1);
             scene.add(natureBounce);
-
-            // ग्राउंड प्लेन सिर्फ अदृश्य परछाई रिसीव करने के लिए (रियलिज्म बूस्ट)
-            const floorGeo = new THREE.PlaneGeometry(10, 10);
-            const floorMat = new THREE.ShadowMaterial({ opacity: 0.35 });
-            const floor = new THREE.Mesh(floorGeo, floorMat);
-            floor.rotation.x = -Math.PI / 2;
-            floor.position.y = -1.22;
-            floor.receiveShadow = true;
-            scene.add(floor);
 
             const loader = new THREE.GLTFLoader();
             loader.load(MODEL_URL, (gltf) => {
@@ -373,15 +352,6 @@
                 priyaModel.traverse((node) => {
                     if (node.isBone && (node.name.toLowerCase().includes('head') || node.name.toLowerCase().includes('neck'))) {
                         headBone = node;
-                    }
-                    if (node.isMesh) {
-                        node.castShadow = true;
-                        node.receiveShadow = true;
-                        // स्किन मटीरियल को थोड़ा सॉफ्ट और रियलिस्टिक बनाना
-                        if (node.material) {
-                            node.material.frustumCulled = false;
-                            if(node.material.roughness !== undefined) node.material.roughness = Math.max(node.material.roughness, 0.45);
-                        }
                     }
                     if (node.morphTargetDictionary) {
                         allSkinnedMeshes.push(node);
@@ -414,6 +384,7 @@
             adjustLayout();
         }
 
+        // --- TICK LOOP FRAME ENGINE ---
         function animate() {
             requestAnimationFrame(animate);
             const delta = clock.getDelta();
@@ -474,6 +445,7 @@
             renderer.render(scene, camera);
         }
 
+        // --- यूआई ऑपरेशन लिंक्स ---
         const inputEl = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
         const micBtn = document.getElementById('micBtn');
