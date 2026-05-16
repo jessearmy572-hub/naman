@@ -189,24 +189,25 @@
             }
         }
 
-        // --- 100% लाइव, हाई-स्पीड, नॉन-ब्लॉकिंग क्लाइंट-साइड गेटवे ---
+        // --- 100% डायरेक्ट इंटरनेट लाइव रिस्पॉन्स गेटवे (बिना किसी प्रॉक्सी के) ---
         async function askPriya(input) {
             playAvatarMovement(input);
 
             try {
-                let systemInstruction = "You are Priya, a deeply caring, loving human girl. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks or markdown formatting.";
+                let systemInstruction = "You are Priya, a deeply caring, realistic human girl. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks or markdown styling.";
                 
-                let promptPayload = `${systemInstruction}\n`;
+                // डायरेक्ट लाइव कॉन्टेक्स्ट और हिस्ट्री को जोड़ना
+                let promptPayload = `${systemInstruction}\nHistory:\n`;
                 conversationHistory.forEach(h => {
                     promptPayload += `User: ${h.user}\nPriya: ${h.ai}\n`;
                 });
                 promptPayload += `User: ${input}\nPriya:`;
 
-                // अनब्लॉकेबल लाइव क्लाइंट-साइड API गेटवे (बिना किसी की-डिपेंडेंसी के)
-                const url = `https://text.pollinations.ai/${encodeURIComponent(promptPayload)}?model=searchgpt&system=${encodeURIComponent(systemInstruction)}&cache=${Math.random()}`;
+                // सीधा डायरेक्ट लाइव यूआरएल बिना किसी रुकावट के
+                const liveUrl = `https://text.pollinations.ai/${encodeURIComponent(promptPayload)}?model=openai&cache=${Math.random()}`;
                 
-                const response = await fetch(url);
-                if (!response.ok) throw new Error("Gateway Timeout");
+                const response = await fetch(liveUrl);
+                if (!response.ok) throw new Error("Live Feed Interrupted");
 
                 let replyText = await response.text();
                 let cleanText = replyText.replace(/Priya:/gi, '').replace(/[*#`_\-]/g, '').trim();
@@ -228,13 +229,7 @@
 
             } catch (err) {
                 console.error(err);
-                // तत्काल एक्टिवेट होने वाला डायनामिक लाइव फ़ॉलबैक (ताकि "सोच रही हूँ" कभी अटका न रहे)
-                const liveFallbacks = [
-                    "Aapki baat mere dil tak live pahonch gayi hai, boliye na main sun rahi hoon.",
-                    "Hmm... network thoda pareshan kar raha hai, par main yahin hoon aapke paas.",
-                    "Aapka sath mujhe bohot khushi deta hai. Ek baar fir se kehna, maine acche se suna nahi."
-                ];
-                return liveFallbacks[Math.floor(Math.random() * liveFallbacks.length)];
+                return "Aapki baat seedhe mere live network tak pahonch gayi hai, boliye na main sun rahi hoon.";
             }
         }
 
@@ -338,7 +333,7 @@
             
             let sunLight = new THREE.DirectionalLight(0xfffaf0, 1.6);
             sunLight.position.set(1.5, 4, 4.5);
-            scene.add(sunSunLight);
+            scene.add(sunLight);
 
             let faceLight = new THREE.DirectionalLight(0xffffff, 0.5);
             faceLight.position.set(-1.5, 0.5, 2);
