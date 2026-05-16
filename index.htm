@@ -53,11 +53,12 @@
           Layer 2: Cyber-Grid Depth Simulator Mask
           Layer 3: Primary WebGL Canvas Context Stage
           Layer 10+: Interface Panels & Core Buttons Dock
+          Layer 99999: Safe Bypass Loader Panel
         */
 
         #image-bg {
             position: absolute;
-            top: -5%; /* Expanded bounds to enable smooth parallax float without reveal artifacts */
+            top: -5%; 
             left: -5%;
             width: 110%;
             height: 110%;
@@ -210,7 +211,6 @@
             color: rgba(255, 255, 255, 0.4);
         }
 
-        /* Tactical Functional Control Buttons Layout Grid */
         .action-circle-btn {
             border: none;
             border-radius: 50%;
@@ -286,39 +286,46 @@
             animation: UI_PopUp_Subtitle 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
-        /* Initial Loading Mask Veil Block */
+        /* CRITICAL ANTI-HANG SECURITY LOADER FRAMEWORK (Fixes Image-1 & Image-2 bugs) */
         #core-boot-loader {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #030307;
+            background: rgba(3, 3, 7, 0.9); /* Subtle alpha to keep background parallax responsive */
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             z-index: 99999;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.75s ease, visibility 0.75s ease;
+            transition: opacity 0.6s cubic-bezier(0.25, 1, 0.25, 1), visibility 0.6s ease;
+            will-change: opacity;
         }
 
         .loader-ring-spinner {
-            width: 75px;
-            height: 75px;
-            border: 4px solid rgba(0, 255, 204, 0.05);
+            width: 70px;
+            height: 70px;
+            border: 4px solid rgba(0, 255, 204, 0.06);
             border-radius: 50%;
             border-top-color: var(--neon-cyan);
             border-bottom-color: var(--neon-blue);
-            animation: System_Engine_Spin 1.2s linear infinite;
+            animation: System_Engine_Spin 1.1s linear infinite;
             margin-bottom: 25px;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.15);
         }
 
         .loader-label-text {
             color: var(--neon-cyan);
-            font-size: 18px;
-            letter-spacing: 2.5px;
+            font-size: 17px;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            text-shadow: 0 0 12px var(--neon-matrix-glow);
+            text-shadow: 0 0 10px var(--neon-matrix-glow);
+            font-weight: 600;
+            text-align: center;
+            padding: 0 20px;
         }
 
         /* ==========================================================================
@@ -331,7 +338,6 @@
         @keyframes HUD_Dock_Slide_Up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes UI_PopUp_Subtitle { from { opacity: 0; transform: translateX(-50%) translateY(15px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 
-        /* Multi-Form Layout Adaptations Sheet Grid */
         @media (max-width: 768px) {
             .dashboard { top: 15px; left: 15px; padding: 12px 18px; font-size: 11px; }
             .ui-dock-wrapper { bottom: 25px; padding: 0 15px; gap: 10px; }
@@ -391,7 +397,6 @@
         let circularCredentialIndexPointer = 0;
         const TARGET_REMOTE_GLTF_BINARY_ASSET_URI = "https://raw.githubusercontent.com/jessearmy572-hub/naman/main/model.glb";
 
-        // Native Three.js Component Instantiation Variables
         let coreThreeSceneInstance = null;
         let corePerspectiveCameraNode = null;
         let coreWebGLRendererModule = null;
@@ -399,33 +404,27 @@
         let coreAnimationMixerController = null;
         let coreSystemClockReference = null;
 
-        // Skeletal Structure Rig Nodes Graph Hooks
         let structuralAvatar3DModelRoot = null;
         let skeletalBoneJointHead = null;
         let skeletalBoneJointNeck = null;
 
-        // Skinned Morph Displacer Buffers Configuration Vectors
         let activeSkinnedMeshSubnodesTrackArray = [];
         let globalAnimationClipsBufferPool = [];
         let activePlayingActionStateTrack = null;
 
-        // Multimodal Flag Interfaces Signals Matrix Fields
         let liveVocalOutputStateSignalActive = false;
         let liveSpeechCapturingStateSignalActive = false;
 
-        // Coordinate Positioning Tracking Vector Graph Registers
         let dynamicInterpolatedCoordinateX = 0;
         let dynamicInterpolatedCoordinateY = 0;
         let absoluteTargetCoordinateX = 0;
         let absoluteTargetCoordinateY = 0;
 
-        // Audio Frequency Domain Analyzing Context Structures
         let hardwareAudioContextDriver = null;
         let hardwareAudioFrequencyAnalyserNode = null;
         let hardwareAudioFrequencyBufferArray = null;
         let mathematicalCalculatedSpeechVolumeScalar = 0;
 
-        // Web Speech Framework API Controller Mapping Hook Registry
         const BrowserSpeechRecognitionEngineInterface = window.SpeechRecognition || window.webkitSpeechRecognition;
         let frameworkSpeechRecognitionProcessor = null;
 
@@ -435,6 +434,19 @@
             frameworkSpeechRecognitionProcessor.lang = 'hi-IN';
             frameworkSpeechRecognitionProcessor.interimResults = false;
             frameworkSpeechRecognitionProcessor.maxAlternatives = 1;
+        }
+
+        // CRITICAL BYPASS: Force loader termination after 4 seconds to eliminate hanging screens entirely
+        setTimeout(() => {
+            dismissSystemLoaderScreenWithSafeAnim();
+        }, 4000);
+
+        function dismissSystemLoaderScreenWithSafeAnim() {
+            const DOMUI_LoaderVeil = document.getElementById('core-boot-loader');
+            if (DOMUI_LoaderVeil && DOMUI_LoaderVeil.style.display !== 'none') {
+                DOMUI_LoaderVeil.style.opacity = 0;
+                setTimeout(() => { DOMUI_LoaderVeil.style.display = 'none'; }, 600);
+            }
         }
 
         /*
@@ -499,21 +511,18 @@
             coreSystemClockReference = new THREE.Clock();
             coreThreeSceneInstance = new THREE.Scene();
 
-            // Setup Fully Accelerated Render Engine Shell
             coreWebGLRendererModule = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
             coreWebGLRendererModule.setSize(window.innerWidth, window.innerHeight);
             coreWebGLRendererModule.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             coreWebGLRendererModule.toneMapping = THREE.ACESFilmicToneMapping;
             coreWebGLRendererModule.toneMappingExposure = 1.25;
             coreWebGLRendererModule.outputEncoding = THREE.sRGBEncoding;
-            coreWebGLRendererModule.setClearColor(0x000000, 0); // Absolute Transparency Layer Binding Fix
+            coreWebGLRendererModule.setClearColor(0x000000, 0); 
             TARGET_VIEWPORT_CANVAS_DOM_CONTAINER.appendChild(coreWebGLRendererModule.domElement);
 
-            // Setup Precision Camera Vector Positioning Grid
             corePerspectiveCameraNode = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
             corePerspectiveCameraNode.position.set(0, 0.20, 3.0); 
 
-            // Initialize Interaction Control Rig Damping Logic Matrix Block
             coreOrbitControlsRig = new THREE.OrbitControls(corePerspectiveCameraNode, coreWebGLRendererModule.domElement);
             coreOrbitControlsRig.enableZoom = true;
             coreOrbitControlsRig.enablePan = false;
@@ -523,7 +532,6 @@
             coreOrbitControlsRig.enableDamping = true;
             coreOrbitControlsRig.dampingFactor = 0.05;
 
-            // Setup Environment Realistic Illumination Node Array Map Layout
             const ambientHemisphereIlluminationNode = new THREE.HemisphereLight(0xffffff, 0x444444, 1.6);
             coreThreeSceneInstance.add(ambientHemisphereIlluminationNode);
 
@@ -535,20 +543,16 @@
             fillBounceRimIlluminationNode.position.set(-3.0, -2.0, -2.0);
             coreThreeSceneInstance.add(fillBounceRimIlluminationNode);
 
-            // Execute Native GLTF Asset Stream Load Pipeline Engine
             const assetGLTFLoaderEngineInstance = new THREE.GLTFLoader();
-            assetGLTFLoaderEngineInstance.load(TARGET_REMOTE_GLTF_MODEL_BINARY_URL, (loadedGltfAssetBundlePayload) => {
+            assetGLTFLoaderEngineInstance.load(TARGET_REMOTE_GLTF_BINARY_ASSET_URI, (loadedGltfAssetBundlePayload) => {
                 
-                // Clear Initial Screen Curtain Mask Layout Cover
-                const DOMUI_BootLoaderVeilContainer = document.getElementById('core-boot-loader');
-                DOMUI_BootLoaderVeilContainer.style.opacity = 0;
-                setTimeout(() => { DOMUI_BootLoaderVeilContainer.style.display = 'none'; }, 600);
+                // Safe Model Load Complete Call
+                dismissSystemLoaderScreenWithSafeAnim();
 
                 structuralAvatar3DModelRoot = loadedGltfAssetBundlePayload.scene;
                 coreThreeSceneInstance.add(structuralAvatar3DModelRoot);
                 executeDynamicResponsiveModelScalingLayouts();
 
-                // Dynamic Skeletal Animation Mixer Rig Setup Mapping Channels
                 globalAnimationClipsBufferPool = loadedGltfAssetBundlePayload.animations;
                 coreAnimationMixerController = new THREE.AnimationMixer(structuralAvatar3DModelRoot);
                 
@@ -558,7 +562,6 @@
                     activePlayingActionStateTrack.play(); 
                 }
 
-                // Deep Structural Rig Branch Parsing Loop Configuration Tracker
                 structuralAvatar3DModelRoot.traverse((evaluatedSubmeshJointNode) => {
                     if (evaluatedSubmeshJointNode.isBone) {
                         const compiledBoneLowerNameString = evaluatedSubmeshJointNode.name.toLowerCase();
@@ -570,25 +573,22 @@
                     }
                 });
             }, undefined, (gltfLoaderTerminalCriticalFaultException) => {
-                console.error("Asset Loader Frame Layer thrown an unrecoverable rendering crash flag:", gltfLoaderTerminalCriticalFaultException);
-                document.getElementById('core-boot-loader').style.display = 'none';
+                console.error("Critical Asset pipeline failed:", gltfLoaderTerminalCriticalFaultException);
+                dismissSystemLoaderScreenWithSafeAnim(); // Recover screen on crash
             });
 
-            // General Frame Interceptor Event Array Registry Setup Links
             window.addEventListener('resize', onDisplayGridResizeLayoutCorrectionTrigger);
             window.addEventListener('mousemove', onTrackingVectorInteractionCoordinateShiftUpdate);
             
-            // Integrated Touch Control Vector Mapping Interceptor Hooks (Touch Interaction Core Fix)
             window.addEventListener('touchmove', (nativeTouchEventPayloadData) => {
                 if(nativeTouchEventPayloadData.touches.length > 0) {
                     absoluteTargetCoordinateX = (nativeTouchEventPayloadData.touches[0].clientX / window.innerWidth) * 2 - 1;
                     absoluteTargetCoordinateY = -(nativeTouchEventPayloadData.touches[0].clientY / window.innerHeight) * 2 + 1;
-                    onNaturalBackgroundParallaxMovementExecution(); // Trigger parallax on touch drag
+                    onNaturalBackgroundParallaxMovementExecution(); 
                 }
             }, { passive: true });
         }
 
-        // Compute Scalar Vector Metrics Matching Dynamic Display Aspect Ratios
         function executeDynamicResponsiveModelScalingLayouts() {
             if (!structuralAvatar3DModelRoot) return;
             const mobileLayoutFlagStateDetected = window.innerWidth < 768;
@@ -607,12 +607,10 @@
             onNaturalBackgroundParallaxMovementExecution();
         }
 
-        // Realtime Natural Background Parallax Movement Controller (Parallax Feature Fix)
         function onNaturalBackgroundParallaxMovementExecution() {
             const DOMUI_ParallaxBackgroundWallpaperImage = document.getElementById('image-bg');
             if (!DOMUI_ParallaxBackgroundWallpaperImage) return;
             
-            // Subtle offset tracking computation metrics variables
             let calculatedParallaxShiftPixelValueX = absoluteTargetCoordinateX * 22; 
             let calculatedParallaxShiftPixelValueY = absoluteTargetCoordinateY * 22; 
             
@@ -639,7 +637,7 @@
                 hardwareAudioFrequencyAnalyserNode.fftSize = 128;
                 hardwareAudioFrequencyBufferArray = new Uint8Array(hardwareAudioFrequencyAnalyserNode.frequencyBinCount);
             } catch(nativeAudioPipelineContextSetupFaultException) {
-                console.error("Device Audio Core Mapping Engine threw a configuration crash error:", nativeAudioPipelineContextSetupFaultException);
+                console.error("Device Audio setup anomaly logged:", nativeAudioPipelineContextSetupFaultException);
             }
         }
 
@@ -652,7 +650,6 @@
             }
             window.speechSynthesis.cancel();
             
-            // Clean action brackets descriptors from active structural speech stream text buffer block
             let completelyStrippedVocalSpeechStringText = compiledOutputAIPayloadText.replace(/\[.*?\]/g, '').trim();
             
             const DOMUI_SubtitleMonitorOverlayBox = document.getElementById('subtitle-monitor-box');
@@ -673,7 +670,7 @@
             };
             
             structuralUtteranceInstanceConfigurationObject.onerror = (speechSynthesizerDriverFaultException) => {
-                console.error("Speech Synthesizer execution pipeline encountered a channel fault:", speechSynthesizerDriverFaultException);
+                console.error("Speech compilation runtime exception:", speechSynthesizerDriverFaultException);
                 liveVocalOutputStateSignalActive = false;
                 DOMUI_SubtitleMonitorOverlayBox.style.display = 'none';
             };
@@ -695,7 +692,6 @@
             if (coreAnimationMixerController) coreAnimationMixerController.update(numericalDeltaTimelineTimeStepValue);
             if (coreOrbitControlsRig) coreOrbitControlsRig.update();
 
-            // Real-Time Fourier Amplitude Signal Extractors (Natural Lipsync Engine Feature Fix)
             if (liveVocalOutputStateSignalActive && hardwareAudioFrequencyAnalyserNode) {
                 hardwareAudioFrequencyAnalyserNode.getByteFrequencyData(hardwareAudioFrequencyBufferArray);
                 let processingAmplitudeFrequencySumAccumulator = 0;
@@ -705,7 +701,6 @@
                 mathematicalCalculatedSpeechVolumeScalar = processingAmplitudeFrequencySumAccumulator / hardwareAudioFrequencyBufferArray.length;
             }
 
-            // Real-Time Linear Interpolation Tracking Matrix Node Loops Execution Block (Avatar Movement & Touching Response Fix)
             if (structuralAvatar3DModelRoot) {
                 dynamicInterpolatedCoordinateX = THREE.MathUtils.lerp(dynamicInterpolatedCoordinateX, absoluteTargetCoordinateX, 0.05);
                 dynamicInterpolatedCoordinateY = THREE.MathUtils.lerp(dynamicInterpolatedCoordinateY, absoluteTargetCoordinateY, 0.05);
@@ -718,10 +713,7 @@
                     skeletalBoneJointNeck.rotation.y = dynamicInterpolatedCoordinateX * 0.09;
                 }
 
-                // Sinusoidal Spatial Distortion Vertex Re-shaper Layouts (Natural Eye Blinking Fix)
                 let adaptiveFrameCurrentMouthOpeningMorphWeight = liveVocalOutputStateSignalActive ? Math.min(mathematicalCalculatedSpeechVolumeScalar / 6.8, 1.1) : 0;
-                
-                // Naturalistic non-periodic random cycle blinks processing variables configuration
                 let adaptiveFrameCurrentEyeBlinkingMorphWeight = (Math.sin(numericalContinuousElapsedTimeRunningValue * 3.8) > 0.96) ? 1.0 : 0.0;
 
                 activeSkinnedMeshSubnodesTrackArray.forEach(skinnedSubmeshComponentNodeReference => {
@@ -730,14 +722,12 @@
                     
                     if (!activeMorphTargetMeshDictionaryMap || !activeMorphInfluencesWeightTrackingArray) return;
 
-                    // Compute Lips Vector Open Blends over Active Target Submeshes Grid Array
                     ['mouthOpen', 'jawOpen', 'Mouth_Open', 'vowel_a'].forEach(vowelOpenShapeKeyIdentifierString => {
                         if (activeMorphTargetMeshDictionaryMap[vowelOpenShapeKeyIdentifierString] !== undefined) {
                             activeMorphInfluencesWeightTrackingArray[activeMorphTargetMeshDictionaryMap[vowelOpenShapeKeyIdentifierString]] = THREE.MathUtils.lerp(activeMorphInfluencesWeightTrackingArray[activeMorphTargetMeshDictionaryMap[vowelOpenShapeKeyIdentifierString]], adaptiveFrameCurrentMouthOpeningMorphWeight, 0.45);
                         }
                     });
 
-                    // Compute Double Eyes Blink Blends over Active Target Submeshes Grid Array
                     ['eyeBlinkLeft', 'eyeBlinkRight', 'blink', 'Blink'].forEach(eyeBlinkShapeKeyIdentifierString => {
                         if (activeMorphTargetMeshDictionaryMap[eyeBlinkShapeKeyIdentifierString] !== undefined) {
                             activeMorphInfluencesWeightTrackingArray[activeMorphTargetMeshDictionaryMap[eyeBlinkShapeKeyIdentifierString]] = THREE.MathUtils.lerp(activeMorphInfluencesWeightTrackingArray[activeMorphTargetMeshDictionaryMap[eyeBlinkShapeKeyIdentifierString]], adaptiveFrameCurrentEyeBlinkingMorphWeight, 0.55);
@@ -765,7 +755,6 @@
             
             document.getElementById('system-core-mood-txt').innerText = "प्रक्रिया चालू है... 🤔";
             
-            // Random Base Skeletal Blend Action Pipeline Instantiation Handler Track Loop
             if (coreAnimationMixerController && globalAnimationClipsBufferPool.length > 0) {
                 coreAnimationMixerController.stopAllAction();
                 let operationalRandomClipsIndexFactor = Math.floor(Math.random() * globalAnimationClipsBufferPool.length);
@@ -774,12 +763,11 @@
             }
 
             const activeReturnedNetworkPayloadText = await fetchSecureNeuralAIResponseStream(clearExtractedInputTextString);
-            document.getElementById('system-core-mood-txt').innerText = "जेमिनी nv1 लाइव डायरेक्ट ⚡";
+            document.getElementById('system-core-mood-txt').innerText = "जेमिनी nv1 LIVE डायरेक्ट ⚡";
             
             dispatchSpeechSynthesizerVocalTrackBuffer(activeReturnedNetworkPayloadText);
         }
 
-        // Native System Speech Capturing Layer Integration Logic Mapping
         if (frameworkSpeechRecognitionProcessor) {
             frameworkSpeechRecognitionProcessor.onstart = () => {
                 liveSpeechCapturingStateSignalActive = true;
@@ -788,7 +776,7 @@
             };
 
             frameworkSpeechRecognitionProcessor.onerror = (speechRecognitionLayerFaultException) => {
-                console.error("Speech Recognition driver flagged an active fallback warning alert:", speechRecognitionLayerFaultException);
+                console.error("Speech Recognition layer issue safely bypassed:", speechRecognitionLayerFaultException);
                 liveSpeechCapturingStateSignalActive = false;
                 DOMUI_ActionButtonMicTrigger.classList.remove('listening');
                 DOMUI_TextInputElementBar.placeholder = "प्रिया से कुछ भी पूछें...";
@@ -818,7 +806,6 @@
             DOMUI_ActionButtonMicTrigger.style.display = 'none'; 
         }
 
-        // Connect General Physical Action Input Listeners
         DOMUI_ActionButtonSendTrigger.addEventListener('click', triggerInteractionLifecycleExecutionCycle);
         DOMUI_TextInputElementBar.addEventListener('keypress', (nativeHardwareKeyboardEvent) => { 
             if (nativeHardwareKeyboardEvent.key === 'Enter') triggerInteractionLifecycleExecutionCycle(); 
