@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Priya AI - Official Live Server Edition</title>
+    <title>Priya AI - GitHub Mobile Unstoppable Edition</title>
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
@@ -89,33 +89,23 @@
     <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop" id="image-bg" alt="Background">
 
     <div class="dashboard">
-        <div><span class="status-dot" id="dot"></span> इंजन: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">गूगल ऑफिशियल SDK 🤖</span></div>
-        <div style="font-size: 11px; color:#aaa; margin-top:4px;">सिस्टम: <span id="key-status" style="color:#00ffcc;">Core-1 (Active)</span></div>
+        <div><span class="status-dot" id="dot"></span> इंजन: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">जेमिनी मोबाइल लाइव 🤖</span></div>
+        <div style="font-size: 11px; color:#aaa; margin-top:4px;">चैनल: <span id="key-status" style="color:#00ffcc;">Core-1 (Bypass Active)</span></div>
     </div>
 
-    <div id="loader">प्रिया का न्यूरल माइंड लोड हो रहा है...<br><span style="font-size:11px; color:#aaa;">Official Gemini Module Enabled</span></div>
+    <div id="loader">प्रिया का न्यूरल माइंड लोड हो रहा है...<br><span style="font-size:11px; color:#aaa;">Mobile Hub Optimization Active</span></div>
     <div id="canvas-container"></div>
 
     <div class="ui-container">
         <button class="mic-btn" id="micBtn">🎤</button>
         <div class="input-box">
-            <input type="text" id="userInput" placeholder="लाइव सर्वर पर बात करें..." />
+            <input type="text" id="userInput" placeholder="कुछ भी पूछें, सीधे लाइव जवाब आएगा..." />
         </div>
         <button class="send-btn" id="sendBtn">➔</button>
     </div>
 
-    <script type="importmap">
-      {
-        "imports": {
-          "@google/generative-ai": "https://esm.run/@google/generative-ai"
-        }
-      }
-    </script>
-
-    <script type="module">
-        import { GoogleGenAI } from '@google/generative-ai';
-
-        // 🔐 तुम्हारी लाइव कुंजियाँ यहाँ पूरी तरह सेट हैं
+    <script>
+        // 🔐 तुम्हारी तीनों कुंजियाँ पूरी तरह लोड हैं
         const API_KEYS = [
             "AIzaSyBgyADY-6VFaLefYi8PaGak_L8kpfpGDA0",
             "AIzaSyBSaw3teN0aoDb2qdzuYktqUZ08sUOIv5o",
@@ -135,54 +125,49 @@
         let mousePos = { x: 0, y: 0 };
         let audioCtx = null, analyser = null, dataArray = null;
         let mouthVolume = 0;
-        
-        let aiSession = null;
-        let googleAIInstance = null;
 
-        // ऑफिशियल जेमिनी इंजन इनिशियलाइजेशन
-        async function initGemini() {
+        // 🛠️ स्पेशल मोबाइल-वेब बाईपास टनल (बिना किसी SDK के)
+        async function askGeminiDirect(input) {
+            const systemPrompt = "You are Priya, a deeply caring human girl. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks, hashtags or markdown format.";
+            let activeKey = API_KEYS[currentKeyIndex];
+            
+            const targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeKey}`;
+            
+            // 🚀 ऑल-वेदर ओपन-गेटवे जो गिटहब पेजेस के ब्लॉक को तुरंत तोड़ देता है
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+
             try {
-                let activeKey = API_KEYS[currentKeyIndex];
-                googleAIInstance = new GoogleGenAI({ apiKey: activeKey });
-                aiSession = googleAIInstance.getGenerativeModel({ 
-                    model: "gemini-1.5-flash",
-                    systemInstruction: "You are Priya, a deeply caring human girl. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks, hashtags or markdown."
-                }).startChat();
+                const response = await fetch(proxyUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [
+                            { role: "user", parts: [{ text: `System Instruction: ${systemPrompt}\n\nUser: ${input}` }] }
+                        ],
+                        generationConfig: { maxOutputTokens: 150 }
+                    })
+                });
+
+                // अगर ऑल-ऑरिजिन रिस्पॉन्स दे तो डेटा निकालो
+                const outerData = await response.json();
+                const data = JSON.parse(outerData.contents);
                 
-                document.getElementById('key-status').innerText = `Core-${currentKeyIndex + 1} (Active)`;
-                return true;
-            } catch (e) {
-                console.error("Gemini Core Initialization Failed", e);
-                return false;
-            }
-        }
+                let reply = data.candidates[0].content.parts[0].text;
+                return reply.replace(/[*#`_\-]/g, '').trim();
 
-        async function rotateKeyAndReconnect() {
-            currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
-            await initGemini();
-        }
-
-        async function askPriyaOnline(input) {
-            if (!aiSession) return getLocalFallback(input);
-            try {
-                const result = await aiSession.sendMessage(input);
-                let replyText = result.response.text();
-                return replyText.replace(/[*#`_\-]/g, '').trim();
             } catch (err) {
-                console.warn("Key rotation triggered...", err);
-                await rotateKeyAndReconnect();
-                try {
-                    if (aiSession) {
-                        const retryResult = await aiSession.sendMessage(input);
-                        return retryResult.response.text().replace(/[*#`_\-]/g, '').trim();
-                    }
-                } catch(retryErr) {}
-                return getLocalFallback(input);
+                console.warn(`Core-${currentKeyIndex + 1} Failed on GitHub Pages. Rotating...`, err);
+                
+                // 🔄 एरर आते ही तुरंत अगली चाबी पर जंप मारें
+                currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
+                document.getElementById('key-status').innerText = `Core-${currentKeyIndex + 1} (Bypass)`;
+                
+                if (currentKeyIndex !== 0) {
+                    return await askGeminiDirect(input);
+                }
+                
+                return "Mera network thoda badmash ho gaya hai sweetie, par main yahi hoon.";
             }
-        }
-
-        function getLocalFallback(input) {
-            return "Hmm... लगता है लाइव सर्वर के बिना गूगल हमसे बात नहीं करेगा स्वीटी। प्लीज लाइव सर्वर ऑन करो।";
         }
 
         function playAvatarMovement() {
@@ -243,6 +228,7 @@
 
             const loader = new THREE.GLTFLoader();
             loader.load(MODEL_URL, (gltf) => {
+                // मॉडल लोड होते ही लोडर गायब होगा!
                 document.getElementById('loader').style.display = 'none';
                 priyaModel = gltf.scene;
                 scene.add(priyaModel);
@@ -259,10 +245,21 @@
                     if (node.isBone && (node.name.toLowerCase().includes('head') || node.name.toLowerCase().includes('neck'))) headBone = node;
                     if (node.morphTargetDictionary) allSkinnedMeshes.push(node);
                 });
+            }, undefined, (error) => {
+                // अगर मॉडल लोडिंग में एरर भी आए, तो स्क्रीन अटकेगी नहीं
+                console.error("Model load error, bypassing loader screen", error);
+                document.getElementById('loader').style.display = 'none';
             });
 
             window.addEventListener('resize', onWindowResize);
-            window.addEventListener('mousemove', onMouseMove);
+            
+            // मोबाइल टच इवेंट सपोर्ट ताकि प्रिया की आँखें घूम सकें
+            window.addEventListener('touchmove', (e) => {
+                if(e.touches.length > 0) {
+                    mousePos.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
+                    mousePos.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
+                }
+            });
         }
 
         function adjustLayout() {
@@ -270,11 +267,6 @@
             const isMobile = window.innerWidth < 768;
             priyaModel.scale.setScalar(isMobile ? window.innerWidth / 460 : window.innerWidth / 1050);
             priyaModel.position.y = isMobile ? -0.85 : -1.15;
-        }
-
-        function onMouseMove(e) {
-            mousePos.x = (e.clientX / window.innerWidth) * 2 - 1;
-            mousePos.y = -(e.clientY / window.innerHeight) * 2 + 1;
         }
 
         function onWindowResize() {
@@ -333,15 +325,14 @@
             
             document.getElementById('mood-txt').innerText = "जेमिनी सोच रहा है... 🤔";
             playAvatarMovement();
-            const reply = await askPriyaOnline(val);
-            document.getElementById('mood-txt').innerText = "गूगल ऑफिशियल SDK 🤖";
+            const reply = await askGeminiDirect(val);
+            document.getElementById('mood-txt').innerText = "जेमिनी मोबाइल लाइव 🤖";
             speak(reply);
         }
 
         sendBtn.addEventListener('click', handleAction);
         inputEl.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAction(); });
 
-        initGemini();
         init3D();
         animate();
     </script>
