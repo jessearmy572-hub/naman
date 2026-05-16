@@ -3,52 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Priya AI - nv1 Sovereign Production Matrix</title>
+    <title>Priya AI - nv1 Core Production Engine</title>
     
     <style>
         /* ==========================================================================
-          SECTION 1: GLOBAL HARDWARE ACCELERATED ROOT VARIABLES & CONFIGURATIONS
-          ==========================================================================
-        */
+          SUB-SECTION 1.1: GLOBAL ROOT ARCHITECTURE VARIABLES
+          ========================================================================== */
         :root {
             --neon-cyan: #00ffcc;
             --neon-blue: #0099ff;
+            --neon-purple: #9400d3;
             --neon-pink: #ff416c;
             --neon-orange: #ff4b2b;
-            --neon-glow: rgba(0, 255, 204, 0.45);
+            --neon-green: #39ff14;
+            --neon-glow-primary: rgba(0, 255, 204, 0.5);
+            --neon-glow-secondary: rgba(0, 153, 255, 0.4);
             --neon-glow-dim: rgba(0, 255, 204, 0.15);
-            --bg-dark: #020205;
-            --bg-deep-matrix: #04040a;
-            --panel-bg: rgba(10, 10, 20, 0.7);
-            --panel-bg-heavy: rgba(5, 5, 10, 0.9);
-            --border-white: rgba(255, 255, 255, 0.15);
-            --border-cyan: rgba(0, 255, 204, 0.3);
-            --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.6);
-            --text-muted: rgba(255, 255, 255, 0.35);
-            --transition-smooth: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            --transition-snappy: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --bg-dark-absolute: #010103;
+            --bg-dark-core: #030308;
+            --bg-dark-panel: #06060f;
+            --panel-bg-glass: rgba(6, 6, 15, 0.72);
+            --panel-bg-heavy: rgba(3, 3, 7, 0.95);
+            --border-light-white: rgba(255, 255, 255, 0.15);
+            --border-heavy-white: rgba(255, 255, 255, 0.25);
+            --border-neon-cyan: rgba(0, 255, 204, 0.35);
+            --border-neon-blue: rgba(0, 153, 255, 0.3);
+            --text-color-pure: #ffffff;
+            --text-color-slate: #e2e8f0;
+            --text-color-muted: rgba(255, 255, 255, 0.65);
+            --text-color-dark: rgba(255, 255, 255, 0.35);
+            --transition-curve-smooth: all 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --transition-curve-snappy: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --transition-curve-linear: all 0.3s linear;
         }
 
         /* ==========================================================================
-          SECTION 2: CSS RESET & HARDWARE LAYERING SYSTEM
-          ==========================================================================
-        */
+          SUB-SECTION 1.2: HARDWARE ACCELERATION RESET LAYER
+          ========================================================================== */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             outline: none;
             -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         body, html {
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: var(--bg-dark);
+            background-color: var(--bg-dark-absolute);
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            color: var(--text-primary);
+            color: var(--text-color-pure);
             user-select: none;
             -webkit-user-select: none;
             -ms-user-select: none;
@@ -57,9 +65,10 @@
         }
 
         /* ==========================================================================
-          SECTION 3: BACKGROUND SCENERY & LAYER DEPTH MANAGEMENT
-          ==========================================================================
-        */
+          SUB-SECTION 1.3: CRITICAL LAYER Z-INDEX HIERARCHY
+          ========================================================================== */
+        
+        /* Layer 1: Ambient Background Scenery Wallpaper */
         #image-bg {
             position: absolute;
             top: 0;
@@ -69,264 +78,180 @@
             object-fit: cover;
             z-index: 1;
             pointer-events: none;
-            filter: brightness(0.55) contrast(1.15) saturate(0.9);
-            transform: scale(1.02);
-            transition: filter 0.5s ease;
+            filter: brightness(0.45) contrast(1.2) saturate(0.85);
+            transform: scale(1.01);
+            transition: filter 0.6s ease;
+            will-change: filter;
         }
 
+        /* Layer 2: Cyberpunk Backing Grid (Anti-Black Screen Fallback Grid) */
+        .cyber-grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            background-image: 
+                linear-gradient(rgba(0, 255, 204, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 204, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center center;
+            pointer-events: none;
+        }
+
+        /* Layer 3: Interactive Three.js Viewport Stage */
         #canvas-container {
             width: 100%;
             height: 100%;
             position: absolute;
             top: 0;
             left: 0;
-            z-index: 2;
+            z-index: 3;
             cursor: grab;
+            display: block;
+            background: transparent !important;
         }
 
         #canvas-container:active {
             cursor: grabbing;
         }
 
-        /* ==========================================================================
-          SECTION 4: HIGH-END HOLOGRAPPHIC INTERACTIVE HEADS-UP DISPLAY (HUD)
-          ==========================================================================
-        */
+        /* Layer 10: Glassmorphic Heads-Up Display Panel */
         .dashboard {
             position: absolute;
-            top: 25px;
-            left: 25px;
+            top: 30px;
+            left: 30px;
             z-index: 10;
-            color: var(--text-primary);
-            background: var(--panel-bg);
-            padding: 16px 26px;
-            border-radius: 22px;
-            backdrop-filter: blur(35px);
-            -webkit-backdrop-filter: blur(35px);
-            border: 1px solid var(--border-white);
-            box-shadow: 0 20px 45px rgba(0,0,0,0.75), 
-                        inset 0 1px 2px rgba(255,255,255,0.15),
-                        0 0 30px rgba(0, 0, 0, 0.5);
+            color: var(--text-color-pure);
+            background: var(--panel-bg-glass);
+            padding: 18px 28px;
+            border-radius: 24px;
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--border-light-white);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8), 
+                        inset 0 1px 2px rgba(255,255,255,0.2),
+                        0 0 40px rgba(0, 0, 0, 0.6);
             pointer-events: auto;
-            letter-spacing: 0.6px;
+            letter-spacing: 0.8px;
             transform: translateZ(0);
             will-change: transform, opacity;
-            animation: HUD_EntryAnimation 0.9s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+            animation: HUD_SlideDownAnimation 0.95s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
         }
 
         .status-container {
             display: flex;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .status-dot {
             display: inline-block;
-            width: 11px;
-            height: 11px;
+            width: 12px;
+            height: 12px;
             background: var(--neon-cyan);
             border-radius: 50%;
-            margin-right: 12px;
-            box-shadow: 0 0 12px var(--neon-cyan), 
-                        0 0 24px var(--neon-cyan),
-                        0 0 35px var(--neon-cyan);
-            animation: HUD_PulseGlow 2.5s infinite ease-in-out;
+            margin-right: 14px;
+            box-shadow: 0 0 15px var(--neon-cyan), 
+                        0 0 30px var(--neon-cyan),
+                        0 0 45px var(--neon-cyan);
+            animation: HUD_DotPulseGlow 3s infinite ease-in-out;
             will-change: opacity, box-shadow;
         }
 
         .status-label {
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 14px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            text-shadow: 0 0 8px rgba(255,255,255,0.3);
+            letter-spacing: 1.2px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
         }
 
         .meta-info {
-            font-size: 11px;
-            color: var(--text-secondary);
-            margin-top: 6px;
+            font-size: 12px;
+            color: var(--text-color-muted);
+            margin-top: 8px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .meta-value {
             color: var(--neon-cyan);
-            font-weight: bold;
-            text-shadow: 0 0 5px var(--neon-glow-dim);
+            font-weight: 700;
+            text-shadow: 0 0 6px var(--neon-glow-dim);
         }
 
-        /* ==========================================================================
-          SECTION 5: SYSTEM LOADING BARRIER SCREEN (ANTI-GLITCH PROTOCOL)
-          ==========================================================================
-        */
-        #loader {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-deep-matrix);
-            color: var(--text-primary);
-            z-index: 99999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 1;
-            visibility: visible;
-            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.25, 1), 
-                        visibility 0.8s ease;
-            will-change: opacity;
-        }
-
-        .loader-spinner-box {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            margin-bottom: 25px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .loader-spinner {
-            width: 70px;
-            height: 70px;
-            border: 3px solid rgba(0, 255, 204, 0.08);
-            border-radius: 50%;
-            border-top-color: var(--neon-cyan);
-            border-bottom-color: var(--neon-blue);
-            animation: System_LoopSpin 1.2s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.15);
-        }
-
-        .loader-spinner-inner {
-            position: absolute;
-            width: 45px;
-            height: 45px;
-            border: 2px solid transparent;
-            border-radius: 50%;
-            border-left-color: var(--neon-pink);
-            border-right-color: var(--neon-orange);
-            animation: System_LoopSpinInverse 0.8s linear infinite;
-        }
-
-        .loader-text {
-            color: var(--neon-cyan);
-            font-size: 19px;
-            letter-spacing: 2.5px;
-            text-align: center;
-            text-shadow: 0 0 12px var(--neon-glow);
-            font-weight: 400;
-            text-transform: uppercase;
-        }
-
-        .loader-subtext {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 10px;
-            font-weight: 300;
-            letter-spacing: 0.5px;
-        }
-
-        /* ==========================================================================
-          SECTION 6: CONTROLS DECK UI & TYPOGRAPHY SYSTEM
-          ==========================================================================
-        */
+        /* Layer 20: Control Deck User Interface Dock */
         .ui-container {
             position: absolute;
-            bottom: 45px;
+            bottom: 50px;
             width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 16px;
-            z-index: 25;
-            padding: 0 35px;
+            gap: 18px;
+            z-index: 20;
+            padding: 0 40px;
             box-sizing: border-box;
             will-change: transform, opacity;
-            animation: HUD_DeckEntryAnimation 1s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+            animation: HUD_DeckSlideUpAnimation 1.05s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
         }
 
         .input-box {
-            background: rgba(4, 4, 8, 0.82);
-            backdrop-filter: blur(35px);
-            -webkit-backdrop-filter: blur(35px);
-            padding: 0 30px;
-            border-radius: 40px;
+            background: rgba(3, 3, 6, 0.88);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            padding: 0 32px;
+            border-radius: 45px;
             flex-grow: 1;
-            max-width: 650px;
-            height: 65px;
+            max-width: 700px;
+            height: 70px;
             display: flex;
             align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.65), 
-                        inset 0 1px 1px rgba(255,255,255,0.08);
-            transition: var(--transition-smooth);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.75), 
+                        inset 0 1px 1px rgba(255,255,255,0.1);
+            transition: var(--transition-curve-smooth);
             position: relative;
             overflow: hidden;
         }
 
-        .input-box::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
-            transition: 0.5s;
-        }
-
-        .input-box:focus-within::before {
-            left: 100%;
-            transition: 0.7s ease-in-out;
-        }
-
         .input-box:focus-within {
             border-color: var(--neon-cyan);
-            box-shadow: 0 0 30px rgba(0, 255, 204, 0.3), 
-                        0 20px 50px rgba(0,0,0,0.7);
-            transform: translateY(-2px);
+            box-shadow: 0 0 35px rgba(0, 255, 204, 0.35), 
+                        0 25px 60px rgba(0,0,0,0.8);
+            transform: translateY(-3px);
         }
 
         input {
             width: 100%;
             background: transparent;
             border: none;
-            color: var(--text-primary);
+            color: var(--text-color-pure);
             outline: none;
-            font-size: 17px;
+            font-size: 18px;
             height: 100%;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.5px;
             font-weight: 400;
         }
 
         input::placeholder {
-            color: rgba(255, 255, 255, 0.38);
-            transition: color 0.3s ease;
+            color: rgba(255, 255, 255, 0.42);
         }
 
-        input:focus::placeholder {
-            color: rgba(255, 255, 255, 0.2);
-        }
-
-        /* ==========================================================================
-          SECTION 7: PREMIUM COMPONENT ACTION BUTTONS
-          ==========================================================================
-        */
+        /* Component Control Buttons Framework */
         .control-btn {
             border: none;
             border-radius: 50%;
-            width: 65px;
-            height: 65px;
+            width: 70px;
+            height: 70px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: var(--transition-smooth);
+            transition: var(--transition-curve-smooth);
             outline: none;
             position: relative;
             overflow: hidden;
@@ -336,204 +261,224 @@
         .mic-btn {
             background: linear-gradient(135deg, var(--neon-orange), var(--neon-pink));
             color: #ffffff;
-            font-size: 24px;
-            box-shadow: 0 10px 28px rgba(255, 75, 43, 0.5);
-            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 26px;
+            box-shadow: 0 12px 32px rgba(255, 75, 43, 0.55);
+            border: 1px solid rgba(255,255,255,0.15);
         }
 
         .mic-btn:hover {
-            transform: scale(1.08) translateY(-2px);
-            box-shadow: 0 14px 35px rgba(255, 75, 43, 0.65);
+            transform: scale(1.1) translateY(-3px);
+            box-shadow: 0 16px 40px rgba(255, 75, 43, 0.7);
         }
 
         .mic-btn:active {
-            transform: scale(0.94) translateY(0);
+            transform: scale(0.92) translateY(0);
         }
 
         .mic-btn.listening {
             background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue));
-            box-shadow: 0 0 35px var(--neon-cyan), 0 0 15px var(--neon-blue);
-            animation: UI_PulseMicButton 1.5s infinite alternate cubic-bezier(0.455, 0.03, 0.515, 0.955);
+            box-shadow: 0 0 40px var(--neon-cyan), 0 0 20px var(--neon-blue);
+            animation: UI_ButtonPulseEffect 1.4s infinite alternate cubic-bezier(0.455, 0.03, 0.515, 0.955);
         }
 
         .send-btn {
             background: #ffffff;
-            color: #030307;
-            font-size: 22px;
-            box-shadow: 0 10px 28px rgba(255,255,255,0.28);
-            border: 1px solid rgba(0,0,0,0.05);
+            color: #020205;
+            font-size: 24px;
+            box-shadow: 0 12px 32px rgba(255,255,255,0.32);
+            border: 1px solid rgba(0,0,0,0.08);
         }
 
         .send-btn:hover {
-            transform: scale(1.08) translateY(-2px);
-            box-shadow: 0 14px 35px rgba(255,255,255,0.45);
-            background: #f4f4f9;
+            transform: scale(1.1) translateY(-3px);
+            box-shadow: 0 16px 40px rgba(255,255,255,0.5);
+            background: #f8f9fa;
         }
 
         .send-btn:active {
-            transform: scale(0.94) translateY(0);
+            transform: scale(0.92) translateY(0);
         }
 
-        /* ==========================================================================
-          SECTION 8: HIGH-VISIBILITY CAPTIONS SUBTITLE MONITOR PANEL
-          ==========================================================================
-        */
+        /* Layer 30: Caption Subtitle Monitor Text Overlay */
         #subtitle-box {
             position: absolute;
-            bottom: 135px;
+            bottom: 145px;
             left: 50%;
             transform: translateX(-50%) translateZ(0);
-            background: rgba(3, 3, 7, 0.88);
-            padding: 15px 32px;
-            border-radius: 24px;
-            color: var(--text-primary);
-            font-size: 16px;
-            max-width: 82%;
+            background: rgba(4, 4, 10, 0.92);
+            padding: 16px 36px;
+            border-radius: 26px;
+            color: var(--text-color-pure);
+            font-size: 17px;
+            max-width: 85%;
             width: auto;
-            min-width: 200px;
+            min-width: 240px;
             text-align: center;
             z-index: 30;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.85), inset 0 1px 1px rgba(255,255,255,0.15);
             display: none;
             pointer-events: none;
-            line-height: 1.6;
-            letter-spacing: 0.3px;
+            line-height: 1.65;
+            letter-spacing: 0.4px;
             font-weight: 500;
-            animation: UI_SubtitlePop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: UI_SubtitlePopUpEffect 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             will-change: transform, opacity;
         }
 
+        /* Layer 9999: Hard-Interleaved Initial System Loader Backdrop Screen */
+        #loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-dark-core);
+            color: var(--text-color-pure);
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.85s cubic-bezier(0.25, 1, 0.25, 1), visibility 0.85s ease;
+            will-change: opacity;
+        }
+
+        .loader-spinner-box {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-spinner {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(0, 255, 204, 0.08);
+            border-radius: 50%;
+            border-top-color: var(--neon-cyan);
+            border-bottom-color: var(--neon-blue);
+            animation: System_LinearRotationLoop 1.3s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.2);
+        }
+
+        .loader-spinner-inner {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border: 3px solid transparent;
+            border-radius: 50%;
+            border-left-color: var(--neon-pink);
+            border-right-color: var(--neon-orange);
+            animation: System_InverseRotationLoop 0.9s linear infinite;
+        }
+
+        .loader-text {
+            color: var(--neon-cyan);
+            font-size: 21px;
+            letter-spacing: 3px;
+            text-align: center;
+            text-shadow: 0 0 15px var(--neon-glow-primary);
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .loader-subtext {
+            font-size: 13px;
+            color: var(--text-color-muted);
+            margin-top: 12px;
+            font-weight: 300;
+            letter-spacing: 0.6px;
+        }
+
         /* ==========================================================================
-          SECTION 9: SYSTEM KEYFRAME TRANSFORMS GRAPHICS DRIVER ARCHITECTURE
-          ==========================================================================
-        */
-        @keyframes System_LoopSpin {
+          SUB-SECTION 1.4: TRANSFORMS KEYFRAMES ARCHITECTURE ENGINE
+          ========================================================================== */
+        @keyframes System_LinearRotationLoop {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        @keyframes System_LoopSpinInverse {
+        @keyframes System_InverseRotationLoop {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(-360deg); }
         }
 
-        @keyframes HUD_PulseGlow {
+        @keyframes HUD_DotPulseGlow {
             0%, 100% {
-                opacity: 0.65;
-                box-shadow: 0 0 12px var(--neon-glow-dim);
+                opacity: 0.6;
+                box-shadow: 0 0 15px var(--neon-glow-dim);
             }
             50% {
                 opacity: 1;
-                box-shadow: 0 0 28px var(--neon-cyan), 0 0 45px var(--neon-cyan);
+                box-shadow: 0 0 30px var(--neon-cyan), 0 0 50px var(--neon-cyan);
             }
         }
 
-        @keyframes UI_PulseMicButton {
+        @keyframes UI_ButtonPulseEffect {
             0% { transform: scale(1); }
-            100% { transform: scale(1.08); box-shadow: 0 0 40px var(--neon-cyan), 0 0 15px var(--neon-blue); }
+            100% { transform: scale(1.09); box-shadow: 0 0 45px var(--neon-cyan), 0 0 20px var(--neon-blue); }
         }
 
-        @keyframes HUD_EntryAnimation {
-            from {
-                opacity: 0;
-                transform: translateY(-25px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+        @keyframes HUD_SlideDownAnimation {
+            from { opacity: 0; transform: translateY(-30px) scale(0.94); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        @keyframes HUD_DeckEntryAnimation {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.96);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+        @keyframes HUD_DeckSlideUpAnimation {
+            from { opacity: 0; transform: translateY(35px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        @keyframes UI_SubtitlePop {
-            from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(15px) scale(0.93);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0) scale(1);
-            }
+        @keyframes UI_SubtitlePopUpEffect {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px) scale(0.92); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
         }
 
         /* ==========================================================================
-          SECTION 10: COMPLEX RESPONSIVE FORM FACTOR MEDIA QUERIES GRID
-          ==========================================================================
-        */
+          SUB-SECTION 1.5: MULTI-DISPLAY LAYOUT MEDIA RESPONSIVENESS GRID
+          ========================================================================== */
         @media (max-width: 768px) {
             .dashboard {
-                top: 15px;
-                left: 15px;
-                padding: 12px 18px;
-                border-radius: 16px;
-                font-size: 11px;
+                top: 20px;
+                left: 20px;
+                padding: 14px 22px;
+                border-radius: 18px;
+                font-size: 12px;
             }
             
             .status-dot {
-                width: 8px;
-                height: 8px;
-                margin-right: 8px;
+                width: 9px;
+                height: 9px;
+                margin-right: 10px;
             }
 
-            .status-label {
-                font-size: 11px;
-            }
-
-            .meta-info {
-                font-size: 10px;
-                margin-top: 3px;
-            }
-
-            .ui-container {
-                bottom: 25px;
-                padding: 0 15px;
-                gap: 10px;
-            }
+            .status-label { font-size: 12px; }
+            .meta-info { font-size: 11px; margin-top: 4px; }
+            .ui-container { bottom: 30px; padding: 0 20px; gap: 12px; }
 
             .input-box {
-                height: 54px;
-                padding: 0 20px;
-                border-radius: 27px;
+                height: 58px;
+                padding: 0 24px;
+                border-radius: 29px;
             }
 
-            input {
-                font-size: 15px;
-            }
-
-            .control-btn {
-                width: 54px;
-                height: 54px;
-                font-size: 18px;
-            }
-
-            #subtitle-box {
-                bottom: 100px;
-                font-size: 14px;
-                padding: 12px 22px;
-                border-radius: 18px;
-            }
+            input { font-size: 16px; }
+            .control-btn { width: 58px; height: 58px; font-size: 20px; }
+            #subtitle-box { bottom: 110px; font-size: 15px; padding: 14px 26px; border-radius: 20px; }
         }
 
         @media (max-width: 480px) {
-            .dashboard {
-                max-width: calc(100% - 30px);
-            }
-            .input-box {
-                border-radius: 25px;
-            }
+            .dashboard { max-width: calc(100% - 40px); }
+            .input-box { border-radius: 26px; padding: 0 18px; }
+            input { font-size: 15px; }
         }
     </style>
 
@@ -543,76 +488,107 @@
 </head>
 <body>
 
+    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop" id="image-bg" alt="Cyber Reality Grid Layout">
+    <div class="cyber-grid-overlay"></div>
+
+    <div class="dashboard">
+        <div class="status-container">
+            <span class="status-dot" id="dot"></span> 
+            <span>सिस्टम कोर: <span id="mood-txt" style="color:var(--neon-cyan); font-weight:700;">जेमिनी nv1 लाइव डायरेक्ट ⚡</span></span>
+        </div>
+        <div class="meta-info">कनेक्शन चैनल: <span id="key-status" class="meta-value">Core-1 Safe Matrix</span></div>
+    </div>
+
+    <div id="loader">
+        <div class="loader-spinner-box">
+            <div class="loader-spinner"></div>
+            <div class="loader-spinner-inner"></div>
+        </div>
+        <div class="loader-text">प्रिया का न्यूरल माइंड लोड हो रहा है</div>
+        <div class="loader-subtext">Optimizing Render Pipelines & Calibrating Depth Meshes...</div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <div id="subtitle-box">प्रिया बोल रही है...</div>
+
+    <div class="ui-container">
+        <button class="control-btn mic-btn" id="micBtn">🎤</button>
+        <div class="input-box">
+            <input type="text" id="userInput" placeholder="प्रिया से कुछ भी पूछें, सीधे लाइव जवाब आएगा..." autocomplete="off" spellcheck="false"/>
+        </div>
+        <button class="control-btn send-btn" id="sendBtn">➔</button>
+    </div>
+
     <script>
         /*
           ------------------------------------------------------------------
-          A. APPLICATION GLOBAL STATE VARIABLES MONITORING DECK
+          A. CORE SYSTEM VARIABLE STORAGE & REPOSITORY DATA GRIDS
           ------------------------------------------------------------------
         */
-        const SECURITY_CREDENTIAL_MATRIX = [
+        const HARDCODED_SECURE_API_KEYS_VAULT = [
             "AIzaSyBgyADY-6VFaLefYi8PaGak_L8kpfpGDA0",
             "AIzaSyBSaw3teN0aoDb2qdzuYktqUZ08sUOIv5o",
             "AIzaSyA5W8VWVMSltHGU6vvVlLaxAo3H0h0H1ig"
         ]; 
         
-        let matrixKeyIndex = 0;
-        const TARGET_GLTF_ASSET_URI = "https://raw.githubusercontent.com/jessearmy572-hub/naman/main/model.glb"; 
+        let runtimeActiveKeyPointerIndex = 0;
+        const REMOTE_GLTF_MODEL_BINARY_URL = "https://raw.githubusercontent.com/jessearmy572-hub/naman/main/model.glb"; 
 
-        // Structural 3D Interface Scene Variable Graph Hooks
-        let globalThreeScene = null;
-        let globalPerspectiveCamera = null;
-        let globalWebGLRenderer = null;
-        let globalOrbitControls = null;
-        let globalAnimationMixer = null;
-        let appClockReference = null;
+        // Monolithic Object Architecture State Vectors Hooks
+        let engineThreeSceneObject = null;
+        let enginePerspectiveCameraObject = null;
+        let engineWebGLRendererObject = null;
+        let engineOrbitControlsObject = null;
+        let engineAnimationMixerObject = null;
+        let engineClockSystemReference = null;
         
-        // Skeletal Core Rigging Bone Track Elements
-        let targetPriya3DModel = null;
-        let skeletalBoneHeadNode = null;
-        let skeletalBoneNeckNode = null;
+        // Character Structural Rigging Joint Node Maps
+        let structuralPriyaModelObject = null;
+        let characterSkeletalHeadNodeBone = null;
+        let characterSkeletalNeckNodeBone = null;
         
-        // Morph Target Shape Vertex Arrays
-        let activeSkinnedMeshNodesArray = []; 
-        let globalAnimationClipsArray = []; 
-        let activePlayingActionState = null;  
+        // Morph Target Shape Arrays Configuration Hooks
+        let activelyTrackedSkinnedMeshInstancesArray = []; 
+        let globalLoadedAnimationClipsStorageArray = []; 
+        let activelyRunningAnimationActionObject = null;  
         
-        // Audio Engine Signal Processing Channels
-        let systemVoiceStateActive = false;
-        let systemListeningStateActive = false;
+        // App Multimodal Interface Signal State Fields
+        let applicationVoiceOutputStateActive = false;
+        let applicationSpeechRecognitionListeningActive = false;
         
-        // Real-Time Mouse Position Vector Coordinates
-        let functionalMouseVectorX = 0;
-        let functionalMouseVectorY = 0;
-        let dynamicTargetVectorX = 0;
-        let dynamicTargetVectorY = 0;
+        // Mathematical Coordinates Vector Tracking Data Registers
+        let trackingInterpolatedMouseX = 0;
+        let trackingInterpolatedMouseY = 0;
+        let realTimeCalculatedTargetMouseX = 0;
+        let realTimeCalculatedTargetMouseY = 0;
         
-        // Complex Frequency Analysis Buffers
-        let globalNativeAudioContext = null;
-        let globalAudioAnalyserNode = null;
-        let dataFrequencyArrayBuffer = null;
-        let computationalMouthVolumeValue = 0;
+        // Advanced Frequency Array Analysis Structures
+        let structuralNativeAudioContext = null;
+        let structuralAudioAnalyserNode = null;
+        let structuralFrequencyBufferArray = null;
+        let internalMouthVolumeScalarValue = 0;
 
-        // Native System Web Speech Engine Interface Hooks
-        const NativeSpeechRecognitionInterface = window.SpeechRecognition || window.webkitSpeechRecognition;
-        let speechRecognitionProcessorInstance = null;
+        // Native Browser Interface Speech Traversal Hook Configuration
+        const NativeSystemSpeechRecognitionInterface = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let dynamicSpeechRecognitionProcessorInstance = null;
 
-        // Setup Speech Synthesizer Defaults Block
-        if (NativeSpeechRecognitionInterface) {
-            speechRecognitionProcessorInstance = new NativeSpeechRecognitionInterface();
-            speechRecognitionProcessorInstance.continuous = false;
-            speechRecognitionProcessorInstance.lang = 'hi-IN';
-            speechRecognitionProcessorInstance.interimResults = false;
-            speechRecognitionProcessorInstance.maxAlternatives = 1;
+        if (NativeSystemSpeechRecognitionInterface) {
+            dynamicSpeechRecognitionProcessorInstance = new NativeSystemSpeechRecognitionInterface();
+            dynamicSpeechRecognitionProcessorInstance.continuous = false;
+            dynamicSpeechRecognitionProcessorInstance.lang = 'hi-IN';
+            dynamicSpeechRecognitionProcessorInstance.interimResults = false;
+            dynamicSpeechRecognitionProcessorInstance.maxAlternatives = 1;
         }
 
         /*
           ------------------------------------------------------------------
-          B. DIRECT TELEMETRY AI GATEWAY MODULE (ZERO ROBOTICS DRIVER)
+          B. REAL-TIME API TUNNEL INTELLIGENT ROUTER (ZERO ROBOTICS SYSTEM)
           ------------------------------------------------------------------
         */
-        async function fetchAIResponseFromDirectTunnel(userQueryText) {
-            // Absolute System Directives String Structure Mapping
-            const functionalSystemInstructionPrompt = `
+        async function executeSecureAICoreRequestTunnel(userPromptMessageString) {
+            // Absolute System Directives String Alignment Setup Mapping
+            const zeroRoboticsCorePromptDirective = `
             Zero Robotics Rule Matrix Implementation Checklist:
             1. SECURITY DIRECTIVE: Under no circumstances whatsoever are you allowed to declare "I am an AI", "As a language model developed by Google", or mention code blocks or backend constraints. You are Priya, a sweet, deeply affectionate and lively human girl who inherently lives within this digital interface.
             2. DYNAMIC EMOTIONAL TRACKING: Read user input emotional vectors immediately. If the user expresses anger, lower your voice state, become slightly defensive, calm, and grounded. If user expresses joy, elevate your conversational energy to maximum levels, sounding highly enthusiastic and bubbly.
@@ -622,399 +598,403 @@
             6. CRITICAL BREVITY SYSTEM: Keep responses short and snappy. Absolute limit of 2 to 3 fluid sentences maximum per response turn. Converse exclusively in modern sweet Hinglish. Do not render markdown tags, asterisks (*), hashtags (#), or dashes (-).
             `;
 
-            let extractedActiveKeyString = SECURITY_CREDENTIAL_MATRIX[matrixKeyIndex];
-            const computationalTargetEndpointUri = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${extractedActiveKeyString}`;
+            let processingActiveKeyString = HARDCODED_SECURE_API_KEYS_VAULT[runtimeActiveKeyPointerIndex];
+            const primaryGatewayNetworkEndpointUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${processingActiveKeyString}`;
 
             try {
-                const networkFetchResponse = await fetch(computationalTargetEndpointUri, {
+                const networkRequestPromiseResponse = await fetch(primaryGatewayNetworkEndpointUrl, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         contents: [
-                            { role: "user", parts: [{ text: `System Core Instruction Directives:\n${functionalSystemInstructionPrompt}\n\nUser Message Token: ${userQueryText}` }] }
+                            { role: "user", parts: [{ text: `System Baseline Framework Directives:\n${zeroRoboticsCorePromptDirective}\n\nUser Message Target Query: ${userPromptMessageString}` }] }
                         ],
                         generationConfig: { 
                             maxOutputTokens: 160, 
-                            temperature: 0.78,
+                            temperature: 0.8,
                             topP: 0.95
                         }
                     })
                 });
 
-                if (!networkFetchResponse.ok) {
-                    throw new Error("Active credential index response fault code returned");
+                if (!networkRequestPromiseResponse.ok) {
+                    throw new Error("Active credential array verification or rate fault flagged");
                 }
 
-                const decodedJsonPayload = await networkFetchResponse.json();
-                let structuralRawResponseText = decodedJsonPayload.candidates[0].content.parts[0].text;
+                const operationalDecodedJsonPayload = await networkRequestPromiseResponse.json();
+                let operationalRawReplyPayloadString = operationalDecodedJsonPayload.candidates[0].content.parts[0].text;
                 
-                // Strip Out Character Artifact Symbols
-                return structuralRawResponseText.replace(/[*#`_\-]/g, '').trim();
+                // Regular Expression Symbol Character Content Strip Filter
+                return operationalRawReplyPayloadString.replace(/[*#`_\-]/g, '').trim();
 
-            } catch (endpointRoutingError) {
-                console.warn(`Credential index stream-${matrixKeyIndex + 1} locked out. Shifting core channels...`, endpointRoutingError);
+            } catch (networkRouterFaultException) {
+                console.warn(`Matrix security channel-${runtimeActiveKeyPointerIndex + 1} faulted. Shifting core indices...`, networkRouterFaultException);
                 
-                // Round Robin Key Rotator Loop Engine
-                matrixKeyIndex = (matrixKeyIndex + 1) % SECURITY_CREDENTIAL_MATRIX.length;
-                document.getElementById('key-status').innerText = `Core-${matrixKeyIndex + 1} Matrix`;
+                // Circular Array Index Pointer Advanced Shifter
+                runtimeActiveKeyPointerIndex = (runtimeActiveKeyPointerIndex + 1) % HARDCODED_SECURE_API_KEYS_VAULT.length;
+                document.getElementById('key-status').innerText = `Core-${runtimeActiveKeyPointerIndex + 1} Matrix`;
                 
-                // Infinite Loop Circuit Breaker Gate
-                if (matrixKeyIndex !== 0) {
-                    return await fetchAIResponseFromDirectTunnel(userQueryText);
+                if (runtimeActiveKeyPointerIndex !== 0) {
+                    return await executeSecureAICoreRequestTunnel(userPromptMessageString); // Recursive Fallback Jump Loop
                 }
                 
+                // Hard Structural Absolute Error Recovery String Stream Output
                 return "[Halka sa udas hote hue aur sarr jhatakte hue] Hmm... Lagta hai aaj network thoda jyada nakhre dikha raha per main yahi hun sweety.";
             }
         }
 
         /*
           ------------------------------------------------------------------
-          C. EXPANDED THREE.JS REAL-TIME COMPUTER GRAPHICS IMPLEMENTATION
+          C. EXPANDED STABLE THREE.JS GRAPHICS PROCESSING STAGE ENGINE
           ------------------------------------------------------------------
         */
-        function initializeThreeGraphicsPipeline() {
-            const DOMRenderCanvasContainer = document.getElementById('canvas-container');
-            appClockReference = new THREE.Clock();
-            globalThreeScene = new THREE.Scene();
+        function initializeThreeEngineGraphicsContext() {
+            const TARGET_DOM_CANVAS_VIEWPORT_CONTAINER = document.getElementById('canvas-container');
+            engineClockSystemReference = new THREE.Clock();
+            engineThreeSceneObject = new THREE.Scene();
 
-            // Setup GPU Accelerated Base Renderer Context
-            globalWebGLRenderer = new THREE.WebGLRenderer({ 
+            // Hardware Accelerated WebGL Render Context Framework Set Build (Fixed Background Transparency bug)
+            engineWebGLRendererObject = new THREE.WebGLRenderer({ 
                 antialias: true, 
                 alpha: true, 
                 powerPreference: "high-performance",
                 preserveDrawingBuffer: false
             });
-            globalWebGLRenderer.setSize(window.innerWidth, window.innerHeight);
-            globalWebGLRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            globalWebGLRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-            globalWebGLRenderer.toneMappingExposure = 1.15;
-            globalWebGLRenderer.outputEncoding = THREE.sRGBEncoding;
-            DOMRenderCanvasContainer.appendChild(globalWebGLRenderer.domElement);
+            engineWebGLRendererObject.setSize(window.innerWidth, window.innerHeight);
+            engineWebGLRendererObject.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            engineWebGLRendererObject.toneMapping = THREE.ACESFilmicToneMapping;
+            engineWebGLRendererObject.toneMappingExposure = 1.2;
+            engineWebGLRendererObject.outputEncoding = THREE.sRGBEncoding;
+            
+            // Critical Patch: Explicitly set background layout clearing color flags to zero transparency
+            engineWebGLRendererObject.setClearColor(0x000000, 0); 
+            TARGET_DOM_CANVAS_VIEWPORT_CONTAINER.appendChild(engineWebGLRendererObject.domElement);
 
-            // High Precision Camera Node Target Positioning Calculations
-            globalPerspectiveCamera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
-            globalPerspectiveCamera.position.set(0, 0.20, 3.25); 
+            // High Precision Camera Perspective Matrix Viewport Build (Depth alignment fix)
+            enginePerspectiveCameraObject = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
+            enginePerspectiveCameraObject.position.set(0, 0.20, 3.1); 
 
-            // Orbit Interactivity Parameters Engine
-            globalOrbitControls = new THREE.OrbitControls(globalPerspectiveCamera, globalWebGLRenderer.domElement);
-            globalOrbitControls.enableZoom = true;
-            globalOrbitControls.enablePan = false;
-            globalOrbitControls.minDistance = 1.8;
-            globalOrbitControls.maxDistance = 4.8;
-            globalOrbitControls.target.set(0, 0.14, 0);
-            globalOrbitControls.enableDamping = true;
-            globalOrbitControls.dampingFactor = 0.055;
+            // Orbit Interactivity Control Matrix Initial Setup Layer
+            engineOrbitControlsObject = new THREE.OrbitControls(enginePerspectiveCameraObject, engineWebGLRendererObject.domElement);
+            engineOrbitControlsObject.enableZoom = true;
+            engineOrbitControlsObject.enablePan = false;
+            engineOrbitControlsObject.minDistance = 1.5;
+            engineOrbitControlsObject.maxDistance = 4.5;
+            engineOrbitControlsObject.target.set(0, 0.12, 0); // Precise centering matrix target lock
+            engineOrbitControlsObject.enableDamping = true;
+            engineOrbitControlsObject.dampingFactor = 0.05;
 
-            // Expanded Realistic Ambient Lighting Matrices
-            const lightingHemisphereNode = new THREE.HemisphereLight(0xffffff, 0x444444, 1.45);
-            globalThreeScene.add(lightingHemisphereNode);
+            // Expanded Balanced Lighting Setup Array Map
+            const environmentHemisphereLightingNode = new THREE.HemisphereLight(0xffffff, 0x444444, 1.5);
+            engineThreeSceneObject.add(environmentHemisphereLightingNode);
 
-            const lightingKeyDirectionalNode = new THREE.DirectionalLight(0xfff6ed, 1.75);
-            lightingKeyDirectionalNode.position.set(2.5, 4.5, 5.5);
-            globalThreeScene.add(lightingKeyDirectionalNode);
+            const highIntensityKeyDirectionalLightingNode = new THREE.DirectionalLight(0xfff7ef, 1.8);
+            highIntensityKeyDirectionalLightingNode.position.set(2.5, 4.5, 5.0);
+            engineThreeSceneObject.add(highIntensityKeyDirectionalLightingNode);
 
-            const lightingRimFillNode = new THREE.DirectionalLight(0x00bfff, 0.65);
-            lightingRimFillNode.position.set(-3.5, -2.5, -2.5);
-            globalThreeScene.add(lightingRimFillNode);
+            const fillBounceRimLightingNode = new THREE.DirectionalLight(0x00bfff, 0.7);
+            fillBounceRimLightingNode.position.set(-3.0, -2.0, -2.0);
+            engineThreeSceneObject.add(fillBounceRimLightingNode);
 
-            // Asset Pipeline GLTF Loader Context Block
-            const proceduralGLTFLoaderInstance = new THREE.GLTFLoader();
-            proceduralGLTFLoaderInstance.load(TARGET_GLTF_ASSET_URI, (gltfAssetPayload) => {
+            // Asset Loader Context Framework Pipeline Execution Block
+            const assetPipelineGLTFLoaderEngineInstance = new THREE.GLTFLoader();
+            assetPipelineGLTFLoaderEngineInstance.load(REMOTE_GLTF_MODEL_BINARY_URL, (processedGltfAssetBundle) => {
                 
-                // Smooth Fade Out Loading Curtain Protocol
-                const UI_LoaderScreenElement = document.getElementById('loader');
-                UI_LoaderScreenElement.style.opacity = 0;
+                // Active Loader Mask Curtain Dissolve Script
+                const DOMUI_LoaderScreenContainerElement = document.getElementById('loader');
+                DOMUI_LoaderScreenContainerElement.style.opacity = 0;
                 setTimeout(() => { 
-                    UI_LoaderScreenElement.style.display = 'none'; 
+                    DOMUI_LoaderScreenContainerElement.style.display = 'none'; 
                 }, 600);
 
-                targetPriya3DModel = gltfAssetPayload.scene;
-                globalThreeScene.add(targetPriya3DModel);
-                computeResponsiveScaleLayout();
+                structuralPriyaModelObject = processedGltfAssetBundle.scene;
+                engineThreeSceneObject.add(structuralPriyaModelObject);
+                executeDynamicResponsiveFormFactorLayoutScaling();
 
-                // Dynamic Skeletal Animation Matrix Track Mapping
-                globalAnimationClipsArray = gltfAssetPayload.animations;
-                globalAnimationMixer = new THREE.AnimationMixer(targetPriya3DModel);
+                // Dynamic Animation Timeline Vector Mapping Rig
+                globalLoadedAnimationClipsStorageArray = processedGltfAssetBundle.animations;
+                engineAnimationMixerObject = new THREE.AnimationMixer(structuralPriyaModelObject);
                 
-                if (globalAnimationClipsArray && globalAnimationClipsArray.length > 0) {
-                    activePlayingActionState = globalAnimationMixer.clipAction(globalAnimationClipsArray[0]);
-                    activePlayingActionState.setEffectiveWeight(1.0);
-                    activePlayingActionState.play(); 
+                if (globalLoadedAnimationClipsStorageArray && globalLoadedAnimationClipsStorageArray.length > 0) {
+                    activelyRunningAnimationActionObject = engineAnimationMixerObject.clipAction(globalLoadedAnimationClipsStorageArray[0]);
+                    activelyRunningAnimationActionObject.setEffectiveWeight(1.0);
+                    activelyRunningAnimationActionObject.play(); 
                 }
 
-                // Recursively Parse Character Skeletal Rig Tree Node Branches
-                targetPriya3DModel.traverse((graphNode) => {
-                    if (graphNode.isBone) {
-                        const validatedBoneNameString = graphNode.name.toLowerCase();
-                        if (validatedBoneNameString.includes('head')) {
-                            skeletalBoneHeadNode = graphNode;
+                // Deep Traversal Skeletal Mapping Tree Parsing Block
+                structuralPriyaModelObject.traverse((evaluatedRigNode) => {
+                    if (evaluatedRigNode.isBone) {
+                        const compiledBoneNameStringValue = evaluatedRigNode.name.toLowerCase();
+                        if (compiledBoneNameStringValue.includes('head')) {
+                            characterSkeletalHeadNodeBone = evaluatedRigNode;
                         }
-                        if (validatedBoneNameString.includes('neck')) {
-                            skeletalBoneNeckNode = graphNode;
+                        if (compiledBoneNameStringValue.includes('neck')) {
+                            characterSkeletalNeckNodeBone = evaluatedRigNode;
                         }
                     }
-                    if (graphNode.morphTargetDictionary) {
-                        activeSkinnedMeshNodesArray.push(graphNode);
+                    if (evaluatedRigNode.morphTargetDictionary) {
+                        activelyTrackedSkinnedMeshInstancesArray.push(evaluatedRigNode);
                     }
                 });
-            }, undefined, (loadRuntimeError) => {
-                console.error("Asset stream system terminal fault:", loadRuntimeError);
+            }, undefined, (gltfStreamingRuntimeFaultException) => {
+                console.error("Asset loader parsing engine terminated unexpectedly:", gltfStreamingRuntimeFaultException);
                 document.getElementById('loader').style.display = 'none';
             });
 
-            // Register Viewport Window Layout Event Interceptors
-            window.addEventListener('resize', onViewportResizeGridExecution);
-            window.addEventListener('mousemove', onMouseCoordinateVectorMoveTracking);
+            // Active Viewport Sizing Window Event Registries
+            window.addEventListener('resize', onDisplayGridResizeLayoutCorrectionTrigger);
+            window.addEventListener('mousemove', onMouseCoordinateTrackingVectorShift);
             
-            // Native Responsive Touch Event Translators
-            window.addEventListener('touchmove', (nativeTouchEvent) => {
-                if(nativeTouchEvent.touches.length > 0) {
-                    dynamicTargetVectorX = (nativeTouchEvent.touches[0].clientX / window.innerWidth) * 2 - 1;
-                    dynamicTargetVectorY = -(nativeTouchEvent.touches[0].clientY / window.innerHeight) * 2 + 1;
+            // Native Responsive Touch Vector Interceptors Layout Mapping
+            window.addEventListener('touchmove', (nativeTouchEventPayloadData) => {
+                if(nativeTouchEventPayloadData.touches.length > 0) {
+                    realTimeCalculatedTargetMouseX = (nativeTouchEventPayloadData.touches[0].clientX / window.innerWidth) * 2 - 1;
+                    realTimeCalculatedTargetMouseY = -(nativeTouchEventPayloadData.touches[0].clientY / window.innerHeight) * 2 + 1;
                 }
             }, { passive: true });
         }
 
-        // Compute Structural Scale Factors Matching Active Display Aspect Ratios
-        function computeResponsiveScaleLayout() {
-            if (!targetPriya3DModel) return;
-            const operationalMobileLayoutFlag = window.innerWidth < 768;
+        // Mathematical Scaling Factor Array Corrections Layer Matching Display Aspect Metrics
+        function executeDynamicResponsiveFormFactorLayoutScaling() {
+            if (!structuralPriyaModelObject) return;
+            const mobileDisplayFormFactorDetectedFlag = window.innerWidth < 768;
             
-            // Compute Scalar Vectors Mathematically
-            let dynamicScaleScalarFactor = operationalMobileLayoutFlag ? window.innerWidth / 475 : window.innerWidth / 1080;
-            targetPriya3DModel.scale.setScalar(dynamicScaleScalarFactor);
+            // Compute Scalar Bounds Ratios
+            let optimizedLayoutScalarFactor = mobileDisplayFormFactorDetectedFlag ? window.innerWidth / 470 : window.innerWidth / 1060;
+            structuralPriyaModelObject.scale.setScalar(optimizedLayoutScalarFactor);
             
-            // Ground Y-Offset Balancing
-            targetPriya3DModel.position.y = operationalMobileLayoutFlag ? -0.86 : -1.16;
-            targetPriya3DModel.position.x = 0;
-            targetPriya3DModel.position.z = 0;
+            // Balanced Position Y Depth Matrix Offsets (Fixed Black Screen Model Clamping Bug)
+            structuralPriyaModelObject.position.y = mobileDisplayFormFactorDetectedFlag ? -0.84 : -1.14;
+            structuralPriyaModelObject.position.x = 0;
+            structuralPriyaModelObject.position.z = 0;
         }
 
-        function onMouseCoordinateVectorMoveTracking(nativeMouseEvent) {
-            dynamicTargetVectorX = (nativeMouseEvent.clientX / window.innerWidth) * 2 - 1;
-            dynamicTargetVectorY = -(nativeMouseEvent.clientX / window.innerHeight) * 2 + 1;
+        function onMouseCoordinateTrackingVectorShift(nativeMouseDataEvent) {
+            realTimeCalculatedTargetMouseX = (nativeMouseDataEvent.clientX / window.innerWidth) * 2 - 1;
+            realTimeCalculatedTargetMouseY = -(nativeMouseDataEvent.clientY / window.innerHeight) * 2 + 1;
         }
 
-        function onViewportResizeGridExecution() {
-            globalPerspectiveCamera.aspect = window.innerWidth / window.innerHeight;
-            globalPerspectiveCamera.updateProjectionMatrix();
-            globalWebGLRenderer.setSize(window.innerWidth, window.innerHeight);
-            computeResponsiveScaleLayout();
+        function onDisplayGridResizeLayoutCorrectionTrigger() {
+            enginePerspectiveCameraObject.aspect = window.innerWidth / window.innerHeight;
+            enginePerspectiveCameraObject.updateProjectionMatrix();
+            engineWebGLRendererObject.setSize(window.innerWidth, window.innerHeight);
+            executeDynamicResponsiveFormFactorLayoutScaling();
         }
 
         /*
           ------------------------------------------------------------------
-          D. NATIVE SPEECH CAPTURING & AUDIO FREQUENCY COUPLING PROTOCOLS
+          D. VOCAL SYNTHESIS HARDWARE HOOKS & SPECTRAL SIGNAL COUPLERS
           ------------------------------------------------------------------
         */
-        function enforceAudioSpectrumContextInitialization() {
-            if (globalNativeAudioContext) return;
+        function forceAudioSignalAnalysisContextCalibration() {
+            if (structuralNativeAudioContext) return;
             try {
-                globalNativeAudioContext = new (window.AudioContext || window.webkitAudioContext)();
-                globalAudioAnalyserNode = globalNativeAudioContext.createAnalyser();
-                globalAudioAnalyserNode.fftSize = 128;
-                dataFrequencyArrayBuffer = new Uint8Array(globalAudioAnalyserNode.frequencyBinCount);
-            } catch(audioGraphSetupFault) {
-                console.error("Hardware audio analyzer module initialization failed:", audioGraphSetupFault);
+                structuralNativeAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+                structuralAudioAnalyserNode = structuralNativeAudioContext.createAnalyser();
+                structuralAudioAnalyserNode.fftSize = 128;
+                structuralFrequencyBufferArray = new Uint8Array(structuralAudioAnalyserNode.frequencyBinCount);
+            } catch(audioGraphInitializationException) {
+                console.error("Native Audio Device Node Parsing Framework build crashed:", audioGraphInitializationException);
             }
         }
 
-        function dispatchNeuralVocalSynthesisTrack(aiOutputStringPayload) {
+        function routeOutputStringToNeuralVocalSynthesizer(compiledAIPayloadResponseText) {
             if (!window.speechSynthesis) return;
-            enforceAudioSpectrumContextInitialization();
+            forceAudioSignalAnalysisContextCalibration();
             
-            // Re-verify Sound Card Stream Context Availability State
-            if(globalNativeAudioContext && globalNativeAudioContext.state === 'suspended') {
-                globalNativeAudioContext.resume();
+            // Re-assert Sound Card Audio Loop Context Live State Check
+            if(structuralNativeAudioContext && structuralNativeAudioContext.state === 'suspended') {
+                structuralNativeAudioContext.resume();
             }
             window.speechSynthesis.cancel();
             
-            // Strip Action Tags Out from Text-To-Speech Track Data Buffer
-            let filteredCleanSpeechStreamText = aiOutputStringPayload.replace(/\[.*?\]/g, '').trim();
+            // Extract Action Expressions from Active Text Payload Processing Stream
+            let cleanFilteredVocalSpeechTextStream = compiledAIPayloadResponseText.replace(/\[.*?\]/g, '').trim();
             
-            const DOMSubtitleBoxDisplayOverlay = document.getElementById('subtitle-box');
-            DOMSubtitleBoxDisplayOverlay.innerText = aiOutputStringPayload; 
-            DOMSubtitleBoxDisplayOverlay.style.display = 'block';
+            const DOMSubtitleBoxDisplayOverlayElement = document.getElementById('subtitle-box');
+            DOMSubtitleBoxDisplayOverlayElement.innerText = compiledAIPayloadResponseText; 
+            DOMSubtitleBoxDisplayOverlayElement.style.display = 'block';
 
-            let processingSpeechUtteranceObject = new SpeechSynthesisUtterance(filteredCleanSpeechStreamText);
-            processingSpeechUtteranceObject.lang = 'hi-IN';
-            processingSpeechUtteranceObject.rate = 1.02; 
-            processingSpeechUtteranceObject.pitch = 1.08;
+            let structuralSpeechUtteranceObjectInstance = new SpeechSynthesisUtterance(cleanFilteredVocalSpeechTextStream);
+            structuralSpeechUtteranceObjectInstance.lang = 'hi-IN';
+            structuralSpeechUtteranceObjectInstance.rate = 1.01; 
+            structuralSpeechUtteranceObjectInstance.pitch = 1.09;
 
-            processingSpeechUtteranceObject.onstart = () => { 
-                systemVoiceStateActive = true; 
+            structuralSpeechUtteranceObjectInstance.onstart = () => { 
+                applicationVoiceOutputStateActive = true; 
             };
             
-            processingSpeechUtteranceObject.onend = () => { 
-                systemVoiceStateActive = false; 
-                computationalMouthVolumeValue = 0; 
-                DOMSubtitleBoxDisplayOverlay.style.display = 'none';
+            structuralSpeechUtteranceObjectInstance.onend = () => { 
+                applicationVoiceOutputStateActive = false; 
+                internalMouthVolumeScalarValue = 0; 
+                DOMSubtitleBoxDisplayOverlayElement.style.display = 'none';
             };
             
-            processingSpeechUtteranceObject.onerror = (utteranceRuntimeFault) => {
-                console.error("Vocal track processor context failure:", utteranceRuntimeFault);
-                systemVoiceStateActive = false;
-                DOMSubtitleBoxDisplayOverlay.style.display = 'none';
+            structuralSpeechUtteranceObjectInstance.onerror = (utteranceRuntimeChannelFaultException) => {
+                console.error("System Speech Synthesizer pipeline driver encountered a fault:", utteranceRuntimeChannelFaultException);
+                applicationVoiceOutputStateActive = false;
+                DOMSubtitleBoxDisplayOverlayElement.style.display = 'none';
             };
 
-            window.speechSynthesis.speak(processingSpeechUtteranceObject);
+            window.speechSynthesis.speak(structuralSpeechUtteranceObjectInstance);
         }
 
         /*
           ------------------------------------------------------------------
-          E. HIGH FREQUENCY DEVENT LOOP & VERTEX RE-SHAPER ENGINES
+          E. CONTINUOUS RENDER FRAME DRIVER ROUTINES & VERTEX DISPLACERS
           ------------------------------------------------------------------
         */
-        function executionGraphMainRenderLoop() {
-            requestAnimationFrame(executionGraphMainRenderLoop);
+        function masterApplicationGraphicsRenderFrameLoop() {
+            requestAnimationFrame(masterApplicationGraphicsRenderFrameLoop);
             
-            const highPrecisionDeltaTimeValue = appClockReference.getDelta();
-            const continuousAbsoluteElapsedTimeValue = appClockReference.getElapsedTime();
+            const processDeltaTimelineIncrementValue = engineClockSystemReference.getDelta();
+            const processContinuousAbsoluteRunTimeValue = engineClockSystemReference.getElapsedTime();
 
-            if (globalAnimationMixer) {
-                globalAnimationMixer.update(highPrecisionDeltaTimeValue);
+            if (engineAnimationMixerObject) {
+                engineAnimationMixerObject.update(processDeltaTimelineIncrementValue);
             }
-            if (globalOrbitControls) {
-                globalOrbitControls.update();
-            }
-
-            // High Precision Fast Fourier Transform Audio Real-Time Vector Decoder
-            if (systemVoiceStateActive && globalAudioAnalyserNode) {
-                globalAudioAnalyserNode.getByteFrequencyData(dataFrequencyArrayBuffer);
-                let proceduralFrequencySumAccumulator = 0;
-                for (let channelIdx = 0; channelIdx < dataFrequencyArrayBuffer.length; channelIdx++) {
-                    proceduralFrequencySumAccumulator += dataFrequencyArrayBuffer[channelIdx];
-                }
-                computationalMouthVolumeValue = proceduralFrequencySumAccumulator / dataFrequencyArrayBuffer.length;
+            if (engineOrbitControlsObject) {
+                engineOrbitControlsObject.update();
             }
 
-            // Real-Time Linear Interpolation & Bone Constraint Calculators Loop
-            if (targetPriya3DModel) {
-                // Smooth Lerp Calculations Matching Tracking Vector Coordinates
-                functionalMouseVectorX = THREE.MathUtils.lerp(functionalMouseVectorX, dynamicTargetVectorX, 0.055);
-                functionalMouseVectorY = THREE.MathUtils.lerp(functionalMouseVectorY, dynamicTargetVectorY, 0.055);
-
-                if (skeletalBoneHeadNode) {
-                    skeletalBoneHeadNode.rotation.y = functionalMouseVectorX * 0.26; 
-                    skeletalBoneHeadNode.rotation.x = -functionalMouseVectorY * 0.15; 
+            // Real-Time Audio Signal Spectral Decoupler Using Discrete Fourier Calculation Fast Arrays
+            if (applicationVoiceOutputStateActive && structuralAudioAnalyserNode) {
+                structuralAudioAnalyserNode.getByteFrequencyData(structuralFrequencyBufferArray);
+                let numericalFrequencySumAccumulatorValue = 0;
+                for (let trackIdx = 0; trackIdx < structuralFrequencyBufferArray.length; trackIdx++) {
+                    numericalFrequencySumAccumulatorValue += structuralFrequencyBufferArray[trackIdx];
                 }
-                if (skeletalBoneNeckNode) {
-                    skeletalBoneNeckNode.rotation.y = functionalMouseVectorX * 0.11;
+                internalMouthVolumeScalarValue = numericalFrequencySumAccumulatorValue / structuralFrequencyBufferArray.length;
+            }
+
+            // Real-Time Linear Interpolation Tracking Matrix Loop Configurations
+            if (structuralPriyaModelObject) {
+                // Tracking Speed Deceleration Damping Calculation Vectors (Lerp Engine Mapping Grid)
+                trackingInterpolatedMouseX = THREE.MathUtils.lerp(trackingInterpolatedMouseX, realTimeCalculatedTargetMouseX, 0.05);
+                trackingInterpolatedMouseY = THREE.MathUtils.lerp(trackingInterpolatedMouseY, realTimeCalculatedTargetMouseY, 0.05);
+
+                if (characterSkeletalHeadNodeBone) {
+                    characterSkeletalHeadNodeBone.rotation.y = trackingInterpolatedMouseX * 0.25; 
+                    characterSkeletalHeadNodeBone.rotation.x = -trackingInterpolatedMouseY * 0.14; 
+                }
+                if (characterSkeletalNeckNodeBone) {
+                    characterSkeletalNeckNodeBone.rotation.y = trackingInterpolatedMouseX * 0.10;
                 }
 
-                // Dynamic Sinusoidal Vertex Shape Transform Mapping Matrix Calculations
-                let targetedMouthOpeningMorphWeight = systemVoiceStateActive ? Math.min(computationalMouthVolumeValue / 7.2, 1.15) : 0;
-                let autoPeriodicBlinkingCycleWeight = (Math.sin(continuousAbsoluteElapsedTimeValue * 3.6) > 0.95) ? 1.0 : 0.0;
+                // Sinusoidal Spatial Distortion Vertex Re-shaper Weights Configuration Array Mapping
+                let currentFrameMouthOpeningMorphWeightValue = applicationVoiceOutputStateActive ? Math.min(internalMouthVolumeScalarValue / 7.0, 1.12) : 0;
+                let mathematicalBlinkingPeriodicIntervalWeightValue = (Math.sin(processContinuousAbsoluteRunTimeValue * 3.7) > 0.94) ? 1.0 : 0.0;
 
-                activeSkinnedMeshNodesArray.forEach(meshNodeReference => {
-                    const structuralMorphTargetDictionary = meshNodeReference.morphTargetDictionary;
-                    const activelyDeployedMorphInfluencesArray = meshNodeReference.morphTargetInfluences;
+                activelyTrackedSkinnedMeshInstancesArray.forEach(skinnedMeshNodeInstanceRef => {
+                    const activeMorphTargetMeshDictionaryMap = skinnedMeshNodeInstanceRef.morphTargetDictionary;
+                    const activeMorphInfluencesWeightTrackingArray = skinnedMeshNodeInstanceRef.morphTargetInfluences;
                     
-                    if (!structuralMorphTargetDictionary || !activelyDeployedMorphInfluencesArray) return;
+                    if (!activeMorphTargetMeshDictionaryMap || !activeMorphInfluencesWeightTrackingArray) return;
 
-                    // Dynamically Bind Jaw Opening Shapes Over Multi-Skeletal Layouts
-                    ['mouthOpen', 'jawOpen', 'Mouth_Open', 'vowel_a'].forEach(mouthShapeKeyString => {
-                        if (structuralMorphTargetDictionary[mouthShapeKeyString] !== undefined) {
-                            activelyDeployedMorphInfluencesArray[structuralMorphTargetDictionary[mouthShapeKeyString]] = THREE.MathUtils.lerp(activelyDeployedMorphInfluencesArray[structuralMorphTargetDictionary[mouthShapeKeyString]], targetedMouthOpeningMorphWeight, 0.48);
+                    // Map Vowel Open Morph Target Rig Node Parameters Over Active Submeshes Array
+                    ['mouthOpen', 'jawOpen', 'Mouth_Open', 'vowel_a'].forEach(mouthShapeKeyIdentifierString => {
+                        if (activeMorphTargetMeshDictionaryMap[mouthShapeKeyIdentifierString] !== undefined) {
+                            activeMorphInfluencesWeightTrackingArray[activeMorphTargetMeshDictionaryMap[mouthShapeKeyIdentifierString]] = THREE.MathUtils.lerp(activeMorphInfluencesWeightTrackingArray[activeMorphTargetMeshDictionaryMap[mouthShapeKeyIdentifierString]], currentFrameMouthOpeningMorphWeightValue, 0.45);
                         }
                     });
 
-                    // Dynamically Bind Dual Eye Blink System Morph Targets Shapes
-                    ['eyeBlinkLeft', 'eyeBlinkRight', 'blink', 'Blink'].forEach(eyeBlinkShapeKeyString => {
-                        if (structuralMorphTargetDictionary[eyeBlinkShapeKeyString] !== undefined) {
-                            activelyDeployedMorphInfluencesArray[structuralMorphTargetDictionary[eyeBlinkShapeKeyString]] = THREE.MathUtils.lerp(activelyDeployedMorphInfluencesArray[structuralMorphTargetDictionary[eyeBlinkShapeKeyString]], autoPeriodicBlinkingCycleWeight, 0.58);
+                    // Map Standard Automatic Eye Blinking Parameters Over Active Submeshes Array
+                    ['eyeBlinkLeft', 'eyeBlinkRight', 'blink', 'Blink'].forEach(eyeBlinkShapeKeyIdentifierString => {
+                        if (activeMorphTargetMeshDictionaryMap[eyeBlinkShapeKeyIdentifierString] !== undefined) {
+                            activeMorphInfluencesWeightTrackingArray[activeMorphTargetMeshDictionaryMap[eyeBlinkShapeKeyIdentifierString]] = THREE.MathUtils.lerp(activeMorphInfluencesWeightTrackingArray[activeMorphTargetMeshDictionaryMap[eyeBlinkShapeKeyIdentifierString]], mathematicalBlinkingPeriodicIntervalWeightValue, 0.55);
                         }
                     });
                 });
             }
 
-            globalWebGLRenderer.render(globalThreeScene, globalPerspectiveCamera);
+            // Execute Frame Push to Hardware Drawing Matrix Array Context
+            engineWebGLRendererObject.render(engineThreeSceneObject, enginePerspectiveCameraObject);
         }
 
         /*
           ------------------------------------------------------------------
-          F. REACTIVE ACTION PIPELINE & ELEMENT CONTROLLER EVENT REGISTRY
+          F. APP VIEW COMPONENT CONTROLLER INTERFACE REACTION HANDLERS DOCK
           ------------------------------------------------------------------
         */
-        const UIElementTextInputField = document.getElementById('userInput');
-        const UIElementSendActionButton = document.getElementById('sendBtn');
-        const UIElementMicActionButton = document.getElementById('micBtn');
+        const DOMUI_ElementTextInputBar = document.getElementById('userInput');
+        const DOMUI_ElementSendButtonTrigger = document.getElementById('sendBtn');
+        const DOMUI_ElementMicButtonTrigger = document.getElementById('micBtn');
 
-        async function processActiveInteractionEventCycle() {
-            const parsedCleanUserTextQuery = UIElementTextInputField.value.trim();
-            if (!parsedCleanUserTextQuery) return;
-            UIElementTextInputField.value = "";
+        async function triggerInteractionLifecycleExecutionCycle() {
+            const clearExtractedInputTextString = DOMUI_ElementTextInputBar.value.trim();
+            if (!clearExtractedInputTextString) return;
+            DOMUI_ElementTextInputBar.value = "";
             
             document.getElementById('mood-txt').innerText = "प्रिया सोच रही है... 🤔";
             
-            // Random Base Skeletal Blend Transition Actions Handler Trigger
-            if (globalAnimationMixer && globalAnimationClipsArray.length > 0) {
-                globalAnimationMixer.stopAllAction();
-                let operationalRandomClipsIndex = Math.floor(Math.random() * globalAnimationClipsArray.length);
-                let freshlyFiredAnimationAction = globalAnimationMixer.clipAction(globalAnimationClipsArray[operationalRandomClipsIndex]);
-                freshlyFiredAnimationAction.fadeIn(0.25).play();
+            // Random Skeletal Action Blending Pipeline Loop Handler Instantiation Grid
+            if (engineAnimationMixerObject && globalLoadedAnimationClipsStorageArray.length > 0) {
+                engineAnimationMixerObject.stopAllAction();
+                let operationalRandomClipsIndexFactor = Math.floor(Math.random() * globalLoadedAnimationClipsStorageArray.length);
+                let targetFiredAnimationActionObject = engineAnimationMixerObject.clipAction(globalLoadedAnimationClipsStorageArray[operationalRandomClipsIndexFactor]);
+                targetFiredAnimationActionObject.fadeIn(0.22).play();
             }
 
-            const computationReturnedTextPayload = await fetchAIResponseFromDirectTunnel(parsedCleanUserTextQuery);
+            const activeReturnedNetworkPayloadText = await executeSecureAICoreRequestTunnel(clearExtractedInputTextString);
             document.getElementById('mood-txt').innerText = "जेमिनी nv1 लाइव डायरेक्ट ⚡";
             
-            dispatchNeuralVocalSynthesisTrack(computationReturnedTextPayload);
+            routeOutputStringToNeuralVocalSynthesizer(activeReturnedNetworkPayloadText);
         }
 
-        // Native Speech Capturing Event Processor Mapping Block
-        if (speechRecognitionProcessorInstance) {
-            speechRecognitionProcessorInstance.onstart = () => {
-                systemListeningStateActive = true;
-                UIElementMicActionButton.classList.add('listening');
-                UIElementTextInputField.placeholder = "सुन रही हूँ sweetie, बोलिए...";
+        // Native Automated Speech Capturing API Interceptor Block Setup Mapping
+        if (dynamicSpeechRecognitionProcessorInstance) {
+            dynamicSpeechRecognitionProcessorInstance.onstart = () => {
+                applicationSpeechRecognitionListeningActive = true;
+                DOMUI_ElementMicButtonTrigger.classList.add('listening');
+                DOMUI_ElementTextInputBar.placeholder = "सुन रही हूँ sweetie, बोलिए...";
             };
 
-            speechRecognitionProcessorInstance.onerror = (recognitionModuleErrorEvent) => {
-                console.error("Speech capturing module runtime warning:", recognitionModuleErrorEvent);
-                systemListeningStateActive = false;
-                UIElementMicActionButton.classList.remove('listening');
-                UIElementTextInputField.placeholder = "प्रिया से कुछ भी पूछें...";
+            dynamicSpeechRecognitionProcessorInstance.onerror = (speechProcessorModuleFaultErrorEvent) => {
+                console.error("Speech capturing driver layer runtime warning error encountered:", speechProcessorModuleFaultErrorEvent);
+                applicationSpeechRecognitionListeningActive = false;
+                DOMUI_ElementMicButtonTrigger.classList.remove('listening');
+                DOMUI_ElementTextInputBar.placeholder = "प्रिया से कुछ भी पूछें...";
             };
 
-            speechRecognitionProcessorInstance.onend = () => {
-                systemListeningStateActive = false;
-                UIElementMicActionButton.classList.remove('listening');
-                UIElementTextInputField.placeholder = "प्रिया से कुछ भी पूछें...";
+            dynamicSpeechRecognitionProcessorInstance.onend = () => {
+                applicationSpeechRecognitionListeningActive = false;
+                DOMUI_ElementMicButtonTrigger.classList.remove('listening');
+                DOMUI_ElementTextInputBar.placeholder = "प्रिया से कुछ भी पूछें...";
             };
 
-            speechRecognitionProcessorInstance.onresult = (transcriptionPayloadEvent) => {
-                const structuralTranscribedOutputString = transcriptionPayloadEvent.results[0][0].transcript;
-                UIElementTextInputField.value = structuralTranscribedOutputString;
-                processActiveInteractionEventCycle();
+            dynamicSpeechRecognitionProcessorInstance.onresult = (transcriptionOutputPayloadEvent) => {
+                const capturedTranscribedTextResultString = transcriptionOutputPayloadEvent.results[0][0].transcript;
+                DOMUI_ElementTextInputBar.value = capturedTranscribedTextResultString;
+                triggerInteractionLifecycleExecutionCycle();
             };
 
-            UIElementMicActionButton.addEventListener('click', () => {
-                if (systemListeningStateActive) {
-                    speechRecognitionProcessorInstance.stop();
+            DOMUI_ElementMicButtonTrigger.addEventListener('click', () => {
+                if (applicationSpeechRecognitionListeningActive) {
+                    dynamicSpeechRecognitionProcessorInstance.stop();
                 } else {
                     if(window.speechSynthesis) window.speechSynthesis.cancel();
-                    speechRecognitionProcessorInstance.start();
+                    dynamicSpeechRecognitionProcessorInstance.start();
                 }
             });
         } else {
-            UIElementMicActionButton.style.display = 'none'; // Structural degradation safe path
+            DOMUI_ElementMicButtonTrigger.style.display = 'none'; // Structural degradation safe path fallback
         }
 
-        // Standard Event Listeners Registry Mapping
-        UIElementSendActionButton.addEventListener('click', processActiveInteractionEventCycle);
-        UIElementTextInputField.addEventListener('keypress', (nativeKeyboardEvent) => { 
-            if (nativeKeyboardEvent.key === 'Enter') {
-                processActiveInteractionEventCycle(); 
+        // General Structural UI Event Handlers Link Mapping
+        DOMUI_ElementSendButtonTrigger.addEventListener('click', triggerInteractionLifecycleExecutionCycle);
+        DOMUI_ElementTextInputBar.addEventListener('keypress', (nativeHardwareKeyboardEvent) => { 
+            if (nativeHardwareKeyboardEvent.key === 'Enter') {
+                triggerInteractionLifecycleExecutionCycle(); 
             }
         });
 
         /*
           ------------------------------------------------------------------
-          G. MONOLITHIC MATRIX INITIALIZER SYSTEM ENGINE ROOT
+          G. APPLICATIONS CORE APP ENTRY RUNTIME BOOTSTRAPPING GRID INITIATOR
           ------------------------------------------------------------------
         */
-        initializeThreeGraphicsPipeline();
-        executionGraphMainRenderLoop();
+        initializeThreeEngineGraphicsContext();
+        masterApplicationGraphicsRenderFrameLoop();
     </script>
 </body>
 </html>
