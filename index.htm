@@ -3,59 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Priya AI - nv1 Core</title>
+    <title>nv1 Classic - Priya AI</title>
     <style>
-        :root { --glow: #00f2ff; --glass: rgba(10, 10, 20, 0.9); }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #020205; font-family: 'Segoe UI', sans-serif; }
-
-        /* Level 1: Background & Aura */
-        #dynamic-bg {
-            position: absolute; width: 100%; height: 100%; z-index: 1;
-            background: radial-gradient(circle at center, rgba(0,242,255,0.08) 0%, #000 80%);
-            transition: background 1s ease;
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
+        
+        /* Classic Glow Background */
+        #bg { 
+            position: absolute; width: 100%; height: 100%; 
+            background: radial-gradient(circle, #001a1a 0%, #000 100%);
+            z-index: 1;
         }
 
-        #canvas-container { width: 100%; height: 100%; position: absolute; z-index: 2; touch-action: none; }
+        #canvas-container { width: 100%; height: 100%; position: absolute; z-index: 2; }
 
-        /* Level 6: HUD Status */
+        /* Simple HUD */
         .hud {
-            position: absolute; top: 25px; left: 25px; z-index: 10;
-            background: var(--glass); padding: 12px 20px; border-radius: 15px;
-            border-left: 4px solid var(--glow); color: white; backdrop-filter: blur(10px);
+            position: absolute; top: 20px; left: 20px; z-index: 10;
+            color: #00f2ff; font-size: 14px; letter-spacing: 1px;
+            text-shadow: 0 0 5px #00f2ff;
         }
-        .live-dot { width: 8px; height: 8px; background: var(--glow); border-radius: 50%; display: inline-block; margin-right: 8px; animation: blink 1.2s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        /* Level 3: Input Dock */
-        .dock {
-            position: absolute; bottom: 30px; width: 100%; display: flex; justify-content: center; z-index: 100;
+        /* Legacy Input Style */
+        .controls {
+            position: absolute; bottom: 25px; width: 100%; display: flex; justify-content: center; z-index: 100;
         }
-        .input-bar {
-            background: var(--glass); border: 1px solid rgba(0, 242, 255, 0.3);
-            width: 90%; max-width: 500px; display: flex; align-items: center;
-            padding: 8px 15px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        .input-box {
+            background: rgba(0,0,0,0.8); border: 1px solid #00f2ff;
+            width: 85%; max-width: 450px; display: flex; padding: 5px 15px; border-radius: 5px;
         }
-        input { flex: 1; background: none; border: none; color: white; height: 45px; font-size: 16px; outline: none; }
-        .btn { background: none; border: none; color: var(--glow); font-size: 22px; cursor: pointer; padding: 5px; transition: transform 0.2s; }
-        .btn:active { transform: scale(0.9); }
+        input { flex: 1; background: none; border: none; color: #fff; height: 40px; outline: none; }
+        button { background: none; border: none; color: #00f2ff; font-size: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div id="dynamic-bg"></div>
-
-<div class="hud">
-    <div><span class="live-dot"></span><b id="sys-status">nv1: STANDBY</b></div>
-    <div id="sensor-status" style="font-size: 10px; opacity: 0.6; margin-top: 4px;">SENSORS: ONLINE</div>
-</div>
+<div id="bg"></div>
+<div class="hud">nv1_SYSTEM_v1.0 // ONLINE</div>
 
 <div id="canvas-container"></div>
 
-<div class="dock">
-    <div class="input-bar">
-        <button class="btn" id="micBtn">🎤</button>
-        <input type="text" id="userInput" placeholder="कमांड दें या बात करें...">
-        <button class="btn" id="sendBtn" style="color:white">➔</button>
+<div class="controls">
+    <div class="input-box">
+        <button id="mic">🎤</button>
+        <input type="text" id="in" placeholder="Type command...">
+        <button id="send">➔</button>
     </div>
 </div>
 
@@ -64,146 +55,85 @@
 
 <script>
     const MODEL_URL = "https://raw.githubusercontent.com/jessearmy572-hub/naman/main/model.glb";
-    let scene, camera, renderer, mixer, clock, model, head;
-    let morphs = [], isSpeaking = false, mouse = {x:0, y:0};
+    let scene, camera, renderer, mixer, clock, model, head, morphs = [], talking = false;
 
-    // --- Core Logic ---
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'hi-IN';
-
-    async function processCommand(input) {
-        const text = input.toLowerCase();
-        document.getElementById('sys-status').innerText = "nv1: THINKING";
-
-        // Level 7: Device Control
-        if (text.includes("battery") || text.includes("बैटरी")) {
-            const b = await navigator.getBattery();
-            return `आपकी बैटरी अभी ${Math.floor(b.level * 100)}% है।`;
-        }
-        if (text.includes("vibrate") || text.includes("वाइब्रेट")) {
-            if (navigator.vibrate) navigator.vibrate(200);
-            return "वाइब्रेशन एक्टिवेट कर दिया गया है।";
-        }
-        if (text.includes("time") || text.includes("समय")) {
-            return `अभी ${new Date().toLocaleTimeString('hi-IN')} हो रहे हैं।`;
-        }
-
-        // Level 9: Emotion/General Chat
-        if (text.match(/(kaise ho|how are you|kya haal)/)) return "मैं बहुत अच्छी हूँ! आप बताइए, मैं आपकी क्या सेवा कर सकती हूँ?";
-        if (text.match(/(kaun ho|who are you|pari chay)/)) return "मैं प्रिया हूँ, आपकी एडवांस्ड AI असिस्टेंट।";
-        
-        return "जी, मैं आपकी बात समझ रही हूँ।";
-    }
-
+    // Core Engine
     function init() {
         clock = new THREE.Clock();
         scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
-        camera.position.set(0, 0, 3.2);
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.set(0, 0, 3);
 
         renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
-
-        scene.add(new THREE.AmbientLight(0xffffff, 2.0));
+        scene.add(new THREE.AmbientLight(0xffffff, 2));
 
         new THREE.GLTFLoader().load(MODEL_URL, (gltf) => {
             model = gltf.scene;
             scene.add(model);
             mixer = new THREE.AnimationMixer(model);
-            if(gltf.animations.length > 0) mixer.clipAction(gltf.animations[0]).play();
-
+            if(gltf.animations[0]) mixer.clipAction(gltf.animations[0]).play();
+            
             model.traverse(n => {
-                if (n.name.toLowerCase().includes('head')) head = n;
-                if (n.morphTargetDictionary) morphs.push(n);
+                if(n.name.toLowerCase().includes('head')) head = n;
+                if(n.morphTargetDictionary) morphs.push(n);
             });
-            resize();
-            speak("nv1 सिस्टम सक्रिय है। मैं तैयार हूँ।");
+            model.position.y = -1.2;
         });
 
-        // Level 5: Touch Response
-        window.addEventListener('touchstart', () => {
-            if(navigator.vibrate) navigator.vibrate(30);
-            document.getElementById('sensor-status').innerText = "SENSORS: TOUCH DETECTED";
-            setTimeout(() => document.getElementById('sensor-status').innerText = "SENSORS: ONLINE", 2000);
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
         });
-
-        window.addEventListener('mousemove', e => {
-            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-        });
-
-        window.addEventListener('resize', resize);
-    }
-
-    function resize() {
-        if (!model) return;
-        const mob = window.innerWidth < 768;
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        model.scale.setScalar(mob ? 0.9 : 1.3);
-        model.position.y = mob ? -0.85 : -1.35;
     }
 
     function animate() {
         requestAnimationFrame(animate);
         const dt = clock.getDelta();
-        const el = clock.getElapsedTime();
-        if (mixer) mixer.update(dt);
-
-        if (model) {
-            // Level 4: Motion
-            if (head) {
-                head.rotation.y = THREE.MathUtils.lerp(head.rotation.y, mouse.x * 0.45, 0.1);
-                head.rotation.x = THREE.MathUtils.lerp(head.rotation.x, -mouse.y * 0.2, 0.1);
-            }
+        const t = clock.getElapsedTime();
+        if(mixer) mixer.update(dt);
+        
+        if(model) {
+            let blink = (Math.sin(t*4) > 0.98) ? 1 : 0;
+            let move = talking ? Math.abs(Math.sin(t*15)) * 0.7 : 0;
             
-            let blink = (Math.sin(el * 4) > 0.98 || Math.sin(el * 0.5) < -0.99) ? 1 : 0;
-            let talk = isSpeaking ? Math.abs(Math.sin(el * 18)) * 0.6 : 0;
-
             morphs.forEach(m => {
                 const d = m.morphTargetDictionary;
-                for (let k in d) {
-                    const l = k.toLowerCase();
-                    if (l.includes('blink')) m.morphTargetInfluences[d[k]] = blink;
-                    if (l.includes('mouth') || l.includes('jaw') || l.includes('aa')) m.morphTargetInfluences[d[k]] = talk;
+                for(let k in d) {
+                    if(k.includes('blink')) m.morphTargetInfluences[d[k]] = blink;
+                    if(k.includes('mouth') || k.includes('jaw')) m.morphTargetInfluences[d[k]] = move;
                 }
             });
         }
         renderer.render(scene, camera);
     }
 
-    function speak(t) {
+    // Classic Voice System
+    function speak(txt) {
         window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(t);
+        const u = new SpeechSynthesisUtterance(txt);
         u.lang = 'hi-IN';
-        u.onstart = () => { isSpeaking = true; document.getElementById('sys-status').innerText = "nv1: SPEAKING"; };
-        u.onend = () => { isSpeaking = false; document.getElementById('sys-status').innerText = "nv1: STANDBY"; };
+        u.onstart = () => talking = true;
+        u.onend = () => talking = false;
         window.speechSynthesis.speak(u);
     }
 
-    document.getElementById('sendBtn').onclick = async () => {
-        const val = document.getElementById('userInput').value;
-        if(val) {
-            const res = await processCommand(val);
-            speak(res);
-            document.getElementById('userInput').value = "";
+    // Logic
+    async function handle(cmd) {
+        cmd = cmd.toLowerCase();
+        if(cmd.includes("battery")) {
+            const b = await navigator.getBattery();
+            return `बैटरी ${Math.floor(b.level*100)}% है।`;
         }
-    };
+        if(cmd.includes("time")) return `समय ${new Date().toLocaleTimeString()} है।`;
+        return "जी, मैं सुन रही हूँ।";
+    }
 
-    document.getElementById('micBtn').onclick = () => {
-        recognition.start();
-        document.getElementById('sys-status').innerText = "nv1: LISTENING";
-    };
-
-    recognition.onresult = async (e) => {
-        const t = e.results[0][0].transcript;
-        document.getElementById('userInput').value = t;
-        const res = await processCommand(t);
-        speak(res);
-        document.getElementById('userInput').value = "";
+    document.getElementById('send').onclick = async () => {
+        const val = document.getElementById('in').value;
+        if(val) { speak(await handle(val)); document.getElementById('in').value = ""; }
     };
 
     init();
