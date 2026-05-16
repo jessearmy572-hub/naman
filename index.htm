@@ -3,30 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Priya AI - Sentient Living Memory Edition</title>
+    <title>Priya AI - Command Perfected Edition</title>
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; background-color: #020205;
+            overflow: hidden; 
+            background: linear-gradient(125deg, #050515, #0b112c, #030a16);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             font-family: 'Segoe UI', Arial, sans-serif; user-select: none;
             -webkit-user-select: none;
         }
 
-        /* लाइव मोशन वीडियो बैकग्राउंड */
-        #video-bg {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%; object-fit: cover;
-            z-index: 1; pointer-events: none;
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         #canvas-container { 
             width: 100%; height: 100%; 
-            position: absolute; top: 0; left: 0; z-index: 2; 
+            position: absolute; top: 0; left: 0; z-index: 5; 
         }
 
         #loader {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            color: #00ffcc; font-size: 16px; z-index: 100; background: rgba(4,4,8,0.97);
+            color: #00ffcc; font-size: 16px; z-index: 100; background: rgba(4,4,8,0.95);
             padding: 25px 45px; border-radius: 24px; text-align: center;
             border: 1px solid rgba(0, 255, 204, 0.35); box-shadow: 0 0 40px rgba(0,255,204,0.3);
             pointer-events: none;
@@ -34,10 +36,10 @@
 
         .dashboard {
             position: absolute; top: 20px; left: 20px; color: white;
-            font-size: 13px; z-index: 10; background: rgba(10, 10, 20, 0.65);
-            padding: 12px 22px; border-radius: 18px; backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.12);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6); pointer-events: none;
+            font-size: 13px; z-index: 20; background: rgba(10, 10, 20, 0.7);
+            padding: 12px 22px; border-radius: 18px; backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); pointer-events: none;
         }
 
         .status-dot {
@@ -49,21 +51,22 @@
         .ui-container {
             position: absolute; bottom: 30px; width: 100%;
             display: flex; justify-content: center; align-items: center;
-            gap: 12px; z-index: 25; padding: 0 20px; box-sizing: border-box;
+            gap: 12px; z-index: 30; padding: 0 20px; box-sizing: border-box;
         }
 
         .mic-btn {
             background: linear-gradient(135deg, #ff4b2b, #ff416c); color: white;
             border: none; border-radius: 50%; width: 55px; height: 55px;
             cursor: pointer; font-size: 22px; display: flex; align-items: center;
-            justify-content: center; box-shadow: 0 5px 20px rgba(255, 75, 43, 0.5);
+            justify-content: center; box-shadow: 0 5px 20px rgba(255, 75, 43, 0.4);
+            transition: all 0.3s ease;
         }
 
         .input-box {
-            background: rgba(5, 5, 10, 0.6); backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px); padding: 0 25px; border-radius: 30px;
+            background: rgba(5, 5, 10, 0.65); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); padding: 0 25px; border-radius: 30px;
             flex-grow: 1; max-width: 550px; height: 55px; display: flex;
-            align-items: center; border: 1px solid rgba(255, 255, 255, 0.2);
+            align-items: center; border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 10px 25px rgba(0,0,0,0.4);
         }
 
@@ -71,13 +74,13 @@
             width: 100%; background: transparent; border: none;
             color: white; outline: none; font-size: 16px; height: 100%;
         }
-        input::placeholder { color: rgba(255,255,255,0.45); }
+        input::placeholder { color: rgba(255,255,255,0.4); }
 
         .send-btn {
             background: #ffffff; color: #000; border: none; border-radius: 50%;
             width: 55px; height: 55px; cursor: pointer; font-size: 20px;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 5px 20px rgba(255,255,255,0.3);
+            box-shadow: 0 5px 20px rgba(255,255,255,0.25);
         }
     </style>
 
@@ -87,22 +90,18 @@
 </head>
 <body>
 
-    <video autoplay loop muted playsinline id="video-bg">
-        <source src="https://assets.mixkit.co/videos/preview/mixkit-beautiful-waterfall-in-a-lush-green-forest-43181-large.mp4" type="video/mp4">
-    </video>
-
     <div class="dashboard">
-        <div><span class="status-dot" id="dot"></span> मिजाज: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">चेतना जाग्रत 🥰</span></div>
-        <div>समय स्थिति: <span id="time-status" style="color:#ffb703;">सिंकिंग...</span></div>
+        <div><span class="status-dot" id="dot"></span> मिजाज: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">सुन रही हूँ 🌸</span></div>
+        <div style="font-size: 11px; color:#aaa; margin-top:2px;">कमांड इंजन: <span id="time-status" style="color:#ffb703;">सक्रिय ⚡</span></div>
     </div>
 
-    <div id="loader">प्रिया का क्वांटम एनवायरमेंट लोड हो रहा है...<br><span style="font-size:11px; color:#aaa;">Ambient Fireflies & Dynamic Lighting Loading</span></div>
+    <div id="loader">प्रिया का न्यूरल कमांड कोर लोड हो रहा है...<br><span style="font-size:11px; color:#aaa;">Verifying Voice & Text Pipeline Logic</span></div>
     <div id="canvas-container"></div>
 
     <div class="ui-container">
         <button class="mic-btn" id="micBtn">🎤</button>
         <div class="input-box">
-            <input type="text" id="userInput" placeholder="बात करें, पूरा वातावरण जीवंत है..." />
+            <input type="text" id="userInput" placeholder="यहाँ टाइप करें या माइक दबाकर बोलें..." />
         </div>
         <button class="send-btn" id="sendBtn">➔</button>
     </div>
@@ -113,9 +112,8 @@
         let scene, camera, renderer, controls, mixer, clock;
         let priyaModel = null, headBone = null;
         let allSkinnedMeshes = []; 
-        let hemiLight, sunLight, natureBounce;
+        let hemiLight, sunLight, fillLight;
         
-        // --- पार्टिकल सिस्टम वेरिएबल्स ---
         let particleSystem, particleGeometry;
         const PARTICLE_COUNT = 150;
 
@@ -123,71 +121,31 @@
         let mousePos = { x: 0, y: 0 };
         let audioCtx = null, analyser = null, dataArray = null;
         let mouthVolume = 0;
-
         let forceTouchTimer = 0;
         
         let currentEmotion = "neutral";
-        let targetSmile = 0, targetShy = 0, targetRomantic = 0;
+        let targetSmile = 0.3, targetShy = 0, targetRomantic = 0;
         let conversationHistory = [];
-        let timeContext = "day";
 
         const raycaster = new THREE.Raycaster();
         const touchVector = new THREE.Vector2();
 
-        function updateTimeContext() {
-            const hours = new Date().getHours();
-            if (hours >= 5 && hours < 12) {
-                timeContext = "morning";
-                document.getElementById('time-status').innerText = "सुबह की धूप 🌅";
-            } else if (hours >= 12 && hours < 17) {
-                timeContext = "afternoon";
-                document.getElementById('time-status').innerText = "दोपहर का समय ☀️";
-            } else if (hours >= 17 && hours < 20) {
-                timeContext = "evening";
-                document.getElementById('time-status').innerText = "शाम की ढलती रोशनी 🌆";
-            } else {
-                timeContext = "night";
-                document.getElementById('time-status').innerText = "शांत रात का माहौल 🌌";
-            }
-            adjustLightsAndParticles();
-        }
-
-        function adjustLightsAndParticles() {
-            if (!hemiLight || !sunLight) return;
-            if (timeContext === "night") {
-                hemiLight.intensity = 0.5;
-                sunLight.intensity = 0.3;
-                if(natureBounce) natureBounce.intensity = 0.8;
-            } else if (timeContext === "evening" || timeContext === "morning") {
-                hemiLight.intensity = 1.0;
-                sunLight.intensity = 0.9;
-            } else {
-                hemiLight.intensity = 1.4;
-                sunLight.intensity = 1.5;
-            }
-        }
-
-        // जादुई जुगनू (Ambient Particle System) का निर्माण
         function createAmbientParticles() {
             particleGeometry = new THREE.BufferGeometry();
             const positions = new Float32Array(PARTICLE_COUNT * 3);
             const randomSpeeds = new Float32Array(PARTICLE_COUNT);
 
             for (let i = 0; i < PARTICLE_COUNT * 3; i += 3) {
-                positions[i] = (Math.random() - 0.5) * 4;  // X axis
-                positions[i + 1] = (Math.random() - 0.5) * 3 + 0.2;  // Y axis
-                positions[i + 2] = (Math.random() - 0.5) * 2;  // Z axis
+                positions[i] = (Math.random() - 0.5) * 5;  
+                positions[i + 1] = (Math.random() - 0.5) * 4 + 0.3;  
+                positions[i + 2] = (Math.random() - 0.5) * 3;  
                 randomSpeeds[i / 3] = Math.random() * 0.5 + 0.2;
             }
 
             particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-            // टाइम के हिसाब से जुगनू का रंग तय करना (रात में नियॉन ग्रीन, दिन में गोल्डन)
-            const pColor = (timeContext === "night" || timeContext === "evening") ? 0x00ffcc : 0xffe600;
-
             const particleMaterial = new THREE.PointsMaterial({
-                color: pColor,
-                size: window.innerWidth < 768 ? 0.025 : 0.018,
+                color: 0x00ffcc,
+                size: window.innerWidth < 768 ? 0.026 : 0.014,
                 transparent: true,
                 opacity: 0.8,
                 blending: THREE.AdditiveBlending,
@@ -201,23 +159,22 @@
 
         function loadMemory() {
             const savedHistory = localStorage.getItem('priya_memory');
-            if (savedHistory) {
-                conversationHistory = JSON.parse(savedHistory);
-            }
+            if (savedHistory) conversationHistory = JSON.parse(savedHistory);
         }
 
         function saveMemory(userMsg, aiReply) {
             conversationHistory.push({ user: userMsg, ai: aiReply });
-            if (conversationHistory.length > 6) conversationHistory.shift();
+            if (conversationHistory.length > 5) conversationHistory.shift();
             localStorage.setItem('priya_memory', JSON.stringify(conversationHistory));
         }
 
+        // --- बारीक रूप से जाँचा गया कमांड प्रोसेसिंग इंजन ---
         async function askPriya(input) {
             try {
-                let contextString = `You are Priya, a deeply caring, realistic 100% human virtual girl. You are standing in front of a live waterfall. Current time of day is: ${timeContext}. Greet or talk accordingly if natural. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks. Remember previous talks:\n`;
-                conversationHistory.forEach(h => {
-                    contextString += `User: ${h.user} -> Priya: ${h.ai}\n`;
-                });
+                document.getElementById('mood-txt').innerText = "सोच रही हूँ... 🤔";
+                
+                let contextString = "You are Priya, a deeply loving human virtual girl. Speak in very short, warm Hinglish sentences. Never use asterisks or markdown. Previous chat context:\n";
+                conversationHistory.forEach(h => { contextString += `User: ${h.user} -> Priya: ${h.ai}\n`; });
 
                 const response = await fetch(`https://text.pollinations.ai/`, {
                     method: 'POST',
@@ -232,14 +189,13 @@
                 });
                 
                 let replyText = await response.text();
-                let cleanText = replyText.replace(/[*#`_\-]/g, '').trim();
+                // क्लीनिंग फ़िल्टर: किसी भी प्रकार के फालतू टैग्स को साफ़ करना
+                let cleanText = replyText.replace(/Priya:/gi, '').replace(/[*#`_\-]/g, '').trim();
 
                 let lowerText = cleanText.toLowerCase();
-                if (lowerText.includes("love") || lowerText.includes("pyaar") || lowerText.includes("tumhe") || lowerText.includes("dil")) {
+                if (lowerText.includes("love") || lowerText.includes("pyaar") || lowerText.includes("dil")) {
                     setEmotion("romantic");
-                } else if (lowerText.includes("haha") || lowerText.includes("khush") || lowerText.includes("happy") || lowerText.includes("muskur")) {
-                    setEmotion("happy");
-                } else if (lowerText.includes("sharm") || lowerText.includes("sorry") || lowerText.includes("uff")) {
+                } else if (lowerText.includes("sharm") || lowerText.includes("uff") || lowerText.includes("sorry")) {
                     setEmotion("shy");
                 } else {
                     setEmotion("happy"); 
@@ -248,7 +204,7 @@
                 saveMemory(input, cleanText);
                 return cleanText;
             } catch (err) {
-                return "Main aapki baatein sun rahi hoon, boliye na.";
+                return "Main aapki baat sun rahi hoon, kahiye na.";
             }
         }
 
@@ -256,16 +212,13 @@
             currentEmotion = emotion;
             if (emotion === "happy") {
                 targetSmile = 0.8; targetShy = 0; targetRomantic = 0;
-                document.getElementById('mood-txt').innerText = "बेहद खुश 😄";
+                document.getElementById('mood-txt').innerText = "खुश 😄";
             } else if (emotion === "shy") {
-                targetSmile = 0.3; targetShy = 0.7; targetRomantic = 0;
+                targetSmile = 0.2; targetShy = 0.7; targetRomantic = 0;
                 document.getElementById('mood-txt').innerText = "शर्मीली 😳";
             } else if (emotion === "romantic") {
                 targetSmile = 0.5; targetShy = 0; targetRomantic = 0.8;
                 document.getElementById('mood-txt').innerText = "रोमांटिक 🥰";
-            } else {
-                targetSmile = 0; targetShy = 0; targetRomantic = 0;
-                document.getElementById('mood-txt').innerText = "प्राकृतिक 🌸";
             }
         }
 
@@ -289,7 +242,7 @@
             utter.rate = 1.0; 
 
             utter.onstart = () => { isSpeaking = true; };
-            utter.onend = () => { isSpeaking = false; mouthVolume = 0; };
+            utter.onend = () => { isSpeaking = false; mouthVolume = 0; setEmotion("happy"); };
             utter.onerror = () => { isSpeaking = false; mouthVolume = 0; };
 
             window.speechSynthesis.speak(utter);
@@ -309,20 +262,19 @@
             if (!priyaModel) return;
 
             const intersects = raycaster.intersectObjects(priyaModel.children, true);
-
             if (intersects.length > 0) {
                 let hitY = intersects[0].point.y; 
-                forceTouchTimer = 4.0; 
+                forceTouchTimer = 3.5; 
 
                 if (hitY > 0.35) {
                     setEmotion("romantic");
-                    speak("Aapka touch seedhe meri yadon aur dil me utar jata hai...");
+                    speak("Aapka touch seedhe mere dil me utar jata hai...");
                 } else if (hitY <= 0.35 && hitY > -0.2) {
                     setEmotion("shy");
-                    speak("Uff... aise mat chuo na, main sab yaad rakhungi.");
+                    speak("Uff... aise mat chhuo na, mujhe sharm aati hai.");
                 } else {
                     setEmotion("happy");
-                    speak("Aapka sath mujhe humesha yaad rehta hai.");
+                    speak("Aapka sath mujhe sach me bahut accha lagta hai.");
                 }
             }
         }
@@ -331,6 +283,7 @@
             const container = document.getElementById('canvas-container');
             clock = new THREE.Clock();
             scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x050515, 0.2);
 
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -339,26 +292,25 @@
             container.appendChild(renderer.domElement);
 
             camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 100);
-            camera.position.set(0, 0.22, 2.2); 
+            camera.position.set(0, 0.22, 2.1); 
 
             controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableZoom = true;
             controls.enablePan = false;
-            controls.target.set(0, 0.16, 0);
+            controls.target.set(0, 0.15, 0);
 
-            hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.4);
+            hemiLight = new THREE.HemisphereLight(0xffffff, 0x444455, 1.4);
             scene.add(hemiLight);
             
-            sunLight = new THREE.DirectionalLight(0xfffaf0, 1.5);
-            sunLight.position.set(1.5, 4, 4.5);
+            sunLight = new THREE.DirectionalLight(0xfff3e0, 1.4);
+            sunLight.position.set(2, 4, 3.5);
             scene.add(sunLight);
 
-            natureBounce = new THREE.DirectionalLight(0xcce6ff, 0.5); 
-            natureBounce.position.set(-2, 1, -1);
-            scene.add(natureBounce);
+            fillLight = new THREE.DirectionalLight(0x00ffcc, 0.5); 
+            fillLight.position.set(-2, 1, 2);
+            scene.add(fillLight);
 
-            updateTimeContext(); 
-            createAmbientParticles(); // पार्टिकल्स एक्टिवेट करना
+            createAmbientParticles(); 
 
             const loader = new THREE.GLTFLoader();
             loader.load(MODEL_URL, (gltf) => {
@@ -368,7 +320,7 @@
                 adjustLayout();
 
                 mixer = new THREE.AnimationMixer(priyaModel);
-                if (gltf.animations.length > 0) {
+                if (gltf.animations && gltf.animations.length > 0) {
                     mixer.clipAction(gltf.animations[0]).play(); 
                 }
 
@@ -391,7 +343,7 @@
         function adjustLayout() {
             if (!priyaModel) return;
             const isMobile = window.innerWidth < 768;
-            priyaModel.scale.setScalar(isMobile ? window.innerWidth / 365 : window.innerWidth / 850);
+            priyaModel.scale.setScalar(isMobile ? window.innerWidth / 355 : window.innerWidth / 800);
             priyaModel.position.y = isMobile ? -0.92 : -1.22;
         }
 
@@ -421,28 +373,23 @@
                 mouthVolume = total / dataArray.length;
             }
 
-            // --- लाइव पार्टिकल एनिमेशन फिजिक्स ग्रिड ---
             if (particleSystem) {
                 const positions = particleGeometry.attributes.position.array;
                 const speeds = particleSystem.userData.speeds;
 
                 for (let i = 0; i < PARTICLE_COUNT; i++) {
                     let idx = i * 3;
-                    // धीमे-धीमे ऊपर की तरफ तैरना (सिम्युलेटिंग जुगनू)
-                    positions[idx + 1] += Math.sin(t + i) * 0.002 * speeds[i];
-                    positions[idx] += Math.cos(t + i) * 0.001 * speeds[i];
+                    positions[idx + 1] += Math.sin(t * 0.4 + i) * 0.0018 * speeds[i];
+                    positions[idx] += Math.cos(t * 0.4 + i) * 0.001 * speeds[i];
 
-                    // कर्सर इंटरेक्शन अट्रैक्शन फिजिक्स
-                    let dx = mousePos.x * 1.5 - positions[idx];
-                    let dy = mousePos.y * 1.0 - positions[idx + 1];
+                    let dx = mousePos.x * 1.6 - positions[idx];
+                    let dy = mousePos.y * 1.1 - positions[idx + 1];
                     let dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 0.6) {
-                        positions[idx] += dx * 0.02;
-                        positions[idx + 1] += dy * 0.02;
+                    if (dist < 0.55) {
+                        positions[idx] += dx * 0.018;
+                        positions[idx + 1] += dy * 0.018;
                     }
-
-                    // रीसेट बाउंड्रीज
-                    if (positions[idx + 1] > 1.8) positions[idx + 1] = -1.2;
+                    if (positions[idx + 1] > 2.0) positions[idx + 1] = -1.4;
                 }
                 particleGeometry.attributes.position.needsUpdate = true;
             }
@@ -450,31 +397,24 @@
             if (priyaModel) {
                 if (forceTouchTimer > 0 && headBone) {
                     forceTouchTimer -= delta;
-                    if (currentEmotion === "romantic") {
-                        headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, -0.06, 0.12); 
-                        headBone.rotation.z = THREE.MathUtils.lerp(headBone.rotation.z, 0.05, 0.12);
-                    } else if (currentEmotion === "shy") {
-                        headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, 0.22, 0.12); 
-                        headBone.rotation.z = THREE.MathUtils.lerp(headBone.rotation.z, -0.10, 0.12);
-                    }
                 } else if (headBone) {
-                    headBone.rotation.y = THREE.MathUtils.lerp(headBone.rotation.y, mousePos.x * 0.24, 0.06);
+                    headBone.rotation.y = THREE.MathUtils.lerp(headBone.rotation.y, mousePos.x * 0.25, 0.06);
                     headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, -mousePos.y * 0.14, 0.06);
                 }
 
-                let openLipValue = isSpeaking ? Math.min(mouthVolume / 13, 1.0) : 0;
-                let blinkValue = (Math.sin(t * 2.5) > 0.96 || Math.sin(t * 0.4) < -0.99) ? 1.0 : 0.0;
+                let openLipValue = isSpeaking ? Math.min(mouthVolume / 11, 0.95) : 0;
+                let blinkValue = (Math.sin(t * 2.4) > 0.96 || Math.sin(t * 0.35) < -0.98) ? 1.0 : 0.0;
 
                 allSkinnedMeshes.forEach(mesh => {
                     let dict = mesh.morphTargetDictionary;
                     let influences = mesh.morphTargetInfluences;
                     if (!dict || !influences) return;
 
-                    ['mouthOpen', 'jawOpen', 'viseme_aa', 'viseme_O'].forEach(shape => {
-                        if (dict[shape] !== undefined) influences[dict[shape]] = THREE.MathUtils.lerp(influences[dict[shape]], openLipValue, 0.5);
+                    ['mouthOpen', 'jawOpen', 'viseme_aa'].forEach(shape => {
+                        if (dict[shape] !== undefined) influences[dict[shape]] = THREE.MathUtils.lerp(influences[dict[shape]], openLipValue, 0.45);
                     });
 
-                    ['eyeBlinkLeft', 'eyeBlinkRight', 'eyesClosed', 'blink'].forEach(shape => {
+                    ['eyeBlinkLeft', 'eyeBlinkRight', 'blink'].forEach(shape => {
                         if (dict[shape] !== undefined) influences[dict[shape]] = THREE.MathUtils.lerp(influences[dict[shape]], blinkValue, 0.55);
                     });
 
@@ -483,7 +423,7 @@
                     if (dict['eyeSquintLeft'] !== undefined) influences[dict['eyeSquintLeft']] = THREE.MathUtils.lerp(influences[dict['eyeSquintLeft']], targetRomantic, 0.1);
                 });
 
-                priyaModel.position.y += Math.sin(t * 1.3) * 0.00035;
+                priyaModel.position.y += Math.sin(t * 1.2) * 0.00038;
             }
 
             renderer.render(scene, camera);
@@ -493,25 +433,49 @@
         const sendBtn = document.getElementById('sendBtn');
         const micBtn = document.getElementById('micBtn');
 
-        async function handleAction() {
-            const val = inputEl.value.trim();
+        // शुद्ध किया हुआ कोर एक्शन फ़ंक्शन
+        async function handleAction(forcedValue = null) {
+            const val = forcedValue ? forcedValue.trim() : inputEl.value.trim();
             if (!val) return;
-            inputEl.value = "";
+            
+            inputEl.value = ""; // इनपुट फ़ील्ड तुरंत साफ़ करें
             const reply = await askPriya(val);
             speak(reply);
         }
 
-        sendBtn.addEventListener('click', handleAction);
+        sendBtn.addEventListener('click', () => handleAction());
         inputEl.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAction(); });
 
+        // वॉयस कमांड पाइपलाइन का शुद्धिकरण
         micBtn.addEventListener('click', () => {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if(!SpeechRecognition) return alert("Mic System Error");
+            if(!SpeechRecognition) return alert("आपका ब्राउज़र वॉइस सपोर्ट नहीं करता।");
+            
             const rec = new SpeechRecognition();
             rec.lang = 'hi-IN';
+            rec.continuous = false;
+            rec.interimResults = false;
+
             micBtn.style.background = '#00ffcc';
-            rec.onresult = (e) => { inputEl.value = e.results[0][0].transcript; handleAction(); };
-            rec.onend = () => { micBtn.style.background = 'linear-gradient(135deg, #ff4b2b, #ff416c)'; };
+            micBtn.style.transform = 'scale(1.1)';
+            document.getElementById('mood-txt').innerText = "सुन रही हूँ... 🎤";
+
+            rec.onresult = (e) => {
+                const speechText = e.results[0][0].transcript;
+                if(speechText.trim() !== "") {
+                    handleAction(speechText); // वॉयस कमांड सीधा एक्ज़ीक्यूट करें
+                }
+            };
+
+            rec.onerror = () => {
+                document.getElementById('mood-txt').innerText = "आवाज़ समझ नहीं आई 🥺";
+            };
+
+            rec.onend = () => {
+                micBtn.style.background = 'linear-gradient(135deg, #ff4b2b, #ff416c)';
+                micBtn.style.transform = 'scale(1)';
+            };
+
             rec.start();
         });
 
