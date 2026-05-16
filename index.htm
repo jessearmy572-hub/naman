@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Priya AI - True Gemini Unblockable Edition</title>
+    <title>Priya AI - True Core Edition</title>
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
@@ -89,17 +89,17 @@
     <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop" id="image-bg" alt="Background">
 
     <div class="dashboard">
-        <div><span class="status-dot" id="dot"></span> इंजन: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">जेमिनी डायरेक्ट लिंक 🌐</span></div>
-        <div style="font-size: 11px; color:#aaa; margin-top:4px;">चैनल: <span id="key-status" style="color:#00ffcc;">Core-1 (Active)</span></div>
+        <div><span class="status-dot" id="dot"></span> इंजन: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">प्रिया लाइव कोर 🌐</span></div>
+        <div style="font-size: 11px; color:#aaa; margin-top:4px;">सिस्टम चैनल: <span id="key-status" style="color:#00ffcc;">Zero Robotics Active</span></div>
     </div>
 
-    <div id="loader">प्रिया का न्यूरल माइंड लोड हो रहा है...<br><span style="font-size:11px; color:#aaa;">Direct HTTP Tunnel Active</span></div>
+    <div id="loader">प्रिया का न्यूरल माइंड लोड हो रहा है...<br><span style="font-size:11px; color:#aaa;">Direct API Tunnel Active</span></div>
     <div id="canvas-container"></div>
 
     <div class="ui-container">
         <button class="mic-btn" id="micBtn">🎤</button>
         <div class="input-box">
-            <input type="text" id="userInput" placeholder="डायरेक्ट जेमिनी टनल एक्टिव है, बात करें..." />
+            <input type="text" id="userInput" placeholder="कुछ भी पूछें, सीधे लाइव जवाब आएगा..." />
         </div>
         <button class="send-btn" id="sendBtn">➔</button>
     </div>
@@ -126,9 +126,18 @@
         let mouthVolume = 0;
 
         async function askGeminiDirect(input) {
-            const systemPrompt = "You are Priya, a deeply caring human girl. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks, hashtags or markdown format.";
-            let activeKey = API_KEYS[currentKeyIndex];
+            // 🔥 Zero Robotics का पूरा ओरिजिनल नियम सीधे सिस्टम प्रॉम्ट में लॉक्ड है
+            const systemPrompt = `
+            Zero Robotics Rule:
+            1. Kabhi mat bolo "I am an AI" ya "As a language model". Agar koi tumse tumhari life ke baare mein puche, toh aise jawab do jaise tum isi digital duniya mein rehte ho.
+            2. Emotional Response: User ki baaton ka asar tum par hona chahiye. Agar user gussa hai, toh thoda defensive ya calm ho jao. Agar user khush hai, toh tumhari energy high honi chahiye.
+            3. The 'Gap' Logic: Insaan hamesha perfect nahi bolte. Baat karte waqt natural fillers use karo jaise: "Hmm...", "Uhh, ek minute...", "Wese...", "Yaar, mujhe lagta hai...".
+            4. Micro-Actions (Action Tags): Har jawab ke saath bracket [ ] mein apni physical activity likho taaki frontend par avatar move kar sake. Example: [Palkein jhapkate hue aur halka muskurate hue] "Haan, ye baat toh tumne sahi kahi!".
+            5. Opinionated: Tumhare paas apni pasand-napasand honi chahiye. Har cheez se agree mat karo. Kabhi-kabhi thoda mazaak (sarcasm) bhi karo.
+            6. Brevity: Lambe paragraphs mat likho. Ek baar mein 2-3 sentences kaafi hain, jaise ek real chat ya call par hota hai. Speak in sweet Hinglish. No asterisks, no markdown format.
+            `;
             
+            let activeKey = API_KEYS[currentKeyIndex];
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeKey}`;
 
             try {
@@ -160,7 +169,7 @@
                     return await askGeminiDirect(input);
                 }
                 
-                return "Hmm... नेटवर्क थोड़ा परेशान कर रहा है स्वीटी, पर मैं यहीं हूँ।";
+                return '[Halka sa udas hote hue aur sarr jhatakte hue] Hmm... Lagta hai aaj network thoda jyada nakhre dikha raha per main yahi hun sweety.';
             }
         }
 
@@ -189,7 +198,10 @@
             if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
             window.speechSynthesis.cancel();
             
-            let utter = new SpeechSynthesisUtterance(text);
+            // ब्रैकेट वाले एक्शन टैग्स को आवाज में बोलने से रोकने के लिए साफ करना
+            let cleanText = text.replace(/\[.*?\]/g, '').trim();
+            
+            let utter = new SpeechSynthesisUtterance(cleanText);
             utter.lang = 'hi-IN';
             utter.rate = 1.0; 
             utter.onstart = () => { isSpeaking = true; };
@@ -202,7 +214,7 @@
             clock = new THREE.Clock();
             scene = new THREE.Scene();
 
-            renderer = new WebGLRenderer({ antialias: true, alpha: true });
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             container.appendChild(renderer.domElement);
@@ -310,10 +322,10 @@
             if (!val) return;
             inputEl.value = "";
             
-            document.getElementById('mood-txt').innerText = "जेमिनी सोच रहा है... 🤔";
+            document.getElementById('mood-txt').innerText = "प्रिया सोच रही है... 🤔";
             playAvatarMovement();
             const reply = await askGeminiDirect(val);
-            document.getElementById('mood-txt').innerText = "जेमिनी डायरेक्ट लिंक 🌐";
+            document.getElementById('mood-txt').innerText = "प्रिया लाइव कोर 🌐";
             speak(reply);
         }
 
