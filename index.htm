@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Priya AI - nv1 Unified Fix</title>
+    <title>Priya AI - nv1 Realistic Core</title>
     <style>
         :root { --glow: #00f2ff; --panel: rgba(0, 0, 0, 0.85); }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #050508; font-family: 'Inter', sans-serif; }
         
-        /* Level 1: Background Fix */
+        /* Level 1: Background & Atmosphere */
         #main-aura { 
             position: absolute; width: 100%; height: 100%; z-index: 1; 
             background: radial-gradient(circle at center, rgba(0,242,255,0.1) 0%, #000 80%);
@@ -16,7 +16,7 @@
 
         #canvas-container { width: 100%; height: 100%; position: absolute; z-index: 2; touch-action: none; }
 
-        /* HUD & Status Fix */
+        /* HUD & Status Engine */
         .hud-top {
             position: absolute; top: 25px; left: 25px; z-index: 10;
             background: var(--panel); padding: 12px 18px; border-radius: 12px;
@@ -25,7 +25,7 @@
         .status-dot { width: 8px; height: 8px; background: var(--glow); border-radius: 50%; display: inline-block; margin-right: 8px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        /* Level 3: Chat Interface Fix */
+        /* Level 3: Interaction Dock */
         .ui-dock {
             position: absolute; bottom: 30px; width: 100%; display: flex; justify-content: center; z-index: 100;
         }
@@ -62,38 +62,39 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 
 <script>
+    // Realistic Model URL
     const MODEL_URL = "https://raw.githubusercontent.com/jessearmy572-hub/naman/main/model.glb";
     let scene, camera, renderer, mixer, clock, priya, head;
     let morphs = [], isSpeaking = false, mouse = {x:0, y:0};
 
-    // --- FIX 1: SPEECH RECOGNITION (सुनने की क्षमता) ---
+    // --- Speech Recognition ---
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.lang = 'hi-IN';
     recognition.continuous = false;
 
-    // --- FIX 2: UNIFIED BRAIN (सोचने और काम करने की क्षमता) ---
+    // --- nv1 Command Brain ---
     async function engine(input) {
         const text = input.toLowerCase();
         document.getElementById('sys-label').innerText = "nv1 CORE: THINKING";
         
-        // Priority A: Device Control (Level 7)
+        // Device Commands
         if (text.includes("battery") || text.includes("बैटरी")) {
             const b = await navigator.getBattery();
             return `आपकी बैटरी अभी ${Math.floor(b.level * 100)}% है।`;
         }
         if (text.includes("vibrate") || text.includes("वाइब्रेट")) {
             if (navigator.vibrate) navigator.vibrate(200);
-            return "डिवाइस वाइब्रेशन एक्टिवेटेड।";
+            return "डिवाइस वाइब्रेशन सफल।";
         }
         if (text.includes("time") || text.includes("समय")) {
             return `अभी ${new Date().toLocaleTimeString('hi-IN')} हो रहे हैं।`;
         }
 
-        // Priority B: Social Intent (Level 9)
-        if (text.match(/(kaise ho|how are you|kya haal)/)) return "मैं एकदम परफेक्ट हूँ! आप कैसे हैं?";
+        // Social Intent
+        if (text.match(/(kaise ho|how are you|kya haal)/)) return "मैं बहुत अच्छी हूँ! आप कैसे हैं?";
         if (text.match(/(kaun ho|who are you|intro)/)) return "मैं प्रिया हूँ, आपका nv1 इंटेलिजेंट अवतार।";
         
-        return "जी, मैं सुन रही हूँ। क्या मैं आपके लिए कुछ और कर सकती हूँ?";
+        return "जी, मैं आपकी बात समझ रही हूँ।";
     }
 
     function init() {
@@ -102,13 +103,21 @@
         camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
         camera.position.set(0, 0, 3.2);
 
+        // Realistic Renderer Setup
         renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.outputEncoding = THREE.sRGBEncoding; // For realistic colors
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        scene.add(new THREE.AmbientLight(0xffffff, 2.0));
+        // Advanced Lighting for Realistic Skin/Texture
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(1, 1, 2);
+        scene.add(directionalLight);
 
+        // Load Realistic Avatar
         new THREE.GLTFLoader().load(MODEL_URL, (gltf) => {
             priya = gltf.scene;
             scene.add(priya);
@@ -120,10 +129,10 @@
                 if (n.morphTargetDictionary) morphs.push(n);
             });
             resize();
-            speak("सिस्टम रीबूट सफल। nv1 अब पूरी तरह सक्रिय है।");
+            speak("nv1 कोर सक्रिय। अवतार ऑनलाइन है।");
         });
 
-        // --- FIX 3: TOUCH RESPONSE (महसूस करना) ---
+        // Touch Sensing
         window.addEventListener('touchstart', () => {
             if(navigator.vibrate) navigator.vibrate(30);
             document.getElementById('sub-label').innerText = "SENSORS: TOUCH DETECTED";
@@ -155,12 +164,13 @@
         if (mixer) mixer.update(dt);
 
         if (priya) {
-            // Level 4: Smooth Motion Fix
+            // Smooth Head Tracking
             if (head) {
                 head.rotation.y = THREE.MathUtils.lerp(head.rotation.y, mouse.x * 0.45, 0.08);
                 head.rotation.x = THREE.MathUtils.lerp(head.rotation.x, -mouse.y * 0.2, 0.08);
             }
             
+            // Natural Behaviors (Blink & Lip Sync)
             let blink = (Math.sin(el * 4) > 0.98 || Math.sin(el * 0.5) < -0.99) ? 1 : 0;
             let talk = isSpeaking ? Math.abs(Math.sin(el * 18)) * 0.6 : 0;
 
@@ -176,18 +186,17 @@
         renderer.render(scene, camera);
     }
 
-    // --- FIX 4: VOICE ENGINE (बोलने की क्षमता) ---
     function speak(t) {
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(t);
         u.lang = 'hi-IN';
-        u.pitch = 1.1;
+        u.pitch = 1.0;
         u.onstart = () => { isSpeaking = true; document.getElementById('sys-label').innerText = "nv1 CORE: SPEAKING"; };
         u.onend = () => { isSpeaking = false; document.getElementById('sys-label').innerText = "nv1 CORE: ONLINE"; };
         window.speechSynthesis.speak(u);
     }
 
-    // Interactions
+    // Interaction Events
     document.getElementById('sendBtn').onclick = async () => {
         const val = document.getElementById('userInput').value;
         if(val) {
