@@ -526,7 +526,7 @@
         let coreAnimationMixerController = null;
         let coreSystemClockReference = null;
 
-        let structuralAvatar3DModelRoot = null; // Map model variable issues safely
+        let structuralAvatar3DModelRoot = null; 
         let skeletalBoneJointHead = null;
         let skeletalBoneJointNeck = null;
 
@@ -565,7 +565,8 @@
             frameworkSpeechRecognitionProcessor.maxAlternatives = 1;
         }
 
-        setTimeout(() => { forceDismissLoaderOverlayWithBypassSecurity(); }, 6000);
+        // Anti-hang safety timeout (बढ़ाकर 15 सेकंड किया ताकि नेटवर्क स्लो होने पर भी मॉडल लोड हो सके)
+        setTimeout(() => { forceDismissLoaderOverlayWithBypassSecurity(); }, 15000);
 
         function forceDismissLoaderOverlayWithBypassSecurity() {
             const DOMUI_LoaderOverlayVeilContainer = document.getElementById('core-boot-loader');
@@ -624,7 +625,7 @@
                 if (activeKeyPointerIndexRegister !== 0) {
                     return await fetchSecureNeuralAIResponseStream(userQueryInputString);
                 }
-                return "[Halka sa udas hote hue aur sarr jhatakte hue] Hmm... Lagta hai aaj network thoda nakhre dikha raha hai dear, par main yahi hun tumhare paas.";
+                return "[Halka sa udas hote hue aur sarr jhatakte hue] Hmm... Lagta hai network thoda nakhre dikha raha hai dear, par main yahi hun tumhare paas.";
             }
         }
 
@@ -643,44 +644,47 @@
             coreWebGLRendererModule.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             coreWebGLRendererModule.toneMapping = THREE.ACESFilmicToneMapping;
             coreWebGLRendererModule.toneMappingExposure = 1.3;
-            coreWebGLRendererModule.outputColorSpace = THREE.SRGBColorSpace; // Modern specification update
+            
+            // BUG FIX: Three.js r128 के लिए पुराने आउटपुट एनकोडिंग का उपयोग किया
+            coreWebGLRendererModule.outputEncoding = THREE.sRGBEncoding; 
+            
             coreWebGLRendererModule.shadowMap.enabled = true;
             coreWebGLRendererModule.setClearColor(0x000000, 0); 
             TARGET_VIEWPORT_CANVAS_DOM_CONTAINER.appendChild(coreWebGLRendererModule.domElement);
 
             corePerspectiveCameraNode = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
-            corePerspectiveCameraNode.position.set(0, 1.35, 2.4); 
+            corePerspectiveCameraNode.position.set(0, 1.4, 1.6); // BUG FIX: कैमरे को मॉडल के थोड़ा और पास सेट किया गया
 
             coreOrbitControlsRig = new THREE.OrbitControls(corePerspectiveCameraNode, coreWebGLRendererModule.domElement);
             coreOrbitControlsRig.enableZoom = true;
             coreOrbitControlsRig.enablePan = false;
-            coreOrbitControlsRig.minDistance = 1.1;
-            coreOrbitControlsRig.maxDistance = 5.0;
-            coreOrbitControlsRig.target.set(0, 1.25, 0); 
+            coreOrbitControlsRig.minDistance = 0.8;
+            coreOrbitControlsRig.maxDistance = 4.0;
+            coreOrbitControlsRig.target.set(0, 1.3, 0); // BUG FIX: OrbitControls के टारगेट को सीधा प्रिया के चेहरे पर फोकस किया
             coreOrbitControlsRig.enableDamping = true;
             coreOrbitControlsRig.dampingFactor = 0.05;
             coreOrbitControlsRig.maxPolarAngle = Math.PI / 2 + 0.05;
 
-            const ambientHemisphereIlluminationNode = new THREE.HemisphereLight(0xffffff, 0x555555, 1.4);
+            // BUG FIX: मॉडल की लाइटिंग को बेहतर किया गया ताकि अंधेरा न दिखे
+            const ambientHemisphereIlluminationNode = new THREE.HemisphereLight(0xffffff, 0x444444, 1.6);
             coreThreeSceneInstance.add(ambientHemisphereIlluminationNode);
 
-            const sunLightDirectionalNode = new THREE.DirectionalLight(0xfffbe0, 1.2);
-            sunLightDirectionalNode.position.set(4, 8, 4);
+            const sunLightDirectionalNode = new THREE.DirectionalLight(0xffffff, 1.5);
+            sunLightDirectionalNode.position.set(2, 4, 3);
             sunLightDirectionalNode.castShadow = true;
             coreThreeSceneInstance.add(sunLightDirectionalNode);
 
-            const coolReflectiveWaterBounceLightNode = new THREE.DirectionalLight(0xbee3ff, 0.6);
-            coolReflectiveWaterBounceLightNode.position.set(-3, -6, 2);
+            const coolReflectiveWaterBounceLightNode = new THREE.DirectionalLight(0x00ffcc, 0.4);
+            coolReflectiveWaterBounceLightNode.position.set(-2, 2, -1);
             coreThreeSceneInstance.add(coolReflectiveWaterBounceLightNode);
 
             const assetGLTFLoaderEngineInstance = new THREE.GLTFLoader();
             const DOMUI_LoadingTextLabel = document.getElementById('loading-text');
 
             assetGLTFLoaderEngineInstance.load(REMOTE_GLTF_BINARY_PRODUCTION_ASSET_URI, (loadedGltfAssetBundlePayload) => {
-                forceDismissLoaderOverlayWithBypassSecurity();
-
                 structuralAvatar3DModelRoot = loadedGltfAssetBundlePayload.scene;
                 coreThreeSceneInstance.add(structuralAvatar3DModelRoot);
+                
                 executeDynamicResponsiveModelScalingLayouts();
 
                 structuralAvatar3DModelRoot.traverse((evaluatedSubmeshJointNode) => {
@@ -712,6 +716,9 @@
 
                 executeLongTermMemoryGreetingsSync();
 
+                // BUG FIX: लोडिंग पूरी तरह समाप्त होने के बाद ही स्क्रीन को हटाया जाए
+                forceDismissLoaderOverlayWithBypassSecurity();
+
             }, (xhrTrackProgressEvent) => {
                 if (xhrTrackProgressEvent.total > 0 && DOMUI_LoadingTextLabel) {
                     let calculatedPercentage = Math.round((xhrTrackProgressEvent.loaded / xhrTrackProgressEvent.total) * 100);
@@ -731,12 +738,9 @@
             if (!structuralAvatar3DModelRoot) return;
             const mobileLayoutFlagStateDetected = window.innerWidth < 768;
             
-            let structuredScalarFactorMultiplierValue = mobileLayoutFlagStateDetected ? window.innerWidth / 410 : window.innerWidth / 920;
-            structuralAvatar3DModelRoot.scale.setScalar(structuredScalarFactorMultiplierValue);
-            
-            structuralAvatar3DModelRoot.position.y = mobileLayoutFlagStateDetected ? -0.25 : -0.55;
-            structuralAvatar3DModelRoot.position.x = 0;
-            structuralAvatar3DModelRoot.position.z = 0;
+            // BUG FIX: स्केलिंग फ़ैक्टर को स्टेबल किया गया ताकि मॉडल गायब न हो
+            structuralAvatar3DModelRoot.scale.setScalar(mobileLayoutFlagStateDetected ? 0.95 : 1.0);
+            structuralAvatar3DModelRoot.position.set(0, 0, 0); 
         }
 
         function onTrackingVectorInteractionCoordinateShiftUpdate(nativeMouseDataEventPayload) {
@@ -879,7 +883,6 @@
                     }
                 });
 
-                // Fixed core tracking reference bug: Replaced missing 'model' definition with 'structuralAvatar3DModelRoot'
                 let computedHeadTargetJointLocator = structuralAvatar3DModelRoot ? (structuralAvatar3DModelRoot.getObjectByName("Head") || structuralAvatar3DModelRoot.getObjectByName("Neck")) : null;
                 if (computedHeadTargetJointLocator) {
                     if (isCamTrackingActiveSignal) {
@@ -1017,7 +1020,6 @@
                     convertedMeshLowerNameString.includes('bottom') || convertedMeshLowerNameString.includes('footwear')) {
                     if (evaluatedSkinnedMeshNodeReference.material) {
                         if (Array.isArray(evaluatedSkinnedMeshNodeReference.material)) {
-                            // Upgraded material assignments to native ThreeJS vector assignments safely
                             evaluatedSkinnedMeshNodeReference.material.forEach(singleMaterialNode => {
                                 if(singleMaterialNode.color) singleMaterialNode.color.setHex(colorHexCodeValue);
                             });
@@ -1066,7 +1068,7 @@
             if (priyaMemoryEngineDataPayload.lastInteractionTimestamp) {
                 if (priyaMemoryEngineDataPayload.lastInteractionTimestamp !== standardCurrentDateStringValue) {
                     setTimeout(() => {
-                        bridgeNetworkPayloadDirectlyIntoResponseEngine(`[Palkein jhapkate hue aur khush hote hue] Namaste ${priyaMemoryEngineDataPayload.userName}! Tum kuch din pehle mujhse baat karne aaye the na? Aaj fir se milkar bohot khushi hui dear!`);
+                        bridgeNetworkPayloadDirectlyIntoResponseEngine(`[Palkein jhapkate hue aur khush hote hue] Namaste ${priyaMemoryEngineDataPayload.userName}! Tum kuch दिन पहले मुझसे बात करने आए थे ना? आज फिर से मिलकर बहुत खुशी हुई डियर!`);
                     }, 2500);
                 }
             } else {
@@ -1109,7 +1111,7 @@
             frameworkSpeechRecognitionProcessor.onstart = () => {
                 liveSpeechCapturingStateSignalActive = true;
                 DOMUI_ActionButtonMicTrigger.classList.add('listening');
-                DOMUI_TextInputElementBar.placeholder = "कमांडो मोड एक्टिव, बोलie sweetie...";
+                DOMUI_TextInputElementBar.placeholder = "कमांडो मोड एक्टिव, बोलिए sweetie...";
             };
 
             frameworkSpeechRecognitionProcessor.onerror = () => {
@@ -1256,7 +1258,7 @@
                         globalTypewriterAnimationIntervalReference = null;
                         resolveComponentExecutionPromise();
                     }
-                }, 45); // Fixed timing window to prevent non-spaced chunks
+                }, 45); 
             });
         }
 
