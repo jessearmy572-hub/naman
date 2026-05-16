@@ -12,8 +12,8 @@
             -webkit-user-select: none;
         }
 
-        /* लाइव मोशन वीडियो बैकग्राउंड */
-        #video-bg {
+        /* स्टेटिक बैकग्राउंड इमेज कमांड */
+        #image-bg {
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%; object-fit: cover;
             z-index: 1; pointer-events: none;
@@ -87,9 +87,7 @@
 </head>
 <body>
 
-    <video autoplay loop muted playsinline id="video-bg">
-        <source src="https://assets.mixkit.co/videos/preview/mixkit-beautiful-waterfall-in-a-lush-green-forest-43181-large.mp4" type="video/mp4">
-    </video>
+    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop" id="image-bg" alt="Background">
 
     <div class="dashboard">
         <div><span class="status-dot" id="dot"></span> मिजाज: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">चेतना जागृत 🥰</span></div>
@@ -113,8 +111,8 @@
         let scene, camera, renderer, controls, mixer, clock;
         let priyaModel = null, headBone = null;
         let allSkinnedMeshes = []; 
-        let modelAnimations = []; // एनीमेशन क्लिप्स स्टोर करने के लिए एरे
-        let currentAction = null;  // करंट प्ले हो रहा एनीमेशन ट्रैक
+        let modelAnimations = []; 
+        let currentAction = null;  
         
         let isSpeaking = false;
         let mousePos = { x: 0, y: 0 };
@@ -123,7 +121,6 @@
 
         let forceTouchTimer = 0;
         
-        // --- इमोशन और撬ॉन्ग-टर्म मेमोरी वेरिएबल्स ---
         let currentEmotion = "neutral";
         let targetSmile = 0, targetShy = 0, targetRomantic = 0;
         let conversationHistory = [];
@@ -131,7 +128,6 @@
         const raycaster = new THREE.Raycaster();
         const touchVector = new THREE.Vector2();
 
-        // ब्राउज़र मेमोरी से पुराना डेटा लोड करना
         function loadMemory() {
             const savedHistory = localStorage.getItem('priya_memory');
             if (savedHistory) {
@@ -140,21 +136,18 @@
             }
         }
 
-        // ब्राउज़र मेमोरी में नया डेटा सेव करना
         function saveMemory(userMsg, aiReply) {
             conversationHistory.push({ user: userMsg, ai: aiReply });
-            if (conversationHistory.length > 6) conversationHistory.shift(); // मेमोरी को ऑप्टिमाइज़ रखना
+            if (conversationHistory.length > 6) conversationHistory.shift(); 
             localStorage.setItem('priya_memory', JSON.stringify(conversationHistory));
         }
 
-        // --- स्मार्ट एनीमेशन ट्रिगर प्लेयर (कमांड मूवमेंट इंजन) ---
         function playAvatarMovement(commandText) {
             if (!mixer || !modelAnimations || modelAnimations.length === 0) return;
 
             let lowerCmd = commandText.toLowerCase();
             let targetClip = null;
 
-            // टेक्स्ट कमांड्स के हिसाब से मॉडल क्लिप्स को सिंक करना
             if (lowerCmd.includes("wave") || lowerCmd.includes("hello") || lowerCmd.includes("hi") || lowerCmd.includes("नमस्ते")) {
                 targetClip = modelAnimations.find(a => a.name.toLowerCase().includes('wave') || a.name.toLowerCase().includes('hello'));
             } else if (lowerCmd.includes("dance") || lowerCmd.includes("nacho") || lowerCmd.includes("डांस")) {
@@ -165,14 +158,12 @@
                 targetClip = modelAnimations.find(a => a.name.toLowerCase().includes('walk') || a.name.toLowerCase().includes('run'));
             }
 
-            // अगर कोई स्पेसिफिक कीवर्ड मैच नहीं हुआ, लेकिन कोई मूवमेंट कमांड दी गई है
             if (!targetClip && modelAnimations.length > 1) {
                 if(lowerCmd.includes("move") || lowerCmd.includes("action") || lowerCmd.includes("मूवमेंट")) {
-                    targetClip = modelAnimations[1]; // कोई भी अल्टरनेट मूवमेंट चलाएं
+                    targetClip = modelAnimations[1]; 
                 }
             }
 
-            // अगर वैलिड क्लिप मिली तो उसे स्मूथली क्रॉसफ़ेड करके चलाएं
             if (targetClip) {
                 const newAction = mixer.clipAction(targetClip);
                 if (currentAction && currentAction !== newAction) {
@@ -181,7 +172,6 @@
                 newAction.reset().fadeIn(0.4).play();
                 currentAction = newAction;
 
-                // 4 सेकंड बाद वापस डिफ़ॉल्ट आइडल पोशचर (क्लिप 0) पर सेट करें
                 setTimeout(() => {
                     if (modelAnimations[0]) {
                         const defaultAction = mixer.clipAction(modelAnimations[0]);
@@ -195,19 +185,15 @@
             }
         }
 
-        // --- 1. INTELLIGENT EMOTION & MEMORY BRAIN ---
         async function askPriya(input) {
-            // इनपुट कमांड मिलते ही मूवमेंट चेक करें
             playAvatarMovement(input);
 
             try {
-                // पिछली बातचीत का कॉन्टेक्स्ट तैयार करना
-                let contextString = "You are Priya, a deeply caring, realistic 100% human girl with perfect memories. You are standing in front of a live motion waterfall. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks.\nPrevious talks:\n";
+                let contextString = "You are Priya, a deeply caring, realistic 100% human girl with perfect memories. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks.\nPrevious talks:\n";
                 conversationHistory.forEach(h => {
                     contextString += `User: ${h.user} -> Priya: ${h.ai}\n`;
                 });
 
-                // स्टेबल रिस्पॉन्स के लिए GET पाइपलाइन का उपयोग किया गया ताकि नेटवर्क ब्लॉक न हो
                 const systemPrompt = encodeURIComponent(contextString);
                 const userPrompt = encodeURIComponent(input);
                 const url = `https://text.pollinations.ai/${userPrompt}?system=${systemPrompt}&model=openai&cache=${Math.random()}`;
@@ -216,7 +202,6 @@
                 let replyText = await response.text();
                 let cleanText = replyText.replace(/Priya:/gi, '').replace(/[*#`_\-]/g, '').trim();
 
-                // रीयल-टाइम सेंटीमेंट एनालिसिस
                 let lowerText = cleanText.toLowerCase();
                 if (lowerText.includes("love") || lowerText.includes("pyaar") || lowerText.includes("tumhe") || lowerText.includes("dil")) {
                     setEmotion("romantic");
@@ -228,10 +213,7 @@
                     setEmotion("happy"); 
                 }
 
-                // एआई रिस्पॉन्स के हिसाब से भी मूवमेंट ट्रिगर करें
                 playAvatarMovement(cleanText);
-
-                // यादों को सहेजना
                 saveMemory(input, cleanText);
                 return cleanText;
             } catch (err) {
@@ -283,7 +265,6 @@
             window.speechSynthesis.speak(utter);
         }
 
-        // --- 2. ADVANCED GEOMETRY TOUCH TRACKER ---
         function handleInstantTouch(event) {
             if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
             if (event.target.tagName === 'INPUT' || event.target.tagName === 'BUTTON') return;
@@ -306,7 +287,7 @@
                 if (hitY > 0.35) {
                     setEmotion("romantic");
                     speak("Aapka touch seedhe meri yadon aur dil me utar jata hai...");
-                    playAvatarMovement("wave"); // टच रिस्पांस पर हाथ हिलाना ट्रिगर
+                    playAvatarMovement("wave"); 
                 } else if (hitY <= 0.35 && hitY > -0.2) {
                     setEmotion("shy");
                     speak("Uff... aise mat chuo na, main sab yaad rakhungi.");
@@ -317,16 +298,23 @@
             }
         }
 
-        // --- 3D RENDERING MATRIX ---
+        // --- रियलिस्टिक 3D रेंडरिंग इंजन मैट्रिक्स ---
         function init3D() {
             const container = document.getElementById('canvas-container');
             clock = new THREE.Clock();
             scene = new THREE.Scene();
 
+            // अपग्रेड: हाई-रियलिज्म शैडो और पावर प्रिफरेंस इनेबल्ड
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            
+            // रियलिस्टिक कलर सेटिंग्स (ACESFilmic और sRGB)
             renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2; 
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap; // सॉफ्ट रियलिस्टिक परछाई
             container.appendChild(renderer.domElement);
 
             camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 100);
@@ -337,15 +325,35 @@
             controls.enablePan = false;
             controls.target.set(0, 0.16, 0);
 
-            scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.4));
+            // रियलिस्टिक एम्बिएंट एनवायरनमेंट लाइट
+            scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.2));
             
-            let sunLight = new THREE.DirectionalLight(0xfffaf0, 1.5);
-            sunLight.position.set(1.5, 4, 4.5);
+            // मेन रियलिस्टिक सनलाइट विथ शैडो मैप
+            let sunLight = new THREE.DirectionalLight(0xfffaf0, 1.8);
+            sunLight.position.set(2, 4, 5);
+            sunLight.castShadow = true;
+            sunLight.shadow.mapSize.width = 2048; // हाई-डेफिनिशन परछाई
+            sunLight.shadow.mapSize.height = 2048;
+            sunLight.shadow.bias = -0.0001;
             scene.add(sunLight);
 
-            let natureBounce = new THREE.DirectionalLight(0xcce6ff, 0.5); 
+            // स्टूडियो फेस ग्लो लाइट (चेहरे को डार्क होने से बचाने के लिए)
+            let faceLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            faceLight.position.set(-1.5, 0.5, 2);
+            scene.add(faceLight);
+
+            let natureBounce = new THREE.DirectionalLight(0xcce6ff, 0.4); 
             natureBounce.position.set(-2, 1, -1);
             scene.add(natureBounce);
+
+            // ग्राउंड प्लेन सिर्फ अदृश्य परछाई रिसीव करने के लिए (रियलिज्म बूस्ट)
+            const floorGeo = new THREE.PlaneGeometry(10, 10);
+            const floorMat = new THREE.ShadowMaterial({ opacity: 0.35 });
+            const floor = new THREE.Mesh(floorGeo, floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.position.y = -1.22;
+            floor.receiveShadow = true;
+            scene.add(floor);
 
             const loader = new THREE.GLTFLoader();
             loader.load(MODEL_URL, (gltf) => {
@@ -354,7 +362,6 @@
                 scene.add(priyaModel);
                 adjustLayout();
 
-                // सभी उपलब्ध एनीमेशन क्लिप्स कैप्चर करें
                 modelAnimations = gltf.animations;
 
                 mixer = new THREE.AnimationMixer(priyaModel);
@@ -363,12 +370,19 @@
                     currentAction.play(); 
                 }
 
-                // **फिक्स: डीप स्किन-मेश और नॉर्मल मेश दोनों को सही से स्कैन करना**
                 priyaModel.traverse((node) => {
                     if (node.isBone && (node.name.toLowerCase().includes('head') || node.name.toLowerCase().includes('neck'))) {
                         headBone = node;
                     }
-                    // सिर्फ node.isMesh नहीं, बल्कि हर वो नोड जिसके पास मर्फ़ टारगेट डिक्शनरी हो
+                    if (node.isMesh) {
+                        node.castShadow = true;
+                        node.receiveShadow = true;
+                        // स्किन मटीरियल को थोड़ा सॉफ्ट और रियलिस्टिक बनाना
+                        if (node.material) {
+                            node.material.frustumCulled = false;
+                            if(node.material.roughness !== undefined) node.material.roughness = Math.max(node.material.roughness, 0.45);
+                        }
+                    }
                     if (node.morphTargetDictionary) {
                         allSkinnedMeshes.push(node);
                     }
@@ -400,7 +414,6 @@
             adjustLayout();
         }
 
-        // --- TICK LOOP FRAME ENGINE ---
         function animate() {
             requestAnimationFrame(animate);
             const delta = clock.getDelta();
@@ -415,7 +428,6 @@
                     for (let i = 0; i < dataArray.length; i++) { total += dataArray[i]; }
                     mouthVolume = total / dataArray.length;
                 } else {
-                    // **फिक्स: रैंडम ऑटो-लिप वेव ताकि बिना माइक्रोफोन अनुमति के भी होंठ हिलें**
                     mouthVolume = Math.random() * 6.5 + 3.0;
                 }
             }
@@ -435,9 +447,7 @@
                     headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, -mousePos.y * 0.14, 0.06);
                 }
 
-                // लिप्सिंग वैल्यू को थोड़ा और संवेदनशील बनाया
                 let openLipValue = isSpeaking ? Math.min(mouthVolume / 8, 1.0) : 0;
-                // ब्लिंकिंग को अधिक प्राकृतिक बनाने के लिए वेव टाइमर
                 let blinkValue = (Math.sin(t * 3.5) > 0.94 || Math.sin(t * 0.6) < -0.98) ? 1.0 : 0.0;
 
                 allSkinnedMeshes.forEach(mesh => {
@@ -445,7 +455,6 @@
                     let influences = mesh.morphTargetInfluences;
                     if (!dict || !influences) return;
 
-                    // अलग-अलग मॉडल्स के सभी संभावित शेप्स को मैप किया
                     ['mouthOpen', 'jawOpen', 'viseme_aa', 'viseme_O', 'Mouth_Open', 'mouth_open'].forEach(shape => {
                         if (dict[shape] !== undefined) influences[dict[shape]] = THREE.MathUtils.lerp(influences[dict[shape]], openLipValue, 0.45);
                     });
@@ -454,7 +463,6 @@
                         if (dict[shape] !== undefined) influences[dict[shape]] = THREE.MathUtils.lerp(influences[dict[shape]], blinkValue, 0.6);
                     });
 
-                    // लाइव ब्लेंडशेप्स एक्सप्रेशंस मैट्रिक्स (फिक्स्ड सिंटैक्स एरर)
                     if (dict['mouthSmile'] !== undefined) influences[dict['mouthSmile']] = THREE.MathUtils.lerp(influences[dict['mouthSmile']], targetSmile, 0.1);
                     if (dict['browInnerUp'] !== undefined) influences[dict['browInnerUp']] = THREE.MathUtils.lerp(influences[dict['browInnerUp']], targetShy, 0.1);
                     if (dict['eyeSquintLeft'] !== undefined) influences[dict['eyeSquintLeft']] = THREE.MathUtils.lerp(influences[dict['eyeSquintLeft']], targetRomantic, 0.1);
@@ -466,7 +474,6 @@
             renderer.render(scene, camera);
         }
 
-        // --- यूआई ऑपरेशन लिंक्स ---
         const inputEl = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
         const micBtn = document.getElementById('micBtn');
@@ -495,9 +502,10 @@
             rec.start();
         });
 
-        loadMemory(); // लोड यादें
+        loadMemory(); 
         init3D();
         animate();
     </script>
 </body>
 </html>
+
