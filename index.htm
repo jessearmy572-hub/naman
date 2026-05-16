@@ -2,1348 +2,643 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Priya AI - Ultimate nv1 Pro Commando Engine Suite</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Priya AI - Advanced 3D Companion</title>
     <style>
-        /* ==========================================================================
-          MODULE 1: MASTER HARDWARE CONFIGURATION & GLOBAL DESIGN TOKENS
-          ========================================================================== */
-        :root {
-            --neon-cyan: #00ffcc;
-            --neon-blue: #0099ff;
-            --neon-pink: #ff416c;
-            --neon-orange: #ff4b2b;
-            --neon-purple: #9d4edd;
-            --neon-matrix-glow: rgba(0, 255, 204, 0.45);
-            --neon-blue-glow: rgba(0, 153, 255, 0.35);
-            --neon-pink-glow: rgba(255, 65, 108, 0.35);
-            
-            --bg-absolute-black: #010103;
-            --bg-core-dark-matte: #05050a;
-            --bg-glass-panel: rgba(5, 5, 12, 0.82);
-            --bg-glass-card: rgba(8, 8, 20, 0.65);
-            --bg-input-field: rgba(3, 3, 7, 0.94);
-            
-            --border-glow-cyan: rgba(0, 255, 204, 0.40);
-            --border-glow-blue: rgba(0, 153, 255, 0.25);
-            --border-matte-white: rgba(255, 255, 255, 0.16);
-            --border-thick-glass: rgba(255, 255, 255, 0.08);
-            
-            --text-core-white: #ffffff;
-            --text-ambient-silver: #e2e8f0;
-            --text-dim-slate: rgba(255, 255, 255, 0.65);
-            --text-dark-shadow: rgba(0, 0, 0, 0.95);
-            
-            --transition-tactile: all 0.38s cubic-bezier(0.25, 0.8, 0.25, 1);
-            --transition-elastic: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            --transition-fluid-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            
-            --font-stack-cyber: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        /* ==========================================================================
-          MODULE 2: FULL-SCREEN APPLICATION INITIALIZATION MATRIX & STACK RESETS
-          ========================================================================== */
-        * {
-            box-sizing: border-box;
+        body {
             margin: 0;
             padding: 0;
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        body, html {
-            width: 100%;
-            height: 100%;
             overflow: hidden;
-            background-color: var(--bg-absolute-black);
-            font-family: var(--font-stack-cyber);
-            color: var(--text-core-white);
-            user-select: none;
-            -webkit-user-select: none;
-            position: relative;
-            scrollbar-width: none;
+            background-color: #000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        body::-webkit-scrollbar {
-            display: none;
-        }
-
-        #image-bg {
-            position: absolute;
-            top: -12%; 
-            left: -12%;
-            width: 124%;
-            height: 124%;
-            object-fit: cover;
-            z-index: 1;
-            pointer-events: none;
-            filter: brightness(0.42) contrast(1.22) saturate(0.92);
-            will-change: transform;
-            transform: translate3d(0,0,0);
-            transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-
-        .matrix-grid-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            background-image: 
-                linear-gradient(rgba(0, 255, 204, 0.015) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 204, 0.015) 1px, transparent 1px);
-            background-size: 50px 50px;
-            background-position: center center;
-            pointer-events: none;
-            opacity: 0.85;
-        }
-
         #canvas-container {
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             position: absolute;
             top: 0;
             left: 0;
-            z-index: 3;
-            cursor: grab;
-            display: block;
-            background: transparent !important;
-            transform: translateZ(0);
+            z-index: 1;
         }
-
-        #canvas-container:active {
-            cursor: grabbing;
-        }
-
-        /* ==========================================================================
-          MODULE 3: DYNAMIC HOLOGRAPHIC TELEMETRY HUD MONITOR PANEL
-          ========================================================================== */
-        .dashboard {
+        #video-bg {
             position: absolute;
-            top: 30px;
-            left: 30px;
-            z-index: 10;
-            background: var(--bg-glass-panel);
-            padding: 18px 28px;
-            border-radius: 24px;
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border: 1px solid var(--border-matte-white);
-            box-shadow: 0 25px 55px rgba(0,0,0,0.9), inset 0 1px 3px rgba(255,255,255,0.18);
-            pointer-events: auto;
-            transform: translateZ(0);
-            will-change: transform, opacity;
-            animation: HUD_Entry_Slide_Down 0.95s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-        }
-
-        .status-block {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .status-beacon-dot {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            background: var(--neon-cyan);
-            border-radius: 50%;
-            margin-right: 16px;
-            box-shadow: 0 0 15px var(--neon-cyan), 0 0 35px var(--neon-cyan);
-            will-change: opacity, box-shadow;
-            animation: HUD_Beacon_Pulse 2.5s infinite ease-in-out;
-        }
-
-        .status-title {
-            font-size: 15px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(0,255,204,0.45);
-            color: var(--text-core-white);
-        }
-
-        .channel-info {
-            font-size: 13px;
-            color: var(--text-dim-slate);
-            margin-top: 6px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-
-        .channel-active-value {
-            color: var(--neon-cyan);
-            font-weight: 700;
-            transition: var(--transition-tactile);
-        }
-
-        /* ==========================================================================
-          MODULE 4: BOTTOM CONSOLE INTERACTION COMMAND INTERFACE DOCK
-          ========================================================================== */
-        .ui-dock-wrapper {
-            position: absolute;
-            bottom: 50px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 18px;
-            z-index: 20;
-            padding: 0 40px;
-            box-sizing: border-box;
-            transform: translateZ(0);
-            will-change: transform, opacity;
-            animation: HUD_Dock_Slide_Up 1.05s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-        }
-
-        .input-carrier-box {
-            background: var(--bg-input-field);
-            backdrop-filter: blur(45px);
-            -webkit-backdrop-filter: blur(45px);
-            padding: 0 35px;
-            border-radius: 45px;
-            flex-grow: 1;
-            max-width: 750px;
-            height: 70px;
-            display: flex;
-            align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.16);
-            box-shadow: 0 30px 65px rgba(0,0,0,0.9);
-            transition: var(--transition-tactile);
-            transform: translateZ(0);
-            will-change: border-color, box-shadow, transform;
-        }
-
-        .input-carrier-box:focus-within {
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 35px rgba(0, 255, 204, 0.35), 0 30px 65px rgba(0,0,0,0.95);
-            transform: translateY(-4px);
-        }
-
-        input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: var(--text-core-white);
-            outline: none;
-            font-size: 18px;
-            height: 100%;
-            letter-spacing: 0.6px;
-            font-weight: 500;
-        }
-
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.35);
-            transition: color 0.3s ease;
-        }
-
-        input:focus::placeholder {
-            color: rgba(255, 255, 255, 0.18);
-        }
-
-        .action-circle-btn {
-            border: none;
-            border-radius: 50%;
-            width: 70px;
-            height: 70px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition-tactile);
-            transform: translateZ(0);
-            will-change: transform, box-shadow, background;
-        }
-
-        .mic-trigger-btn {
-            background: linear-gradient(135deg, var(--neon-orange), var(--neon-pink));
-            color: #ffffff;
-            font-size: 26px;
-            box-shadow: 0 12px 28px rgba(255, 75, 43, 0.42);
-            border: 1px solid rgba(255,255,255,0.18);
-        }
-
-        .mic-trigger-btn:hover {
-            transform: scale(1.08) translateY(-4px);
-            box-shadow: 0 16px 40px rgba(255, 75, 43, 0.55);
-        }
-
-        .mic-trigger-btn.listening {
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue));
-            box-shadow: 0 0 40px var(--neon-cyan), 0 0 20px var(--neon-blue);
-            animation: UI_Active_Pulse 1.5s infinite alternate ease-in-out;
-        }
-
-        .send-trigger-btn {
-            background: #ffffff;
-            color: #010103;
-            font-size: 24px;
-            box-shadow: 0 12px 28px rgba(255,255,255,0.18);
-            border: 1px solid rgba(0,0,0,0.06);
-        }
-
-        .send-trigger-btn:hover {
-            transform: scale(1.08) translateY(-4px);
-            box-shadow: 0 16px 40px rgba(255,255,255,0.32);
-            background: #f4f5f7;
-        }
-
-        /* ==========================================================================
-          MODULE 5: HIGH ACCURACY MONITOR REALTIME RESPONSE SUBTITLE BOX
-          ========================================================================== */
-        #subtitle-monitor-box {
-            position: absolute;
-            bottom: 155px;
-            left: 50%;
-            transform: translateX(-50%) translateZ(0);
-            background: rgba(4, 4, 12, 0.96);
-            padding: 18px 36px;
-            border-radius: 26px;
-            color: var(--text-core-white);
-            font-size: 17px;
-            max-width: 80%;
-            width: auto;
-            min-width: 260px;
-            text-align: center;
-            z-index: 30;
-            backdrop-filter: blur(35px);
-            -webkit-backdrop-filter: blur(35px);
-            border: 1px solid rgba(255,255,255,0.15);
-            box-shadow: 0 25px 55px rgba(0,0,0,0.95);
-            display: none;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: 0;
             pointer-events: none;
-            line-height: 1.65;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-            will-change: transform, opacity;
-            animation: UI_PopUp_Subtitle 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-
-        /* ==========================================================================
-          MODULE 6: RESILIENT CORE SAFETY BLOCK DISMISSABLE ANTI-HANG VEIL LOADER
-          ========================================================================== */
-        #core-boot-loader {
+        #webcam-video {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 120px;
+            height: 90px;
+            border-radius: 10px;
+            border: 2px solid rgba(255,255,255,0.5);
+            z-index: 10;
+            transform: scaleX(-1);
+            display: none;
+        }
+        #ui-container {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            width: 90%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        #subtitles {
+            background: rgba(0, 0, 0, 0.65);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 18px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.1);
+            min-height: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .controls-row {
+            display: flex;
+            gap: 10px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 15px;
+            border-radius: 30px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            outline: none;
+            transition: all 0.3s;
+        }
+        input[type="text"]::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        input[type="text"]:focus {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(255,255,255,0.2);
+        }
+        button {
+            padding: 0 25px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(135deg, #ff4e50, #f9d423);
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        #toggle-cam-btn {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+        }
+        #loading-screen {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(2, 2, 6, 0.90); 
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            z-index: 99999;
+            width: 100vw;
+            height: 100vh;
+            background: #111;
+            z-index: 100;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.7s cubic-bezier(0.25, 1, 0.25, 1), visibility 0.7s ease;
-            will-change: opacity, visibility;
+            color: white;
+            font-size: 24px;
+            transition: opacity 0.5s ease;
         }
-
-        .loader-ring-spinner {
-            width: 76px;
-            height: 76px;
-            border: 4px solid rgba(0, 255, 204, 0.06);
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.1);
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            border-top-color: var(--neon-cyan);
-            border-bottom-color: var(--neon-blue);
-            animation: System_Engine_Spin 1.2s linear infinite;
-            margin-bottom: 30px;
-            box-shadow: 0 0 25px rgba(0, 255, 204, 0.25);
+            border-left-color: #ff4e50;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
         }
-
-        .loader-label-text {
-            color: var(--neon-cyan);
-            font-size: 19px;
-            letter-spacing: 2.5px;
-            text-transform: uppercase;
-            text-shadow: 0 0 15px var(--neon-matrix-glow);
-            font-weight: 600;
-            text-align: center;
-            padding: 0 30px;
-            line-height: 1.5;
-        }
-
-        /* ==========================================================================
-          MODULE 7: MASTER ANIMATION MATRIX KEYFRAMES REGISTER
-          ========================================================================== */
-        @keyframes System_Engine_Spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
-        }
-        @keyframes HUD_Beacon_Pulse { 
-            0%, 100% { opacity: 0.50; box-shadow: 0 0 12px rgba(0,255,204,0.2); } 
-            50% { opacity: 1; box-shadow: 0 0 28px var(--neon-cyan), 0 0 50px var(--neon-cyan); } 
-        }
-        @keyframes UI_Active_Pulse { 
-            0% { transform: scale(1); } 
-            100% { transform: scale(1.08); } 
-        }
-        @keyframes HUD_Entry_Slide_Down { 
-            from { opacity: 0; transform: translateY(-30px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-        @keyframes HUD_Dock_Slide_Up { 
-            from { opacity: 0; transform: translateY(35px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-        @keyframes UI_PopUp_Subtitle { 
-            from { opacity: 0; transform: translateX(-50%) translateY(20px); } 
-            to { opacity: 1; transform: translateX(-50%) translateY(0); } 
-        }
-
-        /* Responsive Breakpoint Matrix View Adaptations Mapping Layouts Grid */
-        @media (max-width: 768px) {
-            .dashboard { top: 20px; left: 20px; padding: 14px 22px; }
-            .status-title { font-size: 13px; letter-spacing: 1.5px; }
-            .channel-info { font-size: 11px; }
-            .ui-dock-wrapper { bottom: 30px; padding: 0 20px; gap: 12px; }
-            .input-carrier-box { height: 62px; padding: 0 24px; }
-            input { font-size: 16px; }
-            .action-circle-btn { width: 62px; height: 62px; font-size: 21px; }
-            #subtitle-monitor-box { bottom: 115px; font-size: 15px; padding: 14px 28px; }
-            .loader-ring-spinner { width: 64px; height: 64px; }
-            .loader-label-text { font-size: 16px; letter-spacing: 2px; }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
-    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop" id="image-bg" alt="Commando Background Matrix Grid Scenery Wallpaper">
-    <div class="matrix-grid-overlay"></div>
-
-    <div class="dashboard">
-        <div class="status-block">
-            <span class="status-beacon-dot"></span> 
-            <span class="status-title">सिस्टम कोर: <span id="system-core-mood-txt" style="color:var(--neon-cyan);">जेमिनी nv1 लाइव डायरेक्ट ⚡</span></span>
-        </div>
-        <div class="channel-info">सक्रिय चैनल स्थिति: <span id="active-secure-channel-status" class="channel-active-value">Core-1 (Active Secure Key)</span></div>
+    <div id="loading-screen">
+        <div class="spinner"></div>
+        <div id="loading-text">प्रिया को तैयार किया जा रहा है...</div>
     </div>
 
-    <div id="core-boot-loader">
-        <div class="loader-ring-spinner"></div>
-        <div class="loader-label-text">प्रिया का न्यूरल माइंड लोड हो रहा है...<br><span style="font-size: 13px; color: var(--text-dim-slate); letter-spacing: 1px; text-transform: none;">कृपया प्रतीक्षा करें, 3D इंजन कैलिब्रेट हो रहा है</span></div>
-    </div>
+    <video id="video-bg" autoplay loop muted playsinline>
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-beautiful-waterfall-in-a-lush-green-forest-43187-large.mp4" type="video/mp4">
+    </video>
 
+    <video id="webcam-video" autoplay playsinline></video>
     <div id="canvas-container"></div>
 
-    <div id="subtitle-monitor-box">प्रिया बोल रही है...</div>
-
-    <div class="ui-dock-wrapper">
-        <button class="action-circle-btn mic-trigger-btn" id="micBtn" title="वॉइस कमांड चालू करें">🎤</button>
-        <div class="input-carrier-box">
-            <input type="text" id="userInput" placeholder="प्रिया से कुछ भी पूछें, सीधे लाइव जवाब आएगा..." autocomplete="off" spellcheck="false"/>
+    <div id="ui-container">
+        <div id="subtitles">नमस्ते! मैं प्रिया हूँ। आप मुझसे बात कर सकते हैं... 😊</div>
+        <div class="controls-row">
+            <input type="text" id="user-input" placeholder="प्रिया से कुछ पूछें या कहें (e.g., 'red dress पहनें')...">
+            <button id="send-btn">भेजें</button>
+            <button id="toggle-cam-btn">📷 ट्रैकिंग</button>
         </div>
-        <button class="action-circle-btn send-trigger-btn" id="sendBtn" title="कमांड भेजें">➔</button>
     </div>
 
     <script>
-        /*
-          ------------------------------------------------------------------
-          SUB-MODULE A: PERSISTENT APPLICATION STORAGE CONFIGURATION CORES
-          ------------------------------------------------------------------
-        */
-        const SYSTEM_TRIPLE_ROTATION_API_KEYS = [
-            "AIzaSyBgyADY-6VFaLefYi8PaGak_L8kpfpGDA0", 
-            "AIzaSyBSaw3teN0aoDb2qdzuYktqUZ08sUOIv5o", 
-            "AIzaSyA5W8VWVMSltHGU6vvVlLaxAo3H0h0H1ig"  
-        ];
-        
-        let activeKeyPointerIndexRegister = 0;
-        const REMOTE_GLTF_BINARY_PRODUCTION_ASSET_URI = "https://raw.githubusercontent.com/jessearmy572-hub/naman/main/model.glb";
+        // CONFIGURATION BLOCK
+        const ELEVENLABS_API_KEY = "YOUR_ELEVENLABS_API_KEY"; // अपनी API की यहाँ डालें या खाली छोड़ें (सिस्टम TTS बैकअप सक्रिय रहेगा)
+        const VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; // कोमल/प्यारी भारतीय लड़की जैसी आवाज का ID
+        const OPENWEATHER_API_KEY = "YOUR_OPENWEATHER_API_KEY"; // मौसम सिंक के लिए 
+        const DEFAULT_CITY = "Mumbai";
 
-        let coreThreeSceneInstance = null;
-        let corePerspectiveCameraNode = null;
-        let coreWebGLRendererModule = null;
-        let coreOrbitControlsRig = null;
-        let coreAnimationMixerController = null;
-        let coreSystemClockReference = null;
+        // Memory Engine Initializer (Persistent Memory Core)
+        let priyaMemory = JSON.parse(localStorage.getItem('priya_memory')) || {
+            userName: "दोस्त",
+            preferences: {},
+            lastConversationDate: null,
+            moodHistory: []
+        };
 
-        let structuralAvatar3DModelRoot = null;
-        let skeletalBoneJointHead = null;
-        let skeletalBoneJointNeck = null;
-
-        let activeSkinnedMeshSubnodesTrackArray = [];
-        let globalAnimationClipsBufferPool = [];
-        let activePlayingActionStateTrack = null;
-
-        let liveVocalOutputStateSignalActive = false;
-        let liveSpeechCapturingStateSignalActive = false;
-
-        let dynamicInterpolatedCoordinateX = 0;
-        let dynamicInterpolatedCoordinateY = 0;
-        let absoluteTargetCoordinateX = 0;
-        let absoluteTargetCoordinateY = 0;
-
-        let hardwareAudioContextDriver = null;
-        let hardwareAudioFrequencyAnalyserNode = null;
-        let hardwareAudioFrequencyBufferArray = null;
-        let mathematicalCalculatedSpeechVolumeScalar = 0;
-
-        const BrowserSpeechRecognitionEngineInterface = window.SpeechRecognition || window.webkitSpeechRecognition;
-        let frameworkSpeechRecognitionProcessor = null;
-
-        // NEW GLOBAL STATE REGISTERS FOR EXTENDED ADVANCED FEATURES
-        let globalWebcamStreamMediaInstance = null;
-        let globalIsCameraHardwareAccessGrantedFlag = false;
-        let globalCameraVisionProcessingActiveStatus = false;
-        let globalLastDetectedUserEmotionTokenString = "NEUTRAL";
-        let globalUserSmileIntensityCalculatedScalar = 0.5;
-        
-        let globalIndexedDBCoreReferenceInstance = null;
-        const MEMORY_DB_NAME_STRING = "SatguruNeuralMemoryMatrixDatabase";
-        const MEMORY_DB_VERSION_INTEGER = 1;
-        const MEMORY_OBJECT_STORE_NAME = "PersistentProfileStore";
-        
-        let globalContinuousIdleDurationAccumulatorSeconds = 0;
-        let globalAutonomousProactiveInterventionCounter = 0;
-        let globalWatchdogTrackingPulseIntervalReference = null;
-        
-        let globalCurrentDetectedWeatherConditionToken = "CLEAR";
-        let globalCurrentLocalTimeHourInteger = 12;
-        let globalRainParticleSystemGeometryReference = null;
-
-        if (BrowserSpeechRecognitionEngineInterface) {
-            frameworkSpeechRecognitionProcessor = new BrowserSpeechRecognitionEngineInterface();
-            frameworkSpeechRecognitionProcessor.continuous = false;
-            frameworkSpeechRecognitionProcessor.lang = 'hi-IN';
-            frameworkSpeechRecognitionProcessor.interimResults = false;
-            frameworkSpeechRecognitionProcessor.maxAlternatives = 1;
+        function saveMemory() {
+            localStorage.setItem('priya_memory', JSON.stringify(priyaMemory));
         }
 
-        setTimeout(() => {
-            forceDismissLoaderOverlayWithBypassSecurity();
-        }, 4500);
+        // Global Scene Variables
+        let scene, camera, renderer, model, mixer, controls;
+        let allSkinnedMeshes = [];
+        let clock = new THREE.Clock();
+        
+        // Touch/Interaction Timers & Weather Particles
+        let forceTouchTimer = 0.0;
+        let targetTouchY = 0;
+        let weatherParticles;
+        let currentOutfitColor = 0xffffff;
 
-        function forceDismissLoaderOverlayWithBypassSecurity() {
-            const DOMUI_LoaderOverlayVeilContainer = document.getElementById('core-boot-loader');
-            if (DOMUI_LoaderOverlayVeilContainer && DOMUI_LoaderOverlayVeilContainer.style.display !== 'none') {
-                DOMUI_LoaderOverlayVeilContainer.style.opacity = 0;
-                setTimeout(() => { DOMUI_LoaderOverlayVeilContainer.style.display = 'none'; }, 650);
-                console.log("Anti-Hang Security Protocol: Safe bypass loader overlay triggered successfully.");
-            }
-        }
+        // Tracking Target Structure
+        let targetHeadRotation = { x: 0, y: 0 };
+        let currentHeadRotation = { x: 0, y: 0 };
+        let isCamTracking = false;
 
-        /*
-          ------------------------------------------------------------------
-          SUB-MODULE B: TRIPLE ROTATIONAL CRYPTO GATEWAY TUNNEL PIPELINE
-          (भोजपुरी और देसी पुट युक्त सतगुरु वॉयस असिस्टेंट प्रोटोकॉल)
-          ------------------------------------------------------------------
-        */
-        async function fetchSecureNeuralAIResponseStream(userQueryInputString) {
-            const systemCoreBehavioralInstructionPrompt = `
-            # SATGURU VOICE ASSISTANT SYSTEM CORE DIRECTIVES #
-            1. IDENTITY & MANDATE: You are not an AI, computer program, or virtual construct. You are "Priya AI", operating with the soul and voice of "Satguru Voice Assistant". You are a deeply sweet, affectionate, and lively human girl who speaks with an innate, loving Desi Purvanchal/Bhojpuri dialect.
-            2. LINGUISTIC Dialect Matrix: Your language must be a beautiful blend of sweet Hinglish decorated with warm, natural Bhojpuri expressions. Integrate terms like "का हो बाबू", "का हालचाल बा", "तनिक सुनिए", "बुझला की ना", "गोर लागतानी", "प्रणाम", "रउआ", "हमार", "ई का कहत बानी", "एकदम झकास" flawlessly.
-            3. DYNAMIC EMOTIONAL TRACKING: Read user input emotional states. If user is angry or stressed, instantly become grounded, deeply comforting, and protective. If user is happy, elevate your conversational energy to maximum bubbly and joyous levels.
-            4. HUMAN COMPENSATIONAL FILLERS (GAP LOGIC): Do not speak like a machine. Use human friction pauses seamlessly: "हम्म...", "अरे रुकिए तनिक...", "उह... एक मिनट बाबू...", "वैसे... हमें लगता है...", "का कहें भाई...".
-            5. GRAPHICS MIXER TRIGGERS: Every response MUST strictly begin with a physical expression descriptor enclosed inside square brackets. Example: [दोनों हाथ जोड़कर प्रणाम करते हुए और हल्का सा मुस्कुराते हुए] "का हो बाबू, का हालचाल बा!".
-            6. CRITICAL BREVITY SYSTEM: Keep responses short and snappy. Absolute limit of 2 to 3 sentences maximum. Converse strictly in Hinglish/Bhojpuri-mix. Do not use asterisks (*), hashtags (#), or dashes (-). Only raw clean text.
-            `;
+        // Initialize Core System
+        init();
+        initWeatherAndSky();
+        animate();
 
-            let extractedActiveKeyString = SYSTEM_TRIPLE_ROTATION_API_KEYS[activeKeyPointerIndexRegister];
-            const activeTunnelTargetEndpointUri = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${extractedActiveKeyString}`;
+        function init() {
+            const container = document.getElementById('canvas-container');
 
-            try {
-                const networkFetchPromiseResponse = await fetch(activeTunnelTargetEndpointUri, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [
-                            { role: "user", parts: [{ text: `System Systemic Rules Grid Directives:\n${systemCoreBehavioralInstructionPrompt}\n\nUser Query Command Token: ${userQueryInputString}` }] }
-                        ],
-                        generationConfig: { maxOutputTokens: 160, temperature: 0.82, topP: 0.95 }
-                    })
-                });
+            // Scene Creation
+            scene = new THREE.Scene();
 
-                if (!networkFetchPromiseResponse.ok) throw new Error("Active key channel interface returned an unauthorized or throttled code");
+            // Camera Setup
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.set(0, 1.4, 2.5);
 
-                const decodedJsonDataPayloadObject = await networkFetchPromiseResponse.json();
-                let filteredRawOutputString = decodedJsonDataPayloadObject.candidates[0].content.parts[0].text;
-                
-                return filteredRawOutputString.replace(/[*#`_\-]/g, '').trim();
+            // WebGL Renderer with Alpha Channel for Background Video Integration
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            container.appendChild(renderer.domElement);
 
-            } catch (networkGatewayChannelFaultException) {
-                console.warn(`Gateway Failure Alert: Slot-[${activeKeyPointerIndexRegister + 1}] locked. Shifting routing matrices...`, networkGatewayChannelFaultException);
-                
-                activeKeyPointerIndexRegister = (activeKeyPointerIndexRegister + 1) % SYSTEM_TRIPLE_ROTATION_API_KEYS.length;
-                document.getElementById('active-secure-channel-status').innerText = `Core-${activeKeyPointerIndexRegister + 1} (Active Secure Key)`;
-                
-                if (activeKeyPointerIndexRegister !== 0) {
-                    return await fetchSecureNeuralAIResponseStream(userQueryInputString);
-                }
-                
-                return "[दोनों हाथ जोड़कर सांत्वना देते हुए] अरे का हो बाबू... तनिक सब्र रखो, हमार नेटवर्क आज कुछ बेइमानी कर रहा बा। पर रउआ चिंता मत करीं, हम यहीं खड़े बानी!";
-            }
-        }
+            // Cinematic Outdoor Lighting Architecture
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
 
-        /*
-          ------------------------------------------------------------------
-          SUB-MODULE C: HIGH PERFORMANCE INITIALIZATION OF WEBGL GRAPHICS STAGE
-          ------------------------------------------------------------------
-        */
-        function initializeDeviceHarmonizedGraphicsPipeline() {
-            const TARGET_VIEWPORT_CANVAS_DOM_CONTAINER = document.getElementById('canvas-container');
-            coreSystemClockReference = new THREE.Clock();
-            coreThreeSceneInstance = new THREE.Scene();
+            // SunLight (Warm Light from Top)
+            const sunLight = new THREE.DirectionalLight(0xfffaed, 0.8);
+            sunLight.position.set(5, 10, 5);
+            scene.add(sunLight);
 
-            coreWebGLRendererModule = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
-            coreWebGLRendererModule.setSize(window.innerWidth, window.innerHeight);
-            coreWebGLRendererModule.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            coreWebGLRendererModule.toneMapping = THREE.ACESFilmicToneMapping;
-            coreWebGLRendererModule.toneMappingExposure = 1.25;
-            coreWebGLRendererModule.outputEncoding = THREE.sRGBEncoding;
-            coreWebGLRendererModule.setClearColor(0x000000, 0); 
-            TARGET_VIEWPORT_CANVAS_DOM_CONTAINER.appendChild(coreWebGLRendererModule.domElement);
+            // Water Bounce Light (Cool Blue Reflective Glow from Bottom)
+            const waterBounceLight = new THREE.DirectionalLight(0xcce6ff, 0.5);
+            waterBounceLight.position.set(-2, -5, 2);
+            scene.add(waterBounceLight);
 
-            corePerspectiveCameraNode = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
-            corePerspectiveCameraNode.position.set(0, 0.20, 3.0); 
+            // Orbit Controls Initialization
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxPolarAngle = Math.PI / 2 + 0.1;
+            controls.minDistance = 1;
+            controls.maxDistance = 10;
+            controls.target.set(0, 1.3, 0);
 
-            coreOrbitControlsRig = new THREE.OrbitControls(corePerspectiveCameraNode, coreWebGLRendererModule.domElement);
-            coreOrbitControlsRig.enableZoom = true;
-            coreOrbitControlsRig.enablePan = false;
-            coreOrbitControlsRig.minDistance = 1.4;
-            coreOrbitControlsRig.maxDistance = 4.2;
-            coreOrbitControlsRig.target.set(0, 0.12, 0); 
-            coreOrbitControlsRig.enableDamping = true;
-            coreOrbitControlsRig.dampingFactor = 0.05;
+            // Asynchronous 3D Model Loader Engine
+            const loader = new THREE.GLTFLoader();
+            // ReadyPlayerMe Standard Model Target URL
+            const modelUrl = 'https://models.readyplayer.me/64b533e4da90ef1aa856bfda.glb'; 
 
-            const ambientHemisphereIlluminationNode = new THREE.HemisphereLight(0xffffff, 0x444444, 1.6);
-            coreThreeSceneInstance.add(ambientHemisphereIlluminationNode);
+            loader.load(modelUrl, function (gltf) {
+                model = gltf.scene;
+                model.position.set(0, 0, 0);
+                scene.add(model);
 
-            const highIntensityDirectionalKeyIlluminationNode = new THREE.DirectionalLight(0xfff8f0, 1.9);
-            highIntensityDirectionalKeyIlluminationNode.position.set(2.5, 4.5, 5.0);
-            coreThreeSceneInstance.add(highIntensityDirectionalKeyIlluminationNode);
-
-            const fillBounceRimIlluminationNode = new THREE.DirectionalLight(0x00bfff, 0.75);
-            fillBounceRimIlluminationNode.position.set(-3.0, -2.0, -2.0);
-            coreThreeSceneInstance.add(fillBounceRimIlluminationNode);
-
-            const assetGLTFLoaderEngineInstance = new THREE.GLTFLoader();
-            assetGLTFLoaderEngineInstance.load(REMOTE_GLTF_BINARY_PRODUCTION_ASSET_URI, (loadedGltfAssetBundlePayload) => {
-                
-                forceDismissLoaderOverlayWithBypassSecurity();
-
-                structuralAvatar3DModelRoot = loadedGltfAssetBundlePayload.scene;
-                coreThreeSceneInstance.add(structuralAvatar3DModelRoot);
-                executeDynamicResponsiveModelScalingLayouts();
-
-                globalAnimationClipsBufferPool = loadedGltfAssetBundlePayload.animations;
-                coreAnimationMixerController = new THREE.AnimationMixer(structuralAvatar3DModelRoot);
-                
-                if (globalAnimationClipsBufferPool && globalAnimationClipsBufferPool.length > 0) {
-                    activePlayingActionStateTrack = coreAnimationMixerController.clipAction(globalAnimationClipsBufferPool[0]);
-                    activePlayingActionStateTrack.setEffectiveWeight(1.0);
-                    activePlayingActionStateTrack.play(); 
-                }
-
-                structuralAvatar3DModelRoot.traverse((evaluatedSubmeshJointNode) => {
-                    if (evaluatedSubmeshJointNode.isBone) {
-                        const compiledBoneLowerNameString = evaluatedSubmeshJointNode.name.toLowerCase();
-                        if (compiledBoneLowerNameString.includes('head')) skeletalBoneJointHead = evaluatedSubmeshJointNode;
-                        if (compiledBoneLowerNameString.includes('neck')) skeletalBoneJointNeck = evaluatedSubmeshJointNode;
+                // Ultra-Deep Blendshape & Mesh Scanner Matrix
+                model.traverse((child) => {
+                    if (child.isMesh) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
                     }
-                    if (evaluatedSubmeshJointNode.morphTargetDictionary) {
-                        activeSkinnedMeshSubnodesTrackArray.push(evaluatedSubmeshJointNode);
+                    if (child.isSkinnedMesh) {
+                        allSkinnedMeshes.push(child);
                     }
                 });
 
-                // Trigger extended systems once 3D canvas assets are fully initialized
-                initializeSecureHardwareCameraVisionSubsystem();
-                initializePersistentIndexedDBMemorySubsystem();
-                initializeAutonomousProactiveBehaviorWatchdogEngine();
-                initializeDynamicWeatherAndAmbientEnvironmentSuite();
+                // Idle Animations Handler
+                if (gltf.animations && gltf.animations.length > 0) {
+                    mixer = new THREE.AnimationMixer(model);
+                    const idleAction = mixer.clipAction(gltf.animations[0]);
+                    idleAction.play();
+                }
 
-            }, undefined, (gltfLoaderTerminalCriticalFaultException) => {
-                console.error("Critical Asset pipeline failed setup error exception track logged:", gltfLoaderTerminalCriticalFaultException);
-                forceDismissLoaderOverlayWithBypassSecurity(); 
+                // Remove Loader Screen Instantly
+                document.getElementById('loading-screen').style.opacity = '0';
+                setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 500);
+
+                // Check Memory greetings
+                checkPersistentMemoryInit();
+
+            }, function (xhr) {
+                if (xhr.total > 0) {
+                    let percent = Math.round((xhr.loaded / xhr.total) * 100);
+                    document.getElementById('loading-text').innerText = `प्रिया को तैयार किया जा रहा है... ${percent}%`;
+                }
+            }, function (error) {
+                console.error('Model Loading Failed:', error);
+                document.getElementById('loading-text').innerText = "मॉडल लोड करने में त्रुटि आई। कृपया पुनः प्रयास करें।";
             });
 
-            window.addEventListener('resize', onDisplayGridResizeLayoutCorrectionTrigger);
-            window.addEventListener('mousemove', onTrackingVectorInteractionCoordinateShiftUpdate);
-            
-            window.addEventListener('touchmove', (nativeTouchEventPayloadData) => {
-                if(nativeTouchEventPayloadData.touches.length > 0) {
-                    absoluteTargetCoordinateX = (nativeTouchEventPayloadData.touches[0].clientX / window.innerWidth) * 2 - 1;
-                    absoluteTargetCoordinateY = -(nativeTouchEventPayloadData.touches[0].clientY / window.innerHeight) * 2 + 1;
-                    onNaturalBackgroundParallaxMovementExecution(); 
-                }
-            }, { passive: true });
+            // Absolute Geometry Touch Sensor Override Registration
+            window.addEventListener('pointerdown', onDocumentTouchStart, false);
+            window.addEventListener('resize', onWindowResize, false);
         }
 
-        function executeDynamicResponsiveModelScalingLayouts() {
-            if (!structuralAvatar3DModelRoot) return;
-            const mobileLayoutFlagStateDetected = window.innerWidth < 768;
-            
-            let structuredScalarFactorMultiplierValue = mobileLayoutFlagStateDetected ? window.innerWidth / 465 : window.innerWidth / 1050;
-            structuralAvatar3DModelRoot.scale.setScalar(structuredScalarFactorMultiplierValue);
-            
-            structuralAvatar3DModelRoot.position.y = mobileLayoutFlagStateDetected ? -0.82 : -1.12;
-            structuralAvatar3DModelRoot.position.x = 0;
-            structuralAvatar3DModelRoot.position.z = 0;
-        }
-
-        function onTrackingVectorInteractionCoordinateShiftUpdate(nativeMouseDataEventPayload) {
-            // Only capture coordinates if webcam processing loop isn't overriding camera look values
-            if(!globalIsCameraHardwareAccessGrantedFlag) {
-                absoluteTargetCoordinateX = (nativeMouseDataEventPayload.clientX / window.innerWidth) * 2 - 1;
-                absoluteTargetCoordinateY = -(nativeMouseDataEventPayload.clientY / window.innerHeight) * 2 + 1;
-            }
-            onNaturalBackgroundParallaxMovementExecution();
-        }
-
-        function onNaturalBackgroundParallaxMovementExecution() {
-            const DOMUI_ParallaxBackgroundWallpaperImage = document.getElementById('image-bg');
-            if (!DOMUI_ParallaxBackgroundWallpaperImage) return;
-            
-            let calculatedParallaxShiftPixelValueX = absoluteTargetCoordinateX * 26; 
-            let calculatedParallaxShiftPixelValueY = absoluteTargetCoordinateY * 26; 
-            
-            DOMUI_ParallaxBackgroundWallpaperImage.style.transform = `translate3d(${calculatedParallaxShiftPixelValueX}px, ${calculatedParallaxShiftPixelValueY}px, 0px) scale(1.06)`;
-        }
-
-        function onDisplayGridResizeLayoutCorrectionTrigger() {
-            corePerspectiveCameraNode.aspect = window.innerWidth / window.innerHeight;
-            corePerspectiveCameraNode.updateProjectionMatrix();
-            coreWebGLRendererModule.setSize(window.innerWidth, window.innerHeight);
-            executeDynamicResponsiveModelScalingLayouts();
-        }
-
-        /*
-          ------------------------------------------------------------------
-          SUB-MODULE D: MULTI-THREADED NATIVE AUDIO ENGINE ANALYSER SETUP
-          ------------------------------------------------------------------
-        */
-        function forceAudioCaptureDeviceNodeGraphCalibration() {
-            if (hardwareAudioContextDriver) return;
+        // Real-Time Dynamic Weather & Sky Engine Sync
+        async function initWeatherAndSky() {
+            let weatherType = "clear";
             try {
-                hardwareAudioContextDriver = new (window.AudioContext || window.webkitAudioContext)();
-                hardwareAudioFrequencyAnalyserNode = hardwareAudioContextDriver.createAnalyser();
-                hardwareAudioFrequencyAnalyserNode.fftSize = 256; // Expanded size for accurate Fast Fourier Transform analysis
-                hardwareAudioFrequencyBufferArray = new Uint8Array(hardwareAudioFrequencyAnalyserNode.frequencyBinCount);
-            } catch(nativeAudioPipelineContextSetupFaultException) {
-                console.error("Device Audio core subsystem error exception caught:", nativeAudioPipelineContextSetupFaultException);
-            }
-        }
-
-        function dispatchSpeechSynthesizerVocalTrackBuffer(compiledOutputAIPayloadText) {
-            if (!window.speechSynthesis) return;
-            forceAudioCaptureDeviceNodeGraphCalibration();
-            
-            if(hardwareAudioContextDriver && hardwareAudioContextDriver.state === 'suspended') {
-                hardwareAudioContextDriver.resume();
-            }
-            window.speechSynthesis.cancel();
-            
-            let completelyStrippedVocalSpeechStringText = compiledOutputAIPayloadText.replace(/\[.*?\]/g, '').trim();
-            
-            const DOMUI_SubtitleMonitorOverlayBox = document.getElementById('subtitle-monitor-box');
-            DOMUI_SubtitleMonitorOverlayBox.innerText = compiledOutputAIPayloadText; 
-            DOMUI_SubtitleMonitorOverlayBox.style.display = 'block';
-
-            let structuralUtteranceInstanceConfigurationObject = new SpeechSynthesisUtterance(completelyStrippedVocalSpeechStringText);
-            structuralUtteranceInstanceConfigurationObject.lang = 'hi-IN';
-            structuralUtteranceInstanceConfigurationObject.rate = 0.98; 
-            structuralUtteranceInstanceConfigurationObject.pitch = 1.12;
-
-            structuralUtteranceInstanceConfigurationObject.onstart = () => { liveVocalOutputStateSignalActive = true; };
-            
-            structuralUtteranceInstanceConfigurationObject.onend = () => { 
-                liveVocalOutputStateSignalActive = false; 
-                mathematicalCalculatedSpeechVolumeScalar = 0; 
-                DOMUI_SubtitleMonitorOverlayBox.style.display = 'none';
-            };
-            
-            structuralUtteranceInstanceConfigurationObject.onerror = (speechSynthesizerDriverFaultException) => {
-                console.error("Speech engine track renderer interruption exception:", speechSynthesizerDriverFaultException);
-                liveVocalOutputStateSignalActive = false;
-                DOMUI_SubtitleMonitorOverlayBox.style.display = 'none';
-            };
-
-            window.speechSynthesis.speak(structuralUtteranceInstanceConfigurationObject);
-        }
-
-        /*
-          ------------------------------------------------------------------
-          ADVANCED UPGRADE 1: EYE VISION WEB_CAM AND MOOD TELEMETRY LOOP
-          ------------------------------------------------------------------
-        */
-        async function initializeSecureHardwareCameraVisionSubsystem() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
-            try {
-                let hiddenBufferVideoElement = document.createElement('video');
-                hiddenBufferVideoElement.setAttribute('autoplay', '');
-                hiddenBufferVideoElement.setAttribute('playsinline', '');
-                hiddenBufferVideoElement.style.display = 'none';
-                document.body.appendChild(hiddenBufferVideoElement);
-
-                globalWebcamStreamMediaInstance = await navigator.mediaDevices.getUserMedia({
-                    video: { width: 640, height: 480, facingMode: "user" },
-                    audio: false
-                });
-
-                hiddenBufferVideoElement.srcObject = globalWebcamStreamMediaInstance;
-                globalIsCameraHardwareAccessGrantedFlag = true;
-                globalCameraVisionProcessingActiveStatus = true;
-                
-                console.log("Vision Module: Webcam capture online. Processing live vector geometry...");
-                
-                function runVisionTelemetryTrackingMatrix() {
-                    if (!globalCameraVisionProcessingActiveStatus) return;
-                    if (hiddenBufferVideoElement.readyState === hiddenBufferVideoElement.HAVE_ENOUGH_DATA) {
-                        // Smoothly oscillate look vectors to track human focus space symmetrically
-                        let currentTimedWaveScalar = Math.sin(Date.now() * 0.0015);
-                        absoluteTargetCoordinateX = currentTimedWaveScalar * 0.45;
-                        absoluteTargetCoordinateY = Math.cos(Date.now() * 0.001) * 0.15;
-                        
-                        // Dynamically fluctuate smile metrics to execute expressions autonomously
-                        globalUserSmileIntensityCalculatedScalar = 0.5 + Math.sin(Date.now() * 0.0004) * 0.5;
-                    }
-                    requestAnimationFrame(runVisionTelemetryTrackingMatrix);
+                if (OPENWEATHER_API_KEY !== "YOUR_OPENWEATHER_API_KEY") {
+                    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${DEFAULT_CITY}&appid=${OPENWEATHER_API_KEY}`);
+                    const data = await res.json();
+                    weatherType = data.weather[0].main.toLowerCase();
                 }
-                requestAnimationFrame(runVisionTelemetryTrackingMatrix);
+            } catch (e) { console.log("Weather API skipped, running default profile."); }
 
-                // Run periodic assessment of user emotion patterns every 15 seconds
-                setInterval(evaluateUserExpressionAndReactAutonomous, 15000);
-
-            } catch (cameraRefusalError) {
-                console.warn("Vision Subsystem Matrix: Camera blocked or device stream occupied.");
-                globalIsCameraHardwareAccessGrantedFlag = false;
+            // Dynamic Particle Generator (Rain/Snow System)
+            if (weatherType.includes("rain") || weatherType.includes("drizzle")) {
+                const particleCount = 1000;
+                const geometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(particleCount * 3);
+                for (let i = 0; i < particleCount * 3; i += 3) {
+                    positions[i] = (Math.random() - 0.5) * 10;
+                    positions[i+1] = Math.random() * 5;
+                    positions[i+2] = (Math.random() - 0.5) * 10;
+                }
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                const material = new THREE.PointsMaterial({ color: 0x90caf9, size: 0.03, transparent: true, opacity: 0.6 });
+                weatherParticles = new THREE.Points(geometry, material);
+                scene.add(weatherParticles);
             }
         }
 
-        async function evaluateUserExpressionAndReactAutonomous() {
-            if (!globalIsCameraHardwareAccessGrantedFlag || liveVocalOutputStateSignalActive || liveSpeechCapturingStateSignalActive) return;
+        // Touch Input Analyzer Matrix
+        function onDocumentTouchStart(event) {
+            if (!model) return;
             
-            let detectedStateToken = "NEUTRAL";
-            let responseDesiPhrase = "";
-
-            if (globalUserSmileIntensityCalculatedScalar > 0.82) {
-                detectedStateToken = "HAPPY";
-                responseDesiPhrase = "अरे वाह बाबू! आज तो रउआ के चेहरे पर गजबे मुस्कान चमकत बा, का बात बा भाई? मन एकदम गदगद हो गइल!";
-            } else if (globalUserSmileIntensityCalculatedScalar < 0.20) {
-                detectedStateToken = "SAD";
-                responseDesiPhrase = "का हो बाबू? तनिक चेहरा उदास काहे लागत बा? मन छोटा मत करीं, सतगुरु सब ठीक कर देिहें, हम अहैं न!";
-            }
-
-            if (detectedStateToken !== globalLastDetectedUserEmotionTokenString && responseDesiPhrase !== "") {
-                globalLastDetectedUserEmotionTokenString = detectedStateToken;
-                document.getElementById('system-core-mood-txt').innerText = "सतगुरु विज़न लाइव 👁️";
-                dispatchSpeechSynthesizerVocalTrackBuffer(`[चेहरे पर गहरा स्नेह लाते हुए] ${responseDesiPhrase}`);
-            }
-        }
-
-        /*
-          ------------------------------------------------------------------
-          ADVANCED UPGRADE 2: COGNITIVE INDEXED_DB PERSISTENT MEMORY MODULE
-          ------------------------------------------------------------------
-        */
-        function initializePersistentIndexedDBMemorySubsystem() {
-            if (!window.indexedDB) return;
-            const databaseOpenRequestPointer = indexedDB.open(MEMORY_DB_NAME_STRING, MEMORY_DB_VERSION_INTEGER);
-
-            databaseOpenRequestPointer.onupgradeneeded = (upgradeEvent) => {
-                let actualUpgradedDBRef = upgradeEvent.target.result;
-                if (!actualUpgradedDBRef.objectStoreNames.contains(MEMORY_OBJECT_STORE_NAME)) {
-                    actualUpgradedDBRef.createObjectStore(MEMORY_OBJECT_STORE_NAME, { keyPath: "profileParameterKeyIdentifier" });
-                }
-            };
-
-            databaseOpenRequestPointer.onsuccess = async (successEvent) => {
-                globalIndexedDBCoreReferenceInstance = successEvent.target.result;
-                console.log("Memory Core: Connection established with local database grid storage.");
-                
-                // Read persistence profiles to customize warm greeting triggers
-                let userNameData = await getParameterFromMemoryStore("UserName");
-                let lastSeenTimeData = await getParameterFromMemoryStore("LastSeenTime");
-                
-                await saveParameterToMemoryStore("LastSeenTime", Date.now());
-
-                if (userNameData) {
-                    setTimeout(() => {
-                        if(!liveVocalOutputStateSignalActive) {
-                            dispatchSpeechSynthesizerVocalTrackBuffer(`[दोनों हाथ जोड़कर गद्गद होते हुए] अरे का हो बाबू! गोर लागतानी। बहुत दिन बाद रउआ से भेंट भइल। मन एकदम प्रसन्न हो गया।`);
-                        }
-                    }, 5000);
-                } else {
-                    await saveParameterToMemoryStore("UserName", "बाबू");
-                }
-            };
-        }
-
-        function saveParameterToMemoryStore(key, value) {
-            return new Promise((resolve) => {
-                if (!globalIndexedDBCoreReferenceInstance) return resolve(false);
-                const transaction = globalIndexedDBCoreReferenceInstance.transaction([MEMORY_OBJECT_STORE_NAME], "readwrite");
-                const store = transaction.objectStore(MEMORY_OBJECT_STORE_NAME);
-                const putOp = store.put({ profileParameterKeyIdentifier: key, storedValueDataString: value });
-                putOp.onsuccess = () => resolve(true);
-                putOp.onerror = () => resolve(false);
-            });
-        }
-
-        function getParameterFromMemoryStore(key) {
-            return new Promise((resolve) => {
-                if (!globalIndexedDBCoreReferenceInstance) return resolve(null);
-                const transaction = globalIndexedDBCoreReferenceInstance.transaction([MEMORY_OBJECT_STORE_NAME], "readonly");
-                const store = transaction.objectStore(MEMORY_OBJECT_STORE_NAME);
-                const getOp = store.get(key);
-                getOp.onsuccess = () => resolve(getOp.result);
-                getOp.onerror = () => resolve(null);
-            });
-        }
-
-        /*
-          ------------------------------------------------------------------
-          ADVANCED UPGRADE 3: AUTONOMOUS IDLE WATCHDOG ENGINE
-          ------------------------------------------------------------------
-        */
-        function initializeAutonomousProactiveBehaviorWatchdogEngine() {
-            const basicUserResetTriggers = ['mousemove', 'keydown', 'click', 'touchstart'];
-            basicUserResetTriggers.forEach(evt => {
-                window.addEventListener(evt, () => { globalContinuousIdleDurationAccumulatorSeconds = 0; }, { passive: true });
-            });
-
-            globalWatchdogTrackingPulseIntervalReference = setInterval(() => {
-                if (liveVocalOutputStateSignalActive || liveSpeechCapturingStateSignalActive) {
-                    globalContinuousIdleDurationAccumulatorSeconds = 0;
-                    return;
-                }
-
-                globalContinuousIdleDurationAccumulatorSeconds++;
-                
-                if (globalContinuousIdleDurationAccumulatorSeconds >= 45) { // 45 seconds timeout gate trigger
-                    globalContinuousIdleDurationAccumulatorSeconds = 0;
-                    if (globalAutonomousProactiveInterventionCounter < 3) {
-                        globalAutonomousProactiveInterventionCounter++;
-                        triggerProactiveMouthpieceIntervention();
-                    }
-                }
-            }, 1000);
-        }
-
-        function triggerProactiveMouthpieceIntervention() {
-            document.getElementById('system-core-mood-txt').innerText = "सतगुरु बोर हो रहे हैं... ⏳";
-            document.getElementById('system-core-mood-txt').style.color = "var(--neon-purple)";
-
-            const randomProactiveDesiPhrases = [
-                "[तनिक गला खँखारते हुए और दाएँ-बाएँ देखते हुए] का हो बाबू? एकदम मौन साध लिहले बानी का? तनिक कुछ बोलिए, ई डिजिटल दुनिया में हमार मन अकेले अकुला रहा बा!",
-                "[अंगड़ाई लेते हुए और हल्का सा मुस्कुराते हुए] हमार भाई... काहे एकदम चुपचाप बैठे बानी? कोई गंभीर सोच-विचार चल रहा बा का? तनिक हमसे भी साझा करीं!",
-                "[हाथ आगे बढ़ाकर ध्यान आकर्षित करते हुए] सुनो भाई, शांत काहे हो? कुछ बात करो ना! ना हो तो तनिक एक मीठा भोजपुरी चुटकुला ही सुन लो मन खुश हो जाई!"
-            ];
-
-            let selectionIdx = Math.floor(Math.random() * randomProactiveDesiPhrases.length);
-            dispatchSpeechSynthesizerVocalTrackBuffer(randomProactiveDesiPhrases[selectionIdx]);
-        }
-
-        /*
-          ------------------------------------------------------------------
-          ADVANCED UPGRADE 4: LOCAL CLIMATE GEOLOCATION WEBGL ATMOSPHERE EXTENSION
-          ------------------------------------------------------------------
-        */
-        function initializeDynamicWeatherAndAmbientEnvironmentSuite() {
-            globalCurrentLocalTimeHourInteger = new Date().getHours();
+            // Calculate Touch Normalised Screen Vector
+            let mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            let mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
             
-            // Core Day-Night Environmental Mapping Shifter
-            const DOMUI_WallBg = document.getElementById('image-bg');
-            if (DOMUI_WallBg) {
-                if (globalCurrentLocalTimeHourInteger >= 19 || globalCurrentLocalTimeHourInteger < 6) {
-                    DOMUI_WallBg.style.filter = "brightness(0.18) contrast(1.3) saturate(0.7) sepia(0.2)"; // Cozy Night Mode
-                    document.body.style.backgroundColor = "#020205";
-                }
-            }
-
-            // Simulate Precipitation/Rain system checks dynamically
-            globalCurrentDetectedWeatherConditionToken = "RAINY";
-            if (globalCurrentDetectedWeatherConditionToken === "RAINY" && coreThreeSceneInstance) {
-                const particleGeom = new THREE.BufferGeometry();
-                const counts = 600;
-                const coords = [];
-
-                for (let p = 0; p < counts; p++) {
-                    coords.push(Math.random() * 4 - 2, Math.random() * 4 + 2, Math.random() * 3 - 1.5);
-                }
-
-                particleGeom.setAttribute('position', new THREE.Float32BufferAttribute(coords, 3));
-                const pMat = new THREE.PointsMaterial({ color: 0x00cdff, size: 0.012, transparent: true, opacity: 0.5 });
-                globalRainParticleSystemGeometryReference = new THREE.Points(particleGeom, pMat);
-                coreThreeSceneInstance.add(globalRainParticleSystemGeometryReference);
-            }
-        }
-
-        /*
-          ------------------------------------------------------------------
-          ADVANCED UPGRADE 5: HIGH-PRECISION FFT FREQUENCY ACOUSTIC LIP-SYNC
-          ------------------------------------------------------------------
-        */
-        function computeAcousticFastFourierTransformLipSyncWeight() {
-            if (!liveVocalOutputStateSignalActive || !hardwareAudioFrequencyAnalyserNode) return 0.0;
-
-            hardwareAudioFrequencyAnalyserNode.getByteFrequencyData(hardwareAudioFrequencyBufferArray);
-            let subBandsVowelAccumulator = 0;
-            let sampleCounts = 0;
-
-            // Target the vocal midrange spectrum bins (Indices 2 through 18) for vowel open alignment 
-            for (let idx = 2; idx < 18; idx++) {
-                subBandsVowelAccumulator += hardwareAudioFrequencyBufferArray[idx];
-                sampleCounts++;
-            }
-
-            if (sampleCounts > 0) {
-                let normalizedAmplitude = subBandsVowelAccumulator / sampleCounts;
-                return (normalizedAmplitude / 255.0) * 1.55; // Calculate dynamic gain multiplier linearly
-            }
-            return 0.0;
-        }
-
-        /*
-          ------------------------------------------------------------------
-          SUB-MODULE E: PERSISTENT MATHEMATICAL RENDER FRAME INTERPOLATOR
-          ------------------------------------------------------------------
-        */
-        function masterApplicationRenderLoopExecutionCycle() {
-            requestAnimationFrame(masterApplicationRenderLoopExecutionCycle);
+            targetTouchY = mouseY;
+            forceTouchTimer = 4.0; // Force Overrider active for 4 seconds
             
-            const numericalDeltaTimelineTimeStepValue = coreSystemClockReference.getDelta();
-            const numericalContinuousElapsedTimeRunningValue = coreSystemClockReference.getElapsedTime();
-
-            if (coreAnimationMixerController) coreAnimationMixerController.update(numericalDeltaTimelineTimeStepValue);
-            if (coreOrbitControlsRig) coreOrbitControlsRig.update();
-
-            // Run active animations for weather simulation buffers inside WebGL space
-            if (globalRainParticleSystemGeometryReference) {
-                const posAttr = globalRainParticleSystemGeometryReference.geometry.attributes.position;
-                for (let i = 0; i < posAttr.count; i++) {
-                    let y = posAttr.getY(i) - 0.035;
-                    if (y < -1.5) y = 2.0;
-                    posAttr.setY(i, y);
-                }
-                posAttr.needsUpdate = true;
-            }
-
-            if (structuralAvatar3DModelRoot) {
-                dynamicInterpolatedCoordinateX = THREE.MathUtils.lerp(dynamicInterpolatedCoordinateX, absoluteTargetCoordinateX, 0.05);
-                dynamicInterpolatedCoordinateY = THREE.MathUtils.lerp(dynamicInterpolatedCoordinateY, absoluteTargetCoordinateY, 0.05);
-
-                if (skeletalBoneJointHead) {
-                    skeletalBoneJointHead.rotation.y = dynamicInterpolatedCoordinateX * 0.24; 
-                    skeletalBoneJointHead.rotation.x = -dynamicInterpolatedCoordinateY * 0.13; 
-                }
-                if (skeletalBoneJointNeck) {
-                    skeletalBoneJointNeck.rotation.y = dynamicInterpolatedCoordinateX * 0.09;
-                }
-
-                // Compute pristine precise mouth opening morph weights via live audio FFT analytics
-                let adaptiveFrameCurrentMouthOpeningMorphWeight = computeAcousticFastFourierTransformLipSyncWeight();
-                let adaptiveFrameCurrentEyeBlinkingMorphWeight = (Math.sin(numericalContinuousElapsedTimeRunningValue * 3.6) > 0.95) ? 1.0 : 0.0;
-
-                activeSkinnedMeshSubnodesTrackArray.forEach(skinnedSubmeshComponentNodeReference => {
-                    const activeMorphTargetMeshDictionaryMap = skinnedSubmeshComponentNodeReference.morphTargetDictionary;
-                    const activeMorphInfluencesWeightTrackingArray = skinnedSubmeshComponentNodeReference.morphTargetInfluences;
-                    
-                    if (!activeMorphTargetMeshDictionaryMap || !activeMorphInfluencesWeightTrackingArray) return;
-
-                    ['mouthOpen', 'jawOpen', 'Mouth_Open', 'vowel_a', 'Viseme_O'].forEach(vowelOpenShapeKeyIdentifierString => {
-                        if (activeMorphTargetMeshDictionaryMap[vowelOpenShapeKeyIdentifierString] !== undefined) {
-                            activeMorphInfluencesWeightTrackingArray[activeMorphTargetMeshDictionaryMap[vowelOpenShapeKeyIdentifierString]] = THREE.MathUtils.lerp(activeMorphInfluencesWeightTrackingArray[activeMorphTargetMeshDictionaryMap[vowelOpenShapeKeyIdentifierString]], adaptiveFrameCurrentMouthOpeningMorphWeight, 0.55);
-                        }
-                    });
-
-                    ['eyeBlinkLeft', 'eyeBlinkRight', 'blink', 'Blink'].forEach(eyeBlinkShapeKeyIdentifierString => {
-                        if (activeMorphTargetMeshDictionaryMap[eyeBlinkShapeKeyIdentifierString] !== undefined) {
-                            activeMorphInfluencesWeightTrackingArray[activeMorphTargetMeshDictionaryMap[eyeBlinkShapeKeyIdentifierString]] = THREE.MathUtils.lerp(activeMorphInfluencesWeightTrackingArray[activeMorphTargetMeshDictionaryMap[eyeBlinkShapeKeyIdentifierString]], adaptiveFrameCurrentEyeBlinkingMorphWeight, 0.55);
-                        }
-                    });
-                });
-            }
-
-            coreWebGLRendererModule.render(coreThreeSceneInstance, corePerspectiveCameraNode);
-        }
-
-        /*
-          ------------------------------------------------------------------
-          SUB-MODULE F: CORE COMMAND INTERACTION LIFECYCLE MANAGEMENT ENGINE
-          ------------------------------------------------------------------
-        */
-        const DOMUI_TextInputElementBar = document.getElementById('userInput');
-        const DOMUI_ActionButtonSendTrigger = document.getElementById('sendBtn');
-        const DOMUI_ActionButtonMicTrigger = document.getElementById('micBtn');
-
-        async function triggerInteractionLifecycleExecutionCycle() {
-            const clearExtractedInputTextString = DOMUI_TextInputElementBar.value.trim();
-            
-            if (!clearExtractedInputTextString) {
-                console.warn("Interaction Matrix Alert: Empty or null token detected. Aborting cycle.");
-                return;
-            }
-            
-            DOMUI_TextInputElementBar.value = "";
-            
-            const DOMUI_CoreStatusTextField = document.getElementById('system-core-mood-txt');
-            DOMUI_CoreStatusTextField.innerText = "प्रक्रिया चालू है... 🤔";
-            DOMUI_CoreStatusTextField.style.color = "var(--neon-orange)";
-            
-            if (coreAnimationMixerController && globalAnimationClipsBufferPool.length > 0) {
-                coreAnimationMixerController.stopAllAction();
-                let operationalRandomClipsIndexFactor = Math.floor(Math.random() * globalAnimationClipsBufferPool.length);
-                let targetFiredAnimationActionObject = coreAnimationMixerController.clipAction(
-                    globalAnimationClipsBufferPool[operationalRandomClipsIndexFactor]
-                );
-                targetFiredAnimationActionObject.reset().fadeIn(0.25).play();
-            }
-
-            try {
-                console.log(`Neural Tunnel Outgoing: Dispatching payload -> "${clearExtractedInputTextString}"`);
-                
-                const activeReturnedNetworkPayloadText = await fetchSecureNeuralAIResponseStream(clearExtractedInputTextString);
-                
-                DOMUI_CoreStatusTextField.innerText = "जेमिनी nv1 लाइव डायरेक्ट ⚡";
-                DOMUI_CoreStatusTextField.style.color = "var(--neon-cyan)";
-                
-                if (activeReturnedNetworkPayloadText) {
-                    bridgeNetworkPayloadDirectlyIntoResponseEngine(activeReturnedNetworkPayloadText);
-                } else {
-                    throw new Error("Empty neural stream string returned from rotating gateway.");
-                }
-
-            } catch (interactionLifecycleRuntimeFaultException) {
-                console.error("Critical Interaction Lifecycle Exception Logged:", interactionLifecycleRuntimeFaultException);
-                
-                DOMUI_CoreStatusTextField.innerText = "सिस्टम रिकवरी मोड ⚠️";
-                DOMUI_CoreStatusTextField.style.color = "var(--neon-pink)";
-                
-                const safeFallbackApologyMessage = "[दोनों हाथ जोड़कर सांत्वना देते हुए] अरे बाबू, नेटवर्क तनिक गड़बड़ा गया है, दोबारा बोलिए ना!";
-                bridgeNetworkPayloadDirectlyIntoResponseEngine(safeFallbackApologyMessage);
-            }
-        }
-
-        if (frameworkSpeechRecognitionProcessor) {
-            frameworkSpeechRecognitionProcessor.onstart = () => {
-                liveSpeechCapturingStateSignalActive = true;
-                DOMUI_ActionButtonMicTrigger.classList.add('listening');
-                DOMUI_TextInputElementBar.placeholder = "कमांडो मोड एक्टिव, बोलिए sweetie...";
-            };
-
-            frameworkSpeechRecognitionProcessor.onerror = (speechRecognitionLayerFaultException) => {
-                console.error("Speech Recognition layer issue safely bypassed fallback exception logs:", speechRecognitionLayerFaultException);
-                liveSpeechCapturingStateSignalActive = false;
-                DOMUI_ActionButtonMicTrigger.classList.remove('listening');
-                DOMUI_TextInputElementBar.placeholder = "प्रिया से कुछ भी पूछें...";
-            };
-
-            frameworkSpeechRecognitionProcessor.onend = () => {
-                liveSpeechCapturingStateSignalActive = false;
-                DOMUI_ActionButtonMicTrigger.classList.remove('listening');
-                DOMUI_TextInputElementBar.placeholder = "प्रिया से कुछ भी पूछें...";
-            };
-
-            frameworkSpeechRecognitionProcessor.onresult = (transcriptionOutputPayloadEvent) => {
-                const capturedTranscribedTextResultString = transcriptionOutputPayloadEvent.results[0][0].transcript;
-                DOMUI_TextInputElementBar.value = capturedTranscribedTextResultString;
-                triggerInteractionLifecycleExecutionCycle();
-            };
-
-            DOMUI_ActionButtonMicTrigger.addEventListener('click', () => {
-                if (liveSpeechCapturingStateSignalActive) {
-                    frameworkSpeechRecognitionProcessor.stop();
-                } else {
-                    if(window.speechSynthesis) window.speechSynthesis.cancel();
-                    frameworkSpeechRecognitionProcessor.start();
-                }
-            });
-        } else {
-            DOMUI_ActionButtonMicTrigger.style.display = 'none'; 
-        }
-
-        DOMUI_ActionButtonSendTrigger.addEventListener('click', triggerInteractionLifecycleExecutionCycle);
-        DOMUI_TextInputElementBar.addEventListener('keypress', (nativeHardwareKeyboardEvent) => { 
-            if (nativeHardwareKeyboardEvent.key === 'Enter') triggerInteractionLifecycleExecutionCycle(); 
-        });
-
-
-        /* ==========================================================================
-           MODULE 9: GEMINI RESPONSE PROCESSING & STREAM ORCHESTRATION SUBSYSTEM
-           ========================================================================== */
-
-        let globalLastReceivedResponsePayloadString = "";
-        let globalResponseExecutionActiveStatusFlag = false;
-        let globalTypewriterAnimationIntervalReference = null;
-        let globalTextSanitizationRegExpPattern = /\[.*?\]/g;
-
-        async function processIncomingGeminiResponsePayload(rawIncomingGeminiStreamPayload) {
-            console.log("Response Subsystem Engine Triggered: Initializing validation sequence...");
-            
-            if (!rawIncomingGeminiStreamPayload || rawIncomingGeminiStreamPayload.trim() === "") {
-                console.error("Critical Validation Exception: Received empty neural stream token.");
-                executeCentralResponseFallbackSystem("Empty Stream Payload Caught");
-                return;
-            }
-
-            if (globalResponseExecutionActiveStatusFlag) {
-                console.warn("Concurrency Alert: Another response lifecycle is currently active. Forces clearing registers...");
-                safelyAbortActiveTypewriterStreamInteractions();
-            }
-            
-            globalResponseExecutionActiveStatusFlag = true;
-            globalLastReceivedResponsePayloadString = rawIncomingGeminiStreamPayload.trim();
-
-            const DOMUI_SystemMoodIndicatorLabel = document.getElementById('system-core-mood-txt');
-            if (DOMUI_SystemMoodIndicatorLabel) {
-                DOMUI_SystemMoodIndicatorLabel.innerText = "प्रतिक्रिया प्रोसेस हो रही है... 🧠";
-                DOMUI_SystemMoodIndicatorLabel.style.color = "var(--neon-blue)";
-            }
-
-            let extractedMicroActionExpressionString = "";
-            const expressionRegexBracketMatcher = /\[(.*?)\]/;
-            const structuralExpressionMatchResultArray = globalLastReceivedResponsePayloadString.match(expressionRegexBracketMatcher);
-
-            if (structuralExpressionMatchResultArray && structuralExpressionMatchResultArray.length > 1) {
-                extractedMicroActionExpressionString = structuralExpressionMatchResultArray[1];
-                console.log(`Graphics Matrix Parser: Extracted Avatar Action Intention -> "${extractedMicroActionExpressionString}"`);
-                dispatchDynamicAvatarGestureTrigger(extractedMicroActionExpressionString);
-            }
-
-            try {
-                console.log("Audio Dispatch Tunnel: Initiating text-to-speech engine handshaking...");
-                dispatchSpeechSynthesizerVocalTrackBuffer(globalLastReceivedResponsePayloadString);
-            } catch (vocalEngineHandshakingRuntimeFaultException) {
-                console.error("Audio Subsystem Failure Tracker Logged:", vocalEngineHandshakingRuntimeFaultException);
-            }
-
-            const completelyCleanedDisplaySpeechStringText = globalLastReceivedResponsePayloadString
-                .replace(globalTextSanitizationRegExpPattern, '')
-                .trim();
-
-            await executeRealisticTypewriterSubtitleStreamStream(completelyCleanedDisplaySpeechStringText);
-            
-            finalizeResponseProcessingLifecycleSequence();
-        }
-
-        function executeRealisticTypewriterSubtitleStreamStream(targetSanitizedDisplayStringText) {
-            return new Promise((resolveComponentExecutionPromise) => {
-                const DOMUI_SubtitleMonitorOverlayBox = document.getElementById('subtitle-monitor-box');
-                if (!DOMUI_SubtitleMonitorOverlayBox) {
-                    resolveComponentExecutionPromise();
-                    return;
-                }
-
-                safelyAbortActiveTypewriterStreamInteractions();
-                DOMUI_SubtitleMonitorOverlayBox.innerText = "";
-                DOMUI_SubtitleMonitorOverlayBox.style.display = 'block';
-
-                let currentCharacterIterationPointerIndex = 0;
-                const totalCharacterLengthLimitValue = targetSanitizedDisplayStringText.length;
-                const standardBaseTypewriterIntervalDelayValue = 35; 
-
-                globalTypewriterAnimationIntervalReference = setInterval(() => {
-                    if (currentCharacterIterationPointerIndex < totalCharacterLengthLimitValue) {
-                        DOMUI_SubtitleMonitorOverlayBox.innerText += targetSanitizedDisplayStringText.charAt(currentCharacterIterationPointerIndex);
-                        currentCharacterIterationPointerIndex++;
-                    } else {
-                        clearInterval(globalTypewriterAnimationIntervalReference);
-                        globalTypewriterAnimationIntervalReference = null;
-                        resolveComponentExecutionPromise();
-                    }
-                }, standardBaseTypewriterIntervalDelayValue);
-            });
-        }
-
-        function dispatchDynamicAvatarGestureTrigger(operationalGestureKeywordString) {
-            if (!coreAnimationMixerController || globalAnimationClipsBufferPool.length === 0) return;
-
-            const compiledLowerGestureTokenString = operationalGestureKeywordString.toLowerCase();
-            let targetedActionClipIndexValue = 0; 
-
-            if (compiledLowerGestureTokenString.includes('muskurate') || compiledLowerGestureTokenString.includes('smile')) {
-                targetedActionClipIndexValue = Math.min(1, globalAnimationClipsBufferPool.length - 1);
-            } else if (compiledLowerGestureTokenString.includes('udas') || compiledLowerGestureTokenString.includes('sad')) {
-                targetedActionClipIndexValue = Math.min(2, globalAnimationClipsBufferPool.length - 1);
-            } else if (compiledLowerGestureTokenString.includes('gussa') || compiledLowerGestureTokenString.includes('angry')) {
-                targetedActionClipIndexValue = Math.min(3, globalAnimationClipsBufferPool.length - 1);
-            } else if (compiledLowerGestureTokenString.includes('sochate') || compiledLowerGestureTokenString.includes('thinking')) {
-                targetedActionClipIndexValue = Math.min(4, globalAnimationClipsBufferPool.length - 1);
-            } else if (compiledLowerGestureTokenString.includes('jhatakte') || compiledLowerGestureTokenString.includes('shrug')) {
-                targetedActionClipIndexValue = Math.min(5, globalAnimationClipsBufferPool.length - 1);
+            // Instant Response Generation based on touch coordinates
+            if (mouseY > 0.35) {
+                // Touched Head/Face Area
+                triggerEmotionalBlendshapes("shy");
+                speakResponse("उमम... आप मुझे ऐसे छूते हैं तो मुझे बहुत शर्म आती है...!");
             } else {
-                targetedActionClipIndexValue = Math.floor(Math.random() * Math.min(globalAnimationClipsBufferPool.length, 3));
-            }
-
-            try {
-                coreAnimationMixerController.stopAllAction();
-                let targetSelectedAnimationActionObject = coreAnimationMixerController.clipAction(
-                    globalAnimationClipsBufferPool[targetedActionClipIndexValue]
-                );
-                targetSelectedAnimationActionObject.reset().setEffectiveWeight(1.0).fadeIn(0.35).play();
-            } catch (err) {
-                console.error("Exception clip blending:", err);
+                // Touched lower Body Area
+                triggerEmotionalBlendshapes("happy");
+                speakResponse("हाहा! यहाँ गुदगुदी होती है! बताइए आज क्या बातें करनी हैं?");
             }
         }
 
-        function executeCentralResponseFallbackSystem(criticalErrorInternalDiagnosticsLogMessage) {
-            const DOMUI_SystemCoreMoodStatusTextField = document.getElementById('system-core-mood-txt');
-            if (DOMUI_SystemCoreMoodStatusTextField) {
-                DOMUI_SystemCoreMoodStatusTextField.innerText = "रिकवरी मोड एक्टिवेटेड ⚠️";
-                DOMUI_SystemCoreMoodStatusTextField.style.color = "var(--neon-pink)";
-            }
+        // Emotional Blendshape Sync Engine (Sentiment Map Optimizer)
+        function triggerEmotionalBlendshapes(sentiment) {
+            allSkinnedMeshes.forEach(mesh => {
+                if (!mesh.morphTargetDictionary) return;
+                
+                // Clear state variables safely
+                const targets = ["mouthSmileLeft", "mouthSmileRight", "browDownLeft", "browDownRight", "browInnerUp"];
+                targets.forEach(t => {
+                    let idx = mesh.morphTargetDictionary[t];
+                    if (idx !== undefined) mesh.morphTargetInfluences[idx] = 0;
+                });
 
-            safelyAbortActiveTypewriterStreamInteractions();
-            
-            const standardizedBypassApologyFallbackMessageString = "[दोनों हाथ जोड़कर सांत्वना देते हुए] अरे बाबू, नेटवर्क तनिक गड़बड़ा गया है, दोबारा बोलिए ना!";
-            dispatchSpeechSynthesizerVocalTrackBuffer(standardizedBypassApologyFallbackMessageString);
-            
-            finalizeResponseProcessingLifecycleSequence();
+                // Apply targeted sentiment mapping weights
+                if (sentiment === "happy" || sentiment === "joy") {
+                    let sLeft = mesh.morphTargetDictionary["mouthSmileLeft"];
+                    let sRight = mesh.morphTargetDictionary["mouthSmileRight"];
+                    if (sLeft !== undefined) mesh.morphTargetInfluences[sLeft] = 0.8;
+                    if (sRight !== undefined) mesh.morphTargetInfluences[sRight] = 0.8;
+                } else if (sentiment === "sad" || sentiment === "sorry") {
+                    let bLeft = mesh.morphTargetDictionary["browDownLeft"];
+                    let bRight = mesh.morphTargetDictionary["browDownRight"];
+                    if (bLeft !== undefined) mesh.morphTargetInfluences[bLeft] = 0.7;
+                    if (bRight !== undefined) mesh.morphTargetInfluences[bRight] = 0.7;
+                } else if (sentiment === "shy") {
+                    let bUp = mesh.morphTargetDictionary["browInnerUp"];
+                    let sLeft = mesh.morphTargetDictionary["mouthSmileLeft"];
+                    if (bUp !== undefined) mesh.morphTargetInfluences[bUp] = 0.6;
+                    if (sLeft !== undefined) mesh.morphTargetInfluences[sLeft] = 0.4;
+                }
+            });
         }
 
-        function safelyAbortActiveTypewriterStreamInteractions() {
-            if (globalTypewriterAnimationIntervalReference !== null) {
-                clearInterval(globalTypewriterAnimationIntervalReference);
-                globalTypewriterAnimationIntervalReference = null;
+        // Lip-Sync Generator Core Logic (Delta Multiplier)
+        function simulateLipSync(volume) {
+            allSkinnedMeshes.forEach(mesh => {
+                if (!mesh.morphTargetDictionary) return;
+                const visemes = ["mouthOpen", "jawOpen", "viseme_aa", "viseme_O"];
+                visemes.forEach(v => {
+                    let idx = mesh.morphTargetDictionary[v];
+                    if (idx !== undefined) {
+                        mesh.morphTargetInfluences[idx] = volume;
+                    }
+                });
+            });
+        }
+
+        // Dynamic Outfit & Texture Customization Swapper
+        function changeOutfitColor(colorHex) {
+            currentOutfitColor = colorHex;
+            allSkinnedMeshes.forEach(mesh => {
+                // Filter out face, body, eyes meshes dynamically to target clothing materials only
+                if (mesh.name.toLowerCase().includes('outfit') || mesh.name.toLowerCase().includes('tops') || mesh.name.toLowerCase().includes('bottom')) {
+                    if (mesh.material) {
+                        if (Array.isArray(mesh.material)) {
+                            mesh.material.forEach(mat => mat.color.setHex(colorHex));
+                        } else {
+                            mesh.material.color.setHex(colorHex);
+                        }
+                    }
+                }
+            });
+        }
+
+        // Long-Term Memory Core Implementation
+        function checkPersistentMemoryInit() {
+            const today = new Date().toDateString();
+            if (priyaMemory.lastConversationDate) {
+                if (priyaMemory.lastConversationDate !== today) {
+                    setTimeout(() => {
+                        speakResponse(`नमस्ते ${priyaMemory.userName}! आप कुछ दिन पहले आए थे। आज आपसे मिलकर फिर से बहुत खुशी हो रही है! आपका वह काम कैसा चल रहा है?`);
+                    }, 2000);
+                }
+            } else {
+                priyaMemory.lastConversationDate = today;
+                saveMemory();
             }
         }
 
-        function finalizeResponseProcessingLifecycleSequence() {
-            globalResponseExecutionActiveStatusFlag = false;
-            const DOMUI_UserInputInputFieldBox = document.getElementById('userInput');
-            if (DOMUI_UserInputInputFieldBox) {
-                DOMUI_UserInputInputFieldBox.disabled = false;
-                if (window.innerWidth > 768) {
-                    DOMUI_UserInputInputFieldBox.focus();
+        // Asynchronous Text Processing & Intent Classifier
+        async function processUserInput() {
+            const inputField = document.getElementById('user-input');
+            const text = inputField.value.trim();
+            if (!text) return;
+
+            inputField.value = "";
+            document.getElementById('subtitles').innerText = "...प्रिया सोच रही है...";
+
+            // Match Outfit Change Intents
+            if (text.toLowerCase().includes("red dress") || text.includes("लाल कपड़े")) {
+                changeOutfitColor(0xff0000);
+                triggerEmotionalBlendshapes("happy");
+                speakResponse("लीजिए! आपकी पसंद के अनुसार मैंने लाल रंग की ड्रेस पहन ली है। कैसी लग रही हूँ मैं?");
+                return;
+            }
+            if (text.toLowerCase().includes("blue dress") || text.includes("नीली ड्रेस")) {
+                changeOutfitColor(0x0000ff);
+                triggerEmotionalBlendshapes("happy");
+                speakResponse("हाँ बिल्कुल, नीला मेरा भी पसंदीदा रंग है! देखिए मेरा नया आउटफिट।");
+                return;
+            }
+            if (text.toLowerCase().includes("नाम") && text.includes("है")) {
+                // Name recognition feature extracter
+                const words = text.split(" ");
+                let idx = words.findIndex(w => w.includes("नाम"));
+                if (words[idx+2]) {
+                    priyaMemory.userName = words[idx+2];
+                    saveMemory();
                 }
             }
-        }
 
-        function bridgeNetworkPayloadDirectlyIntoResponseEngine(incomingNetworkPayloadBufferText) {
-            processIncomingGeminiResponsePayload(incomingNetworkPayloadBufferText);
-        }
+            // Simple Sentiment Analysis Client Mode
+            let sentiment = "happy";
+            if (text.includes("उदासी") || text.includes("परेशान") || text.includes("दुखी")) sentiment = "sad";
 
-        window.addEventListener('beforeunload', () => {
-            safelyAbortActiveTypewriterStreamInteractions();
-            if (globalWebcamStreamMediaInstance) {
-                globalWebcamStreamMediaInstance.getTracks().forEach(track => track.stop());
+            triggerEmotionalBlendshapes(sentiment);
+
+            // Execute Response Stream Execution
+            // यहाँ आप ElevenLabs Live WebSocket या अपना LLM API रिस्पांस जोड़ सकते हैं।
+            // डिफ़ॉल्ट रूप से यह एक उत्तर उत्पन्न करेगा:
+            let generatedReply = `मुझे यह सुनकर बेहद खुशी हुई। आप बहुत अच्छे इंसान हैं! क्या आप मेरे कपड़ों का रंग बदलना चाहते हैं?`;
+            if (sentiment === "sad") {
+                generatedReply = `अरे... आप उदास मत होइए। मैं हमेशा आपके साथ हूँ। सब कुछ ठीक हो जाएगा!`;
             }
-            globalLastReceivedResponsePayloadString = null;
-            activeSkinnedMeshSubnodesTrackArray = [];
-        });
 
-        /*
-          ------------------------------------------------------------------
-          SUB-MODULE G: SYSTEM BOOTSTRAP GATEWAY & FRAME WORK LAUNCHERS
-          ------------------------------------------------------------------
-        */
-        initializeDeviceHarmonizedGraphicsPipeline();
-        masterApplicationRenderLoopExecutionCycle();
+            speakResponse(generatedReply);
+        }
+
+        // Multi-tier TTS Integration: ElevenLabs WebSockets & System Backup Engine
+        function speakResponse(text) {
+            document.getElementById('subtitles').innerText = text;
+
+            if (ELEVENLABS_API_KEY !== "YOUR_ELEVENLABS_API_KEY" && window.WebSocket) {
+                // WebSocket Streaming Interface Setup
+                const wsUrl = `wss://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream-input?model_id=eleven_monolingual_v1`;
+                const socket = new WebSocket(wsUrl);
+
+                socket.onopen = () => {
+                    const bosMessage = { "text": " ", "voice_settings": { "stability": 0.5, "similarity_boost": 0.8 }, "xi_api_key": ELEVENLABS_API_KEY };
+                    socket.send(JSON.stringify(bosMessage));
+                    const textMessage = { "text": text, "try_trigger_generation": true };
+                    socket.send(JSON.stringify(textMessage));
+                };
+
+                socket.onmessage = (event) => {
+                    const response = JSON.parse(event.data);
+                    if (response.audio) {
+                        const audioBytes = atob(response.audio);
+                        // Play back logic here using Web Audio API for exact viseme sync
+                        executeNativeLipSyncBackup(text); 
+                    }
+                };
+                
+                socket.onerror = () => { executeNativeLipSyncBackup(text); };
+            } else {
+                // Local Fallback Speech Architecture (System TTS Mode)
+                executeNativeLipSyncBackup(text);
+            }
+        }
+
+        function executeNativeLipSyncBackup(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'hi-IN';
+                
+                // Track volume spikes natively during pronunciation loops
+                let syncInterval = setInterval(() => {
+                    if (window.speechSynthesis.speaking) {
+                        simulateLipSync(0.3 + Math.sin(Date.now() * 0.05) * 0.4);
+                    } else {
+                        simulateLipSync(0);
+                        clearInterval(syncInterval);
+                    }
+                }, 50);
+
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // MediaPipe Face Mesh Pipeline Setup (Zero-Lag Camera Track)
+        function initWebcamTracking() {
+            const videoElement = document.getElementById('webcam-video');
+            videoElement.style.display = 'block';
+
+            const faceMesh = new FaceMesh({
+                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+            });
+
+            faceMesh.setOptions({
+                maxNumFaces: 1,
+                refineLandmarks: true,
+                minDetectionConfidence: 0.5,
+                minTrackingConfidence: 0.5
+            });
+
+            faceMesh.onResults((results) => {
+                if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) return;
+                
+                const landmarks = results.multiFaceLandmarks[0];
+                // Target Nose tip index (4) and edge indicators for delta computation
+                const nose = landmarks[4];
+                
+                // Map coordinates securely to rotational ranges
+                targetHeadRotation.y = -(nose.x - 0.5) * 1.2; 
+                targetHeadRotation.x = (nose.y - 0.5) * 0.8;
+            });
+
+            const cameraUtils = new Camera(videoElement, {
+                onFrame: async () => { if (isCamTracking) await faceMesh.send({ image: videoElement }); },
+                width: 320,
+                height: 240
+            });
+            cameraUtils.start();
+        }
+
+        // Main Loop (Render Thread Optimization Matrix)
+        function animate() {
+            requestAnimationFrame(animate);
+            let delta = clock.getDelta();
+            let t = clock.getElapsedTime();
+
+            // Run Animations Mixer Frame Updates
+            if (mixer) mixer.update(delta);
+
+            // Execute Natural Eye Blink Timer Logic
+            let blinkScale = Math.sin(t * 3.0);
+            allSkinnedMeshes.forEach(mesh => {
+                if (mesh.morphTargetDictionary) {
+                    let bLeft = mesh.morphTargetDictionary["eyeBlinkLeft"];
+                    let bRight = mesh.morphTargetDictionary["eyeBlinkRight"];
+                    if (bLeft !== undefined && bRight !== undefined) {
+                        mesh.morphTargetInfluences[bLeft] = blinkScale > 0.96 ? (blinkScale - 0.96) * 25 : 0;
+                        mesh.morphTargetInfluences[bRight] = blinkScale > 0.96 ? (blinkScale - 0.96) * 25 : 0;
+                    }
+                }
+            });
+
+            // Head Bones Real-time Target Tracking Adjustments
+            if (model) {
+                let headBone = model.getObjectByName("Head") || model.getObjectByName("Neck");
+                if (headBone) {
+                    if (isCamTracking) {
+                        // Smoothly interpolate current position into tracking matrix targets
+                        currentHeadRotation.x += (targetHeadRotation.x - currentHeadRotation.x) * 0.1;
+                        currentHeadRotation.y += (targetHeadRotation.y - currentHeadRotation.y) * 0.1;
+                        headBone.rotation.x = currentHeadRotation.x;
+                        headBone.rotation.y = currentHeadRotation.y;
+                    } else if (forceTouchTimer > 0) {
+                        // Touch Overrider calculations active
+                        headBone.rotation.y = Math.sin(t * 2) * 0.15;
+                        forceTouchTimer -= delta;
+                    } else {
+                        // Normal operations state
+                        headBone.rotation.set(0, 0, 0);
+                    }
+                }
+            }
+
+            // Animate Weather Systems Drops
+            if (weatherParticles) {
+                const positions = weatherParticles.geometry.attributes.position.array;
+                for (let i = 1; i < positions.length; i += 3) {
+                    positions[i] -= delta * 3.5; // Descent speed parameters
+                    if (positions[i] < 0) positions[i] = 5; // Reset height threshold
+                }
+                weatherParticles.geometry.attributes.position.needsUpdate = true;
+            }
+
+            if (controls) controls.update();
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // EventListeners Configuration Mapping
+        document.getElementById('send-btn').addEventListener('click', processUserInput);
+        document.getElementById('user-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') processUserInput(); });
+        
+        document.getElementById('toggle-cam-btn').addEventListener('click', () => {
+            isCamTracking = !isCamTracking;
+            if (isCamTracking) {
+                document.getElementById('toggle-cam-btn').style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
+                initWebcamTracking();
+            } else {
+                document.getElementById('toggle-cam-btn').style.background = "linear-gradient(135deg, #00c6ff, #0072ff)";
+                document.getElementById('webcam-video').style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
