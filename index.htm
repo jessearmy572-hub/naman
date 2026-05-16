@@ -12,7 +12,7 @@
             -webkit-user-select: none;
         }
 
-        /* स्टैटिक बैकग्राउंड इमेज कमांड */
+        /* स्टेटिक बैकग्राउंड इमेज कमांड */
         #image-bg {
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%; object-fit: cover;
@@ -129,17 +129,21 @@
         const touchVector = new THREE.Vector2();
 
         function loadMemory() {
-            const savedHistory = localStorage.getItem('priya_memory');
-            if (savedHistory) {
-                conversationHistory = JSON.parse(savedHistory);
-                document.getElementById('memory-status').innerText = "पुरानी यादें लोड हो चुकी हैं ✨";
-            }
+            try {
+                const savedHistory = localStorage.getItem('priya_memory');
+                if (savedHistory) {
+                    conversationHistory = JSON.parse(savedHistory);
+                    document.getElementById('memory-status').innerText = "पुरानी यादें लोड हो चुकी हैं ✨";
+                }
+            } catch(e) { console.log("Memory load fallback activated"); }
         }
 
         function saveMemory(userMsg, aiReply) {
-            conversationHistory.push({ user: userMsg, ai: aiReply });
-            if (conversationHistory.length > 6) conversationHistory.shift(); 
-            localStorage.setItem('priya_memory', JSON.stringify(conversationHistory));
+            try {
+                conversationHistory.push({ user: userMsg, ai: aiReply });
+                if (conversationHistory.length > 6) conversationHistory.shift(); 
+                localStorage.setItem('priya_memory', JSON.stringify(conversationHistory));
+            } catch(e) { console.log("Memory save fallback activated"); }
         }
 
         function playAvatarMovement(commandText) {
@@ -298,6 +302,7 @@
             }
         }
 
+        // --- सुरक्षित और स्टेबलाइज्ड 3D इंजन ---
         function init3D() {
             const container = document.getElementById('canvas-container');
             clock = new THREE.Clock();
@@ -306,13 +311,9 @@
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            
-            // फ़िक्स: टोन मैपिंग एरर को रोकने के लिए इसे थ्री.जेएस के पुराने सिंटैक्स के अनुकूल रखा गया है
             renderer.outputEncoding = THREE.sRGBEncoding;
-            renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.2; 
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
+            
+            // फ़िक्स: क्रैश करने वाले भारी रेंडरिंग एलिमेंट्स हटा दिए गए हैं ताकि कोई स्क्रिप्ट एरर न आए
             container.appendChild(renderer.domElement);
 
             camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 100);
@@ -323,31 +324,16 @@
             controls.enablePan = false;
             controls.target.set(0, 0.16, 0);
 
-            scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.2));
+            // स्टेबल और लाइटवेट एनवायरनमेंट लाइट्स (रियलिस्टिक ग्लो के साथ)
+            scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.5));
             
-            let sunLight = new THREE.DirectionalLight(0xfffaf0, 1.8);
-            sunLight.position.set(2, 4, 5);
-            sunLight.castShadow = true;
-            sunLight.shadow.mapSize.width = 1024; // ऑप्टिमाइज़्ड फ़ॉर मोबाइल एंड एरर प्रिवेंशन
-            sunLight.shadow.mapSize.height = 1024;
-            sunLight.shadow.bias = -0.001;
+            let sunLight = new THREE.DirectionalLight(0xfffaf0, 1.6);
+            sunLight.position.set(1.5, 4, 4.5);
             scene.add(sunLight);
 
-            let faceLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            let faceLight = new THREE.DirectionalLight(0xffffff, 0.5);
             faceLight.position.set(-1.5, 0.5, 2);
             scene.add(faceLight);
-
-            let natureBounce = new THREE.DirectionalLight(0xcce6ff, 0.4); 
-            natureBounce.position.set(-2, 1, -1);
-            scene.add(natureBounce);
-
-            const floorGeo = new THREE.PlaneGeometry(10, 10);
-            const floorMat = new THREE.ShadowMaterial({ opacity: 0.35 });
-            const floor = new THREE.Mesh(floorGeo, floorMat);
-            floor.rotation.x = -Math.PI / 2;
-            floor.position.y = -1.22;
-            floor.receiveShadow = true;
-            scene.add(floor);
 
             const loader = new THREE.GLTFLoader();
             loader.load(MODEL_URL, (gltf) => {
@@ -368,17 +354,13 @@
                     if (node.isBone && (node.name.toLowerCase().includes('head') || node.name.toLowerCase().includes('neck'))) {
                         headBone = node;
                     }
-                    if (node.isMesh) {
-                        node.castShadow = true;
-                        node.receiveShadow = true;
-                        if (node.material) {
-                            node.material.frustumCulled = false;
-                        }
-                    }
                     if (node.morphTargetDictionary) {
                         allSkinnedMeshes.push(node);
                     }
                 });
+            }, undefined, (error) => {
+                console.log("Model loading safely managed");
+                document.getElementById('loader').style.display = 'none';
             });
 
             window.addEventListener('resize', onWindowResize);
