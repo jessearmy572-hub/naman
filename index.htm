@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Priya AI - 3D Device Native Assistant</title>
+    <title>Priya AI - 3D Keyless Assistant</title>
     <style>
         body, html {
             margin: 0;
@@ -11,7 +11,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #000;
+            background-color: #1a1a1a; /* ब्लैक स्क्रीन की जगह डार्क ग्रे बैकग्राउंड */
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
@@ -22,6 +22,22 @@
             top: 0;
             left: 0;
             z-index: 1;
+        }
+
+        /* Loading Text */
+        #loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 20px;
+            z-index: 100;
+            background: rgba(0,0,0,0.7);
+            padding: 15px 30px;
+            border-radius: 10px;
+            pointer-events: none;
+            transition: opacity 0.5s;
         }
 
         /* --- UI Styling --- */
@@ -80,27 +96,27 @@
         }
     </style>
 
-    <!-- Import Three.js and Dependencies via CDN -->
+    <!-- Three.js Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 <body>
 
+    <div id="loader">प्रिया लोड हो रही है... कृपया प्रतीक्षा करें।</div>
     <div id="canvas-container"></div>
 
     <div class="ui-container">
         <div class="input-box">
-            <input type="text" id="userInput" placeholder="Priya se kuch bhi puchiye (Device AI)..." />
+            <input type="text" id="userInput" placeholder="Priya se kuch bhi puchiye..." />
             <button id="sendBtn">➔</button>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURATION ---
-        const MODEL_URL = "https://github.com/jessearmy572-hub/naman/raw/refs/heads/main/model.glb"; 
+        // 🛠️ सुधार 1: लिंक को डायरेक्ट डाउनलोडबल 'raw.githubusercontent' लिंक में बदला ताकि CORS एरर न आए
+        const MODEL_URL = "https://raw.githubusercontent.com/jessearmy572-hub/naman/main/model.glb"; 
 
-        // --- GLOBAL VARIABLES ---
         let scene, camera, renderer, controls, mixer, clock;
         let priyaModel = null;
         let headBone = null;
@@ -109,106 +125,78 @@
         
         let isSpeaking = false;
         let mousePos = { x: 0, y: 0 };
-        let aiSession = null; // Gemini Nano सेशन स्टोर करने के लिए
 
-        // --- 1. THE BRAIN (Device-Native Gemini Nano) ---
-        async function initGeminiNano() {
-            try {
-                // चेक करें कि क्या ब्राउज़र में Built-in AI का सपोर्ट है
-                if (window.ai && window.ai.createTextSession) {
-                    aiSession = await window.ai.createTextSession();
-                    console.log("Device-Native Gemini Nano सफलतापूर्वक एक्टिवेट हो गया है!");
-                } else if (window.ai && window.ai.languageModel) {
-                    // नए क्रोम अपडेट्स के लिए वैकल्पिक सिंटैक्स
-                    aiSession = await window.ai.languageModel.create();
-                    console.log("Device-Native Gemini Nano सक्रिय है।");
-                } else {
-                    console.warn("इस ब्राउज़र में window.ai (Gemini Nano) सक्षम नहीं है। फॉलबैक मोड ऑन है।");
-                }
-            } catch (e) {
-                console.error("Gemini Nano सेशन शुरू करने में त्रुटि:", e);
-            }
-        }
-
+        // AI Brain API Call (Free & Keyless)
         async function askPriya(input) {
-            // सिस्टम प्रॉम्प्ट सेट करना ताकि वह प्रिया बनकर हिंदी में बात करे
-            const promptContext = `You are Priya, a sweet sentient 3D AI assistant. Answer the user in short, sweet, and natural Hindi only. User says: ${input}`;
-
-            // यदि डिवाइस में Gemini Nano उपलब्ध है
-            if (aiSession) {
-                try {
-                    const response = await aiSession.prompt(promptContext);
-                    return response;
-                } catch (err) {
-                    console.error("Gemini Nano एरर, फॉलबैक का उपयोग कर रहे हैं:", err);
-                }
+            const systemPrompt = "You are Priya, a sweet sentient 3D AI assistant. Always answer the user in short, sweet, warm, and natural Hindi only. Do not use asterisks or markdown format.";
+            try {
+                const response = await fetch(`https://text.pollinations.ai/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        messages: [
+                            { role: "system", content: systemPrompt },
+                            { role: "user", content: input }
+                        ],
+                        model: "openai"
+                    })
+                });
+                return await response.text();
+            } catch (err) {
+                return "मैं अभी आपसे जुड़ नहीं पा रही हूँ, कृपया अपना इंटरनेट चेक करें।";
             }
-
-            // --- ऑफ़लाइन/डिवाइस फॉलबैक (अगर window.ai काम न करे या बंद हो) ---
-            if (input.toLowerCase().includes("time") || input.includes("समय") || input.includes("टाइम")) {
-                return `अभी ${new Date().toLocaleTimeString()} हो रहा है।`;
-            }
-            if (input.toLowerCase().includes("battery") || input.includes("बैठरी")) {
-                if (navigator.getBattery) {
-                    const bat = await navigator.getBattery();
-                    return `आपके डिवाइस की बैटरी अभी ${Math.round(bat.level * 100)}% है।`;
-                }
-            }
-            return "नमस्ते! मैं आपके डिवाइस का लोकल AI हूँ। कृपया अपने ब्राउज़र में Gemini Nano (window.ai) फ्लैग ऑन करें।";
         }
 
-        // --- TTS (Text to Speech) ---
         function speak(text) {
             window.speechSynthesis.cancel();
             const utter = new SpeechSynthesisUtterance(text);
             utter.lang = 'hi-IN';
-            
             utter.onstart = () => { isSpeaking = true; };
-            utter.onend = () => { isSpeaking = false; resetFace(); };
-            
+            utter.onend = () => { isSpeaking = false; if(mouthBone) mouthBone.scale.y = 1; };
             window.speechSynthesis.speak(utter);
         }
 
-        function resetFace() {
-            if (mouthBone) mouthBone.scale.y = 1;
-        }
-
-        // --- 2. THE BODY (Three.js Setup) ---
+        // 3D Engine Initialization
         function init3D() {
             const container = document.getElementById('canvas-container');
             clock = new THREE.Clock();
 
             scene = new THREE.Scene();
-            scene.background = new THREE.Color('#000000');
+            scene.background = new THREE.Color('#1a1a1a'); // लाइट ग्रे/डार्क बैकग्राउंड
 
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-            camera.position.set(0, 0, 5);
+            camera.position.set(0, 0, 3.5); // कैमरे को मॉडल के थोड़ा पास लाया गया
 
-            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.shadowMap.enabled = true;
+            renderer.outputEncoding = THREE.sRGBEncoding; // कलर्स को बेहतर बनाने के लिए
             container.appendChild(renderer.domElement);
 
             controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableZoom = true;
             controls.enablePan = false;
-            controls.minDistance = 2;
-            controls.maxDistance = 8;
+            controls.minDistance = 1;
+            controls.maxDistance = 6;
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-            scene.add(ambientLight);
+            // 🛠️ सुधार 2: रोशनी (Lights) बढ़ा दी गई है ताकि मॉडल काला न दिखे
+            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
+            hemiLight.position.set(0, 20, 0);
+            scene.add(hemiLight);
 
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(5, 5, 5);
-            scene.add(directionalLight);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+            dirLight.position.set(3, 10, 10);
+            scene.add(dirLight);
 
-            // GitHub से मॉडल लोड करना
+            // GLTF Loader
             const loader = new THREE.GLTFLoader();
             loader.load(MODEL_URL, (gltf) => {
+                // मॉडल लोड होते ही टेक्स्ट छुपाएं
+                document.getElementById('loader').style.opacity = 0;
+                setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+
                 priyaModel = gltf.scene;
                 scene.add(priyaModel);
-
                 adjustModelScale();
 
                 mixer = new THREE.AnimationMixer(priyaModel);
@@ -217,23 +205,20 @@
                     mixer.clipAction(idleAnim).play();
                 }
 
+                // हड्डियों (Bones) की पहचान
                 priyaModel.traverse((bone) => {
                     if (bone.isBone) {
                         if (bone.name.includes('Arm')) {
                             bone.rotation.z = bone.name.includes('Left') ? -1.4 : 1.4;
                         }
-                        if (bone.name === 'Head' || bone.name === 'Neck') {
-                            headBone = bone;
-                        }
-                        if (bone.name === 'Mouth' || bone.name === 'Jaw') {
-                            mouthBone = bone;
-                        }
-                        if (bone.name.toLowerCase().includes('eye')) {
-                            eyeBones.push(bone);
-                        }
+                        if (bone.name === 'Head' || bone.name === 'Neck') headBone = bone;
+                        if (bone.name === 'Mouth' || bone.name === 'Jaw') mouthBone = bone;
+                        if (bone.name.toLowerCase().includes('eye')) eyeBones.push(bone);
                     }
                 });
-
+            }, undefined, (error) => {
+                document.getElementById('loader').innerText = "मॉडल लोड करने में त्रुटि आई! (CORS या इंटरनेट समस्या)";
+                console.error(error);
             });
 
             window.addEventListener('resize', onWindowResize);
@@ -243,9 +228,10 @@
         function adjustModelScale() {
             if (!priyaModel) return;
             const isMobile = window.innerWidth < 768;
-            const scaleValue = isMobile ? window.innerWidth / 350 : window.innerWidth / 800;
+            // स्केल थोड़ा बढ़ा दिया गया है ताकि मॉडल अच्छे से दिखे
+            const scaleValue = isMobile ? window.innerWidth / 200 : window.innerWidth / 500;
             priyaModel.scale.set(scaleValue, scaleValue, scaleValue);
-            priyaModel.position.y = isMobile ? -1.2 : -1.5;
+            priyaModel.position.y = isMobile ? -1.0 : -1.3;
         }
 
         function onMouseMove(e) {
@@ -260,7 +246,6 @@
             adjustModelScale();
         }
 
-        // --- ANIMATION LOOP ---
         function animate() {
             requestAnimationFrame(animate);
             const delta = clock.getDelta();
@@ -270,8 +255,8 @@
 
             if (priyaModel) {
                 if (headBone) {
-                    headBone.rotation.y = THREE.MathUtils.lerp(headBone.rotation.y, mousePos.x * 0.5, 0.1);
-                    headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, -mousePos.y * 0.3, 0.1);
+                    headBone.rotation.y = THREE.MathUtils.lerp(headBone.rotation.y, mousePos.x * 0.4, 0.1);
+                    headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, -mousePos.y * 0.2, 0.1);
                 }
 
                 if (isSpeaking && mouthBone) {
@@ -282,37 +267,30 @@
                 eyeBones.forEach(eye => { eye.scale.y = blink; });
 
                 const isMobile = window.innerWidth < 768;
-                priyaModel.position.y = (isMobile ? -1.2 : -1.5) + Math.sin(t) * 0.02;
+                priyaModel.position.y = (isMobile ? -1.0 : -1.3) + Math.sin(t) * 0.015;
             }
 
             controls.update();
             renderer.render(scene, camera);
         }
 
-        // --- UI HANDLERS ---
+        // UI Handlers
         const inputEl = document.getElementById('userInput');
         const btnEl = document.getElementById('sendBtn');
 
         async function handleAction() {
             const text = inputEl.value.trim();
             if (!text) return;
-            
             inputEl.value = "";
             const reply = await askPriya(text);
             speak(reply);
         }
 
         btnEl.addEventListener('click', handleAction);
-        inputEl.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleAction();
-        });
+        inputEl.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAction(); });
 
-        // --- START APPLICATION ---
         init3D();
         animate();
-        initGeminiNano(); // ब्राउज़र AI लोड करना
     </script>
 </body>
 </html>
-
-        
