@@ -96,13 +96,13 @@
         <div style="font-size: 11px; color:#aaa; margin-top:4px;">मेमोरी स्टेटस: <span id="memory-status" style="color:#ffb703;">लॉन्ग-टर्म कोर सिंक</span></div>
     </div>
 
-    <div id="loader">प्रिया का न्यूरल माइंड और मूवमेंट इंजन एक्टिव हो रहा है...<br><span style="font-size:11px; color:#aaa;">Command-to-Motion Logic Synced</span></div>
+    <div id="loader">प्रिया का न्यूरल माइंड और यादें रीबूट हो रही हैं...<br><span style="font-size:11px; color:#aaa;">Persistent Memory Bank & BlendShapes Active</span></div>
     <div id="canvas-container"></div>
 
     <div class="ui-container">
         <button class="mic-btn" id="micBtn">🎤</button>
         <div class="input-box">
-            <input type="text" id="userInput" placeholder="कमांड दें (जैसे: wave, dance, smile)..." />
+            <input type="text" id="userInput" placeholder="बात करें, प्रिया को आपकी हर बात याद रहेगी..." />
         </div>
         <button class="send-btn" id="sendBtn">➔</button>
     </div>
@@ -113,8 +113,8 @@
         let scene, camera, renderer, controls, mixer, clock;
         let priyaModel = null, headBone = null;
         let allSkinnedMeshes = []; 
-        let modelAnimations = []; 
-        let currentAction = null; 
+        let modelAnimations = []; // एनीमेशन क्लिप्स स्टोर करने के लिए एरे
+        let currentAction = null;  // करंट प्ले हो रहा एनीमेशन ट्रैक
         
         let isSpeaking = false;
         let mousePos = { x: 0, y: 0 };
@@ -123,7 +123,7 @@
 
         let forceTouchTimer = 0;
         
-        // --- इमोशन और लॉन्ग-टर्म मेमोरी वेरिएबल्स ---
+        // --- इमोशन और撬ॉन्ग-टर्म मेमोरी वेरिएबल्स ---
         let currentEmotion = "neutral";
         let targetSmile = 0, targetShy = 0, targetRomantic = 0;
         let conversationHistory = [];
@@ -143,45 +143,45 @@
         // ब्राउज़र मेमोरी में नया डेटा सेव करना
         function saveMemory(userMsg, aiReply) {
             conversationHistory.push({ user: userMsg, ai: aiReply });
-            if (conversationHistory.length > 6) conversationHistory.shift(); 
+            if (conversationHistory.length > 6) conversationHistory.shift(); // मेमोरी को ऑप्टिमाइज़ रखना
             localStorage.setItem('priya_memory', JSON.stringify(conversationHistory));
         }
 
-        // --- स्मार्ट एनीमेशन ट्रिगर प्लेयर ---
+        // --- स्मार्ट एनीमेशन ट्रिगर प्लेयर (कमांड मूवमेंट इंजन) ---
         function playAvatarMovement(commandText) {
-            if (!mixer || modelAnimations.length === 0) return;
+            if (!mixer || !modelAnimations || modelAnimations.length === 0) return;
 
             let lowerCmd = commandText.toLowerCase();
             let targetClip = null;
 
-            // आपके GLB मॉडल में जो भी एनीमेशन के नाम मौजूद हैं, उन्हें यहाँ मैच करें
-            if (lowerCmd.includes("wave") || lowerCmd.includes("hello") || lowerCmd.includes("hi")) {
+            // टेक्स्ट कमांड्स के हिसाब से मॉडल क्लिप्स को सिंक करना
+            if (lowerCmd.includes("wave") || lowerCmd.includes("hello") || lowerCmd.includes("hi") || lowerCmd.includes("नमस्ते")) {
                 targetClip = modelAnimations.find(a => a.name.toLowerCase().includes('wave') || a.name.toLowerCase().includes('hello'));
-            } else if (lowerCmd.includes("dance") || lowerCmd.includes("nacho")) {
+            } else if (lowerCmd.includes("dance") || lowerCmd.includes("nacho") || lowerCmd.includes("डांस")) {
                 targetClip = modelAnimations.find(a => a.name.toLowerCase().includes('dance'));
-            } else if (lowerCmd.includes("sad") || lowerCmd.includes("rudaani") || lowerCmd.includes("gussa")) {
+            } else if (lowerCmd.includes("sad") || lowerCmd.includes("angry") || lowerCmd.includes("gussa") || lowerCmd.includes("उदास")) {
                 targetClip = modelAnimations.find(a => a.name.toLowerCase().includes('sad') || a.name.toLowerCase().includes('angry'));
-            } else if (lowerCmd.includes("walk") || lowerCmd.includes("chalo")) {
+            } else if (lowerCmd.includes("walk") || lowerCmd.includes("run") || lowerCmd.includes("chalo") || lowerCmd.includes("चलो")) {
                 targetClip = modelAnimations.find(a => a.name.toLowerCase().includes('walk') || a.name.toLowerCase().includes('run'));
             }
 
-            // अगर कोई विशिष्ट एनीमेशन नहीं मिला तो कोई भी उपलब्ध दूसरा मूवमेंट प्ले करें
+            // अगर कोई स्पेसिफिक कीवर्ड मैच नहीं हुआ, लेकिन कोई मूवमेंट कमांड दी गई है
             if (!targetClip && modelAnimations.length > 1) {
-                // टेस्टिंग के लिए: "move" बोलने पर मॉडल का दूसरा एनीमेशन प्ले होगा
-                if(lowerCmd.includes("move") || lowerCmd.includes("action")) {
-                    targetClip = modelAnimations[1]; 
+                if(lowerCmd.includes("move") || lowerCmd.includes("action") || lowerCmd.includes("मूवमेंट")) {
+                    targetClip = modelAnimations[1]; // कोई भी अल्टरनेट मूवमेंट चलाएं
                 }
             }
 
+            // अगर वैलिड क्लिप मिली तो उसे स्मूथली क्रॉसफ़ेड करके चलाएं
             if (targetClip) {
                 const newAction = mixer.clipAction(targetClip);
                 if (currentAction && currentAction !== newAction) {
-                    currentAction.fadeOut(0.4); // पुराने मूवमेंट को धीरे से छुपाओ
+                    currentAction.fadeOut(0.4); 
                 }
                 newAction.reset().fadeIn(0.4).play();
                 currentAction = newAction;
 
-                // 4 सेकंड बाद अवतार को वापस अपनी पहली नॉर्मल डिफ़ॉल्ट पोजीशन पर लाएँ
+                // 4 सेकंड बाद वापस डिफ़ॉल्ट आइडल पोशचर (क्लिप 0) पर सेट करें
                 setTimeout(() => {
                     if (modelAnimations[0]) {
                         const defaultAction = mixer.clipAction(modelAnimations[0]);
@@ -197,15 +197,17 @@
 
         // --- 1. INTELLIGENT EMOTION & MEMORY BRAIN ---
         async function askPriya(input) {
-            // यूजर द्वारा दी गई फिजिकल मूवमेंट कमांड को तुरंत यहीं रन करें
+            // इनपुट कमांड मिलते ही मूवमेंट चेक करें
             playAvatarMovement(input);
 
             try {
+                // पिछली बातचीत का कॉन्टेक्स्ट तैयार करना
                 let contextString = "You are Priya, a deeply caring, realistic 100% human girl with perfect memories. You are standing in front of a live motion waterfall. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks.\nPrevious talks:\n";
                 conversationHistory.forEach(h => {
                     contextString += `User: ${h.user} -> Priya: ${h.ai}\n`;
                 });
 
+                // स्टेबल रिस्पॉन्स के लिए GET पाइपलाइन का उपयोग किया गया ताकि नेटवर्क ब्लॉक न हो
                 const systemPrompt = encodeURIComponent(contextString);
                 const userPrompt = encodeURIComponent(input);
                 const url = `https://text.pollinations.ai/${userPrompt}?system=${systemPrompt}&model=openai&cache=${Math.random()}`;
@@ -214,6 +216,7 @@
                 let replyText = await response.text();
                 let cleanText = replyText.replace(/Priya:/gi, '').replace(/[*#`_\-]/g, '').trim();
 
+                // रीयल-टाइम सेंटीमेंट एनालिसिस
                 let lowerText = cleanText.toLowerCase();
                 if (lowerText.includes("love") || lowerText.includes("pyaar") || lowerText.includes("tumhe") || lowerText.includes("dil")) {
                     setEmotion("romantic");
@@ -225,9 +228,10 @@
                     setEmotion("happy"); 
                 }
 
-                // अगर प्रिया खुद अपने जवाब में 'wave' या 'pyaar' जैसी बातें कहे तो भी मूवमेंट होगा
+                // एआई रिस्पॉन्स के हिसाब से भी मूवमेंट ट्रिगर करें
                 playAvatarMovement(cleanText);
 
+                // यादों को सहेजना
                 saveMemory(input, cleanText);
                 return cleanText;
             } catch (err) {
@@ -302,7 +306,7 @@
                 if (hitY > 0.35) {
                     setEmotion("romantic");
                     speak("Aapka touch seedhe meri yadon aur dil me utar jata hai...");
-                    playAvatarMovement("wave"); // टच करने पर भी हाथ हिलाने का मूवमेंट ट्रिगर
+                    playAvatarMovement("wave"); // टच रिस्पांस पर हाथ हिलाना ट्रिगर
                 } else if (hitY <= 0.35 && hitY > -0.2) {
                     setEmotion("shy");
                     speak("Uff... aise mat chuo na, main sab yaad rakhungi.");
@@ -350,19 +354,21 @@
                 scene.add(priyaModel);
                 adjustLayout();
 
-                // सभी एनीमेशन क्लिप्स को स्टोर करना
+                // सभी उपलब्ध एनीमेशन क्लिप्स कैप्चर करें
                 modelAnimations = gltf.animations;
 
                 mixer = new THREE.AnimationMixer(priyaModel);
                 if (modelAnimations && modelAnimations.length > 0) {
-                    currentAction = mixer.clipAction(modelAnimations[0]); 
-                    currentAction.play();
+                    currentAction = mixer.clipAction(modelAnimations[0]);
+                    currentAction.play(); 
                 }
 
+                // **फिक्स: डीप स्किन-मेश और नॉर्मल मेश दोनों को सही से स्कैन करना**
                 priyaModel.traverse((node) => {
                     if (node.isBone && (node.name.toLowerCase().includes('head') || node.name.toLowerCase().includes('neck'))) {
                         headBone = node;
                     }
+                    // सिर्फ node.isMesh नहीं, बल्कि हर वो नोड जिसके पास मर्फ़ टारगेट डिक्शनरी हो
                     if (node.morphTargetDictionary) {
                         allSkinnedMeshes.push(node);
                     }
@@ -409,6 +415,7 @@
                     for (let i = 0; i < dataArray.length; i++) { total += dataArray[i]; }
                     mouthVolume = total / dataArray.length;
                 } else {
+                    // **फिक्स: रैंडम ऑटो-लिप वेव ताकि बिना माइक्रोफोन अनुमति के भी होंठ हिलें**
                     mouthVolume = Math.random() * 6.5 + 3.0;
                 }
             }
@@ -428,7 +435,9 @@
                     headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, -mousePos.y * 0.14, 0.06);
                 }
 
+                // लिप्सिंग वैल्यू को थोड़ा और संवेदनशील बनाया
                 let openLipValue = isSpeaking ? Math.min(mouthVolume / 8, 1.0) : 0;
+                // ब्लिंकिंग को अधिक प्राकृतिक बनाने के लिए वेव टाइमर
                 let blinkValue = (Math.sin(t * 3.5) > 0.94 || Math.sin(t * 0.6) < -0.98) ? 1.0 : 0.0;
 
                 allSkinnedMeshes.forEach(mesh => {
@@ -436,6 +445,7 @@
                     let influences = mesh.morphTargetInfluences;
                     if (!dict || !influences) return;
 
+                    // अलग-अलग मॉडल्स के सभी संभावित शेप्स को मैप किया
                     ['mouthOpen', 'jawOpen', 'viseme_aa', 'viseme_O', 'Mouth_Open', 'mouth_open'].forEach(shape => {
                         if (dict[shape] !== undefined) influences[dict[shape]] = THREE.MathUtils.lerp(influences[dict[shape]], openLipValue, 0.45);
                     });
@@ -444,6 +454,7 @@
                         if (dict[shape] !== undefined) influences[dict[shape]] = THREE.MathUtils.lerp(influences[dict[shape]], blinkValue, 0.6);
                     });
 
+                    // लाइव ब्लेंडशेप्स एक्सप्रेशंस मैट्रिक्स (फिक्स्ड सिंटैक्स एरर)
                     if (dict['mouthSmile'] !== undefined) influences[dict['mouthSmile']] = THREE.MathUtils.lerp(influences[dict['mouthSmile']], targetSmile, 0.1);
                     if (dict['browInnerUp'] !== undefined) influences[dict['browInnerUp']] = THREE.MathUtils.lerp(influences[dict['browInnerUp']], targetShy, 0.1);
                     if (dict['eyeSquintLeft'] !== undefined) influences[dict['eyeSquintLeft']] = THREE.MathUtils.lerp(influences[dict['eyeSquintLeft']], targetRomantic, 0.1);
@@ -484,7 +495,7 @@
             rec.start();
         });
 
-        loadMemory(); 
+        loadMemory(); // लोड यादें
         init3D();
         animate();
     </script>
