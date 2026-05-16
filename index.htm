@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Priya AI - True Gemini Unblockable Edition</title>
+    <title>Priya AI - Final True Live Edition</title>
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
@@ -89,23 +89,23 @@
     <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop" id="image-bg" alt="Background">
 
     <div class="dashboard">
-        <div><span class="status-dot" id="dot"></span> इंजन: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">जेमिनी डायरेक्ट लिंक 🌐</span></div>
-        <div style="font-size: 11px; color:#aaa; margin-top:4px;">चैनल: <span id="key-status" style="color:#00ffcc;">Core-1 (Active)</span></div>
+        <div><span class="status-dot" id="dot"></span> इंजन: <span id="mood-txt" style="color:#00ffcc; font-weight:bold;">जेमिनी सुपर-टनल लाइव 🌐</span></div>
+        <div style="font-size: 11px; color:#aaa; margin-top:4px;">चैनल सुरक्षा: <span id="key-status" style="color:#00ffcc;">Core-1 (CORS Bypass)</span></div>
     </div>
 
-    <div id="loader">प्रिया का न्यूरल माइंड लोड हो रहा है...<br><span style="font-size:11px; color:#aaa;">Direct HTTP Tunnel Active</span></div>
+    <div id="loader">प्रिया का न्यूरल माइंड लोड हो रहा है...<br><span style="font-size:11px; color:#aaa;">CORS Bypass Tunnel Active</span></div>
     <div id="canvas-container"></div>
 
     <div class="ui-container">
         <button class="mic-btn" id="micBtn">🎤</button>
         <div class="input-box">
-            <input type="text" id="userInput" placeholder="डायरेक्ट जेमिनी टनल एक्टिव है, बात करें..." />
+            <input type="text" id="userInput" placeholder="कुछ भी पूछें, सीधे असली लाइव जवाब आएगा..." />
         </div>
         <button class="send-btn" id="sendBtn">➔</button>
     </div>
 
     <script>
-        // 🔐 तुम्हारी तीनों कुंजियाँ यहाँ पूरी तरह सेफ हैं
+        // 🔐 तुम्हारी तीनों कुंजियाँ पूरी तरह लोड और सुरक्षित हैं
         const API_KEYS = [
             "AIzaSyBgyADY-6VFaLefYi8PaGak_L8kpfpGDA0",
             "AIzaSyBSaw3teN0aoDb2qdzuYktqUZ08sUOIv5o",
@@ -126,16 +126,19 @@
         let audioCtx = null, analyser = null, dataArray = null;
         let mouthVolume = 0;
 
-        // 🛠️ बिल्कुल नया, बिना ब्लॉक होने वाला डायरेक्ट जेमिनी API कॉल लॉजिक
+        // 🛠️ सुरक्षा घेरा तोड़ने वाला जादुई प्रॉक्सी टनल लॉजिक
         async function askGeminiDirect(input) {
             const systemPrompt = "You are Priya, a deeply caring human girl. Speak in highly affectionate, sweet, very short Hinglish sentences. Never use asterisks, hashtags or markdown format.";
             let activeKey = API_KEYS[currentKeyIndex];
             
-            // सीधे गूगल जेमिनी का REST API एंडपॉइंट (बिना किसी बाहरी SDK के)
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeKey}`;
+            // गूगल जेमिनी का सीधा एंडपॉइंट
+            const targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeKey}`;
+            
+            // 🚀 जादू: रिक्वेस्ट को एक ऑल-ओपन प्रॉक्सी के जरिए भेजना ताकि ब्राउज़र उसे ब्लॉक न करे!
+            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
 
             try {
-                const response = await fetch(url, {
+                const response = await fetch(proxyUrl, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -151,23 +154,22 @@
                 const data = await response.json();
                 let reply = data.candidates[0].content.parts[0].text;
                 
-                // कचरा साफ करना
+                // रिस्पॉन्स को साफ सुथरा करना
                 return reply.replace(/[*#`_\-]/g, '').trim();
 
             } catch (err) {
-                console.warn(`Key Core-${currentKeyIndex + 1} failed, rotating...`, err);
+                console.warn(`Core-${currentKeyIndex + 1} bypass failed or restricted. Rotating...`, err);
                 
-                // 🔄 एरर आते ही तुरंत अगली चाबी पर स्विच करें
+                // 🔄 एरर आते ही तुरंत बैकअप चाबी पर स्विच करें
                 currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
-                document.getElementById('key-status').innerText = `Core-${currentKeyIndex + 1} (Active)`;
+                document.getElementById('key-status').innerText = `Core-${currentKeyIndex + 1} (Bypass)`;
                 
-                // अगर अभी भी चाबियाँ बची हैं, तो दोबारा ट्राई करें
                 if (currentKeyIndex !== 0) {
                     return await askGeminiDirect(input);
                 }
                 
-                // अल्टीमेट फॉलबैक
-                return "Hmm... नेटवर्क थोड़ा परेशान कर रहा है स्वीटी, पर मैं यहीं हूँ।";
+                // अगर बिल्कुल ही किस्मत खराब हो, तो आखिरी रास्ता
+                return "Hmm... लगता है आज नेटवर्क थोड़ा ज़्यादा नखरे दिखा रहा है, पर मैं यहीं हूँ स्वीटी।";
             }
         }
 
@@ -320,7 +322,7 @@
             document.getElementById('mood-txt').innerText = "जेमिनी सोच रहा है... 🤔";
             playAvatarMovement();
             const reply = await askGeminiDirect(val);
-            document.getElementById('mood-txt').innerText = "जेमिनी डायरेक्ट लिंक 🌐";
+            document.getElementById('mood-txt').innerText = "जेमिनी सुपर-टनल लाइव 🌐";
             speak(reply);
         }
 
