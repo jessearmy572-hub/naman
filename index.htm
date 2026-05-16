@@ -99,6 +99,8 @@
     <script>
         // --- CONFIGURATION ---
         const API_KEY = "YOUR_API_KEY"; // यहाँ अपनी Gemini API Key डालें
+        // यहाँ आपका दिया हुआ GitHub का डायरेक्ट लिंक जोड़ दिया है
+        const MODEL_URL = "https://github.com/jessearmy572-hub/naman/raw/refs/heads/main/model.glb"; 
 
         // --- GLOBAL VARIABLES ---
         let scene, camera, renderer, controls, mixer, clock;
@@ -190,9 +192,9 @@
             directionalLight.position.set(5, 5, 5);
             scene.add(directionalLight);
 
-            // Load 3D Model
+            // Load 3D Model from GitHub
             const loader = new THREE.GLTFLoader();
-            loader.load('/girl.glb', (gltf) => {
+            loader.load(MODEL_URL, (gltf) => {
                 priyaModel = gltf.scene;
                 scene.add(priyaModel);
 
@@ -202,12 +204,11 @@
                 // Animations Setup
                 mixer = new THREE.AnimationMixer(priyaModel);
                 if (gltf.animations.length > 0) {
-                    // Manually play 'Idle' or first available animation
                     const idleAnim = THREE.AnimationClip.findByName(gltf.animations, 'Idle') || gltf.animations[0];
                     mixer.clipAction(idleAnim).play();
                 }
 
-                // Traverse Bones for Tracking and Fixing T-Pose
+                // Bone Configurations
                 priyaModel.traverse((bone) => {
                     if (bone.isBone) {
                         if (bone.name.includes('Arm')) {
@@ -226,7 +227,7 @@
                 });
 
             }, undefined, (error) => {
-                console.error("Model load nahi ho paya, check karein ki '/girl.glb' sahi path par hai.", error);
+                console.error("Model load nahi ho paya. URL ya CORS issue ho sakta hai.", error);
             });
 
             // Events
