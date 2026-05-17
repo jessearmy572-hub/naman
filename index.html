@@ -3,60 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Priya AI - nv1 Ultimate Core</title>
+    <title>Priya AI - nv1 Next-Gen Core Pro</title>
     <style>
-        :root { --glow: #00f2ff; --panel: rgba(0, 0, 0, 0.85); }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Inter', sans-serif; }
+        :root { 
+            --glow: #00f2ff; 
+            --panel: rgba(10, 10, 12, 0.82); 
+            --border: rgba(0, 242, 255, 0.25);
+        }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #050508; font-family: 'Inter', sans-serif; }
         
-        /* FEATURE 1: Live Motion Video Background Engine */
-        #video-bg {
-            position: absolute;
-            top: 50%; left: 50%;
-            min-width: 100%; min-height: 100%;
-            width: auto; height: auto;
+        /* FEATURE 1: Realistic Nature Beauty Background with Subtle Cinematic Blur */
+        .nature-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80') no-repeat center center;
+            background-size: cover;
             z-index: 1;
-            transform: translate(-50%, -50%);
-            object-fit: cover;
-            opacity: 0.6; /* 3D अवतार को गहराई देने के लिए */
+            filter: brightness(0.75) contrast(1.1);
         }
 
-        /* 3D Canvas Container */
+        /* Ambient Fog Layer over Background for 3D Depth */
+        .bg-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, rgba(5,5,8,0.2) 0%, rgba(5,5,8,0.6) 100%);
+            z-index: 2;
+        }
+
+        /* 3D Canvas Layer */
         #canvas-container { width: 100%; height: 100%; position: absolute; z-index: 3; touch-action: none; }
 
-        /* HUD & Status Monitor */
+        /* HUD Status Monitor Panel */
         .hud-top {
             position: absolute; top: 25px; left: 25px; z-index: 10;
-            background: var(--panel); padding: 12px 18px; border-radius: 12px;
-            border-left: 3px solid var(--glow); color: white; backdrop-filter: blur(10px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            background: var(--panel); padding: 14px 20px; border-radius: 14px;
+            border: 1px solid var(--border); border-left: 4px solid var(--glow); 
+            color: white; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
         }
-        .status-dot { width: 8px; height: 8px; background: var(--glow); border-radius: 50%; display: inline-block; margin-right: 8px; animation: pulse 1.5s infinite; }
-        #debug-log { font-size: 10px; color: #ff3333; margin-top: 5px; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .status-dot { width: 9px; height: 9px; background: var(--glow); border-radius: 50%; display: inline-block; margin-right: 9px; animation: pulse 1.8s infinite; }
+        #debug-log { font-size: 10px; color: #ff4444; margin-top: 6px; font-family: monospace; }
+        @keyframes pulse { 0% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,242,255,0.4); } 70% { opacity: 0.4; box-shadow: 0 0 0 6px rgba(0,242,255,0); } 100% { opacity: 1; } }
 
-        /* UI Input Dock */
-        .ui-dock {
-            position: absolute; bottom: 30px; width: 100%; display: flex; justify-content: center; z-index: 100;
-        }
+        /* UI Input Glass Dock */
+        .ui-dock { position: absolute; bottom: 35px; width: 100%; display: flex; justify-content: center; z-index: 100; }
         .glass-input {
-            background: var(--panel); border: 1px solid rgba(0,242,255,0.3);
-            width: 88%; max-width: 500px; display: flex; align-items: center;
-            padding: 8px 15px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            background: var(--panel); border: 1px solid var(--border);
+            width: 88%; max-width: 520px; display: flex; align-items: center;
+            padding: 6px 18px; border-radius: 50px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.1);
+            transition: border 0.3s ease;
         }
-        input { flex: 1; background: none; border: none; color: white; height: 45px; font-size: 16px; outline: none; }
-        .action-icon { background: none; border: none; color: var(--glow); font-size: 22px; cursor: pointer; padding: 5px; transition: 0.2s; }
-        .action-icon:active { transform: scale(0.85); }
+        .glass-input:focus-within { border-color: var(--glow); box-shadow: 0 15px 35px rgba(0,242,255,0.15); }
+        input { flex: 1; background: none; border: none; color: white; height: 48px; font-size: 16px; outline: none; padding-left: 5px; }
+        input::placeholder { color: rgba(255,255,255,0.4); }
+        .action-icon { background: none; border: none; color: var(--glow); font-size: 22px; cursor: pointer; padding: 6px; transition: transform 0.2s, opacity 0.2s; }
+        .action-icon:active { transform: scale(0.88); opacity: 0.8; }
     </style>
 </head>
 <body>
 
-<video autoplay loop muted playsinline id="video-bg">
-    <source src="https://assets.mixkit.co/videos/preview/mixkit-beautiful-waterfall-in-a-lush-green-forest-43187-large.mp4" type="video/mp4">
-</video>
+<div class="nature-bg"></div>
+<div class="bg-overlay"></div>
 
 <div class="hud-top">
-    <div><span class="status-dot"></span><b id="sys-status">nv1 CORE: LOADING</b></div>
-    <div id="sub-label" style="font-size: 10px; opacity: 0.6; margin-top: 4px;">SENSORS: INITIALIZING</div>
+    <div><span class="status-dot"></span><b id="sys-status">nv1 ADVANCED CORE v2.0</b></div>
+    <div id="sub-label" style="font-size: 11px; opacity: 0.7; margin-top: 5px; letter-spacing: 0.5px;">SYSTEM STATS: STABLE</div>
     <div id="debug-log"></div>
 </div>
 
@@ -64,9 +74,9 @@
 
 <div class="ui-dock">
     <div class="glass-input">
-        <button class="action-icon" id="mic">🎤</button>
+        <button class="action-icon" id="mic" title="आवाज से बात करें">🎤</button>
         <input type="text" id="in" placeholder="मुझसे बात करें या कमांड दें...">
-        <button class="action-icon" id="send" style="color:white">➔</button>
+        <button class="action-icon" id="send" style="color:white" title="संदेश भेजें">➔</button>
     </div>
 </div>
 
