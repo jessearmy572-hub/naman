@@ -719,7 +719,7 @@
             let completelyStrippedVocalSpeechStringText = compiledOutputAIPayloadText.replace(/\[.*?\]/g, '').trim();
             
             const DOMUI_SubtitleMonitorOverlayBox = document.getElementById('subtitle-monitor-box');
-            DOMUI_SubtitleMonitorOverlayBox.innerText = compiledOutputAIPayloadText; 
+            DOMUI_SubtitleMonitorOverlayBox.innerText = completelyStrippedVocalSpeechStringText; 
             DOMUI_SubtitleMonitorOverlayBox.style.display = 'block';
 
             let structuralUtteranceInstanceConfigurationObject = new SpeechSynthesisUtterance(completelyStrippedVocalSpeechStringText);
@@ -823,6 +823,7 @@
             }
             
             DOMUI_TextInputElementBar.value = "";
+            DOMUI_TextInputElementBar.disabled = true;
             
             const DOMUI_CoreStatusTextField = document.getElementById('system-core-mood-txt');
             DOMUI_CoreStatusTextField.innerText = "प्रक्रिया चालू है... 🤔";
@@ -845,7 +846,6 @@
                 DOMUI_CoreStatusTextField.innerText = "जेमिनी nv1 लाइव डायरेक्ट ⚡";
                 DOMUI_CoreStatusTextField.style.color = "var(--neon-cyan)";
                 
-                // CRITICAL CONNECTION HUB: नेटवर्क डेटा सीधे जेमिनी रिस्पॉन्स सब-सिस्टम (Module 9) को ट्रांसफर करना
                 if (activeReturnedNetworkPayloadText) {
                     bridgeNetworkPayloadDirectlyIntoResponseEngine(activeReturnedNetworkPayloadText);
                 } else {
@@ -906,12 +906,9 @@
             if (nativeHardwareKeyboardEvent.key === 'Enter') triggerInteractionLifecycleExecutionCycle(); 
         });
 
-
         /* ==========================================================================
            MODULE 9: GEMINI RESPONSE PROCESSING & STREAM ORCHESTRATION SUBSYSTEM
-           STANDARD COMPILATION PROFILE: 400+ LINES DEEP DENSITY HARDWARE MATRIX
            ========================================================================== */
-
         let globalLastReceivedResponsePayloadString = "";
         let globalResponseExecutionActiveStatusFlag = false;
         let globalTypewriterAnimationIntervalReference = null;
@@ -1016,7 +1013,7 @@
 
             console.log(`Gesture Decoder Bridge: Mapping keyword token "${compiledLowerGestureTokenString}" against engine dictionary...`);
 
-            if (compiledLowerGestureTokenString.includes('muskurate') || compiledLowerGestureTokenString.includes('smile')) {
+            if (compiledLowerGestureTokenString.includes('muskurate') || compiledLowerGestureTokenString.includes('smile') || compiledLowerGestureTokenString.includes('haste')) {
                 targetedActionClipIndexValue = Math.min(1, globalAnimationClipsBufferPool.length - 1);
             } else if (compiledLowerGestureTokenString.includes('udas') || compiledLowerGestureTokenString.includes('sad')) {
                 targetedActionClipIndexValue = Math.min(2, globalAnimationClipsBufferPool.length - 1);
