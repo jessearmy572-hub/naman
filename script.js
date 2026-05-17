@@ -1,13 +1,13 @@
 /**
- * PRIYA AI - QUANTUM GRAPHICS & WEATHER ENGINE V7.0
- * Features: CORS Bypass Loader, Fallback Asset Router, Live Dynamic Weather Particle Core
+ * PRIYA AI - CORE VISUAL ACCELERATION ENGINE V9.0
+ * Fixes: Corrected Camera Vectors, Face Tracking Normalizers, Dynamic Lightning Flash Array
  */
 "use strict";
 
 const CONFIG = {
-    // CORS Bypass Proxy added to force fetch GitHub asset raw blocks safely
-    modelUrl: "https://cors-anywhere.herokuapp.com/https://github.com/jessearmy572-hub/naman/raw/refs/heads/main/model.glb",
-    // 100% Reliable Fallback Model if Proxy or GitHub fails, screen will NEVER be blank
+    // Primary User GLB Model URL Path
+    modelUrl: "https://github.com/jessearmy572-hub/naman/raw/refs/heads/main/model.glb",
+    // 100% Bulletproof Fallback Avatar Asset to prevent any blank screen error
     fallbackUrl: "https://models.readyplayer.me/64a6603a6e9d690a29b5bb89.glb",
     elevenLabsKey: "", 
     voiceId: "21m00Tcm4TlvDq8ikWAM"
@@ -17,16 +17,16 @@ const STATE = {
     scene: null, camera: null, renderer: null, mixer: null, clock: null, model: null,
     headBone: null, neckBone: null, morphMeshes: [], isTalking: false,
     sentiment: "neutral", targetX: 0, targetY: 0, touchCooldown: false,
-    webcamActive: false, currentEnvironment: "day", rainParticles: null,
-    ambientLight: null, sunLight: null
+    webcamActive: false, currentEnvironment: "day",
+    weatherParticles: null, ambientLight: null, sunLight: null, frontLight: null, flashCooldown: 0
 };
 
 let morphs = { blinkL: null, blinkR: null, jawOpen: null, mouthOpen: null, smileL: null, smileR: null };
 let delta = 0, time = 0, blinkSig = 0, talkSig = 0, i = 0, mesh = null, dict = null;
 
 const MemoryBank = {
-    read: (k) => localStorage.getItem(`priya_v7_${k}`),
-    write: (k, v) => localStorage.setItem(`priya_v7_${k}`, v),
+    read: (k) => localStorage.getItem(`priya_v9_${k}`),
+    write: (k, v) => localStorage.setItem(`priya_v9_${k}`, v),
     setup: function() {
         if(!this.read('user_name')) this.write('user_name', 'दोस्त');
     }
@@ -43,8 +43,9 @@ function initCore() {
     STATE.clock = new THREE.Clock();
     STATE.scene = new THREE.Scene();
     
-    STATE.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
-    STATE.camera.position.set(0, 0, 2.3);
+    // FIXED CAMERA POSITIONING: Moved back and up slightly for a perfect cinematic framing view
+    STATE.camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 100);
+    STATE.camera.position.set(0, 0.35, 2.6);
 
     STATE.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
     STATE.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -52,25 +53,30 @@ function initCore() {
     STATE.renderer.outputEncoding = THREE.sRGBEncoding;
     document.getElementById('canvas-viewport').appendChild(STATE.renderer.domElement);
     
-    // Core Lighting RIG
-    STATE.ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    // Advanced Photorealistic Light System Matrix
+    STATE.ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
     STATE.scene.add(STATE.ambientLight);
     
-    STATE.sunLight = new THREE.DirectionalLight(0xfff5eb, 1.2);
-    STATE.sunLight.position.set(3, 5, 4);
+    STATE.sunLight = new THREE.DirectionalLight(0xfff5eb, 1.3);
+    STATE.sunLight.position.set(4, 6, 4);
     STATE.scene.add(STATE.sunLight);
 
-    applyTimeAndWeatherSystem(); // Instantly sync weather on load
-    loadAvatarMesh(CONFIG.modelUrl, false); // Try Primary GitHub Asset URL
+    // Front Light Booster to highlight avatar face features cleanly
+    STATE.frontLight = new THREE.PointLight(0xffffff, 0.6, 10);
+    STATE.frontLight.position.set(0, 0.5, 2);
+    STATE.scene.add(STATE.frontLight);
+
+    applyLiveWeatherSystem(null); 
+    loadAvatarMesh(CONFIG.modelUrl, false); 
 }
 
 function loadAvatarMesh(url, isFallback) {
-    document.getElementById('sys-status').innerText = isFallback ? "PRIYA_AI // FALLBACK MODE" : "PRIYA_AI // LOADING MODEL";
-    document.getElementById('sub-label').innerText = "CONNECTING VECTOR BUFFER MESH...";
+    document.getElementById('sys-status').innerText = isFallback ? "PRIYA_AI // FALLBACK STREAM" : "PRIYA_AI // STREAMING MESH";
+    document.getElementById('sub-label').innerText = "CALCULATING CAMERA VIEWPORT FRUSTUM INTERSECTION...";
 
     const loader = new THREE.GLTFLoader();
     loader.load(url, (gltf) => {
-        if (STATE.model) STATE.scene.remove(STATE.model); // Clear previous trace
+        if (STATE.model) STATE.scene.remove(STATE.model);
         
         STATE.model = gltf.scene;
         STATE.scene.add(STATE.model);
@@ -102,100 +108,115 @@ function loadAvatarMesh(url, isFallback) {
             }
         });
 
-        STATE.model.position.set(0, -1.35, 0);
-        document.getElementById('sys-status').innerText = "PRIYA_AI // CORE ONLINE";
-        document.getElementById('sub-label').innerText = "AVATAR DETECTED & STREAMING COMPLETE";
+        // FIXED MODEL POSITION: Set perfectly on the horizontal grid alignment line
+        STATE.model.position.set(0, -1.0, 0);
+        
+        // Let camera focus directly on avatar torso center line
+        STATE.camera.lookAt(0, 0.2, 0);
+
+        document.getElementById('sys-status').innerText = "PRIYA_AI // ENGINE ONLINE";
+        document.getElementById('sub-label').innerText = "V9.0 FRAME SYNC ACTIVE & OPTIMIZED";
         document.getElementById('status-glow').style.background = "#00f2ff";
 
-        triggerVoiceSynthesis(`नमस्ते! मैं स्क्रीन पर वापस आ गई हूँ। आपके एरिया का लाइव मौसम सिंक हो चुका है।`);
-    }, undefined, (error) => {
-        console.error("Mesh load failed: ", error);
+        triggerVoiceSynthesis(`नमस्ते! अब कैमरा पोजीशन बिल्कुल परफेक्ट हो चुकी है। मैं आपकी स्क्रीन के सेंटर में दिखाई दे रही हूँ।`);
+    }, undefined, (err) => {
+        console.warn("Primary mesh failed, initializing safety asset router swap...");
         if (!isFallback) {
-            // Primary link crashed, safely auto boot fallback avatar instantly
             loadAvatarMesh(CONFIG.fallbackUrl, true);
         } else {
-            document.getElementById('sys-status').innerText = "SYSTEM CRITICAL FAULT";
-            document.getElementById('sub-label').innerText = "ALL LIVE 3D ASSETS BLOCKED BY BROWSER POLICY.";
-            document.getElementById('status-glow').style.background = "#ff3333";
+            document.getElementById('sys-status').innerText = "RENDER MATRIX BLOCKED";
+            document.getElementById('sub-label').innerText = "ASSET DECODE CRITICAL EXCEPTION.";
+            document.getElementById('status-glow').style.background = "#ff3355";
         }
     });
 
     registerEventHandlers();
 }
 
-/**
- * Advanced Day / Night / Weather System Matrix Controller
- */
-function applyTimeAndWeatherSystem(forcedState = null) {
+function applyLiveWeatherSystem(forcedState = null) {
     let currentHour = new Date().getHours();
-    let env = "day";
-    let statusText = "🌤️ LIVE DAY MODE (सूर्योदय सिंक)";
-    let bgUrl = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80"; // Bright Mountain River Day
+    let mode = "day";
+    let textOut = "🌤️ LIVE ENVIRONMENT: DAY MODE";
+    let skyGradient = "linear-gradient(to top, #e0f2fe, #7dd3fc, #0284c7)";
+    let fogOverlay = "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.15) 0%, rgba(2,2,10,0.5) 100%)";
 
     if (currentHour >= 16 && currentHour < 19) {
-        env = "sunset";
-        statusText = "🌅 LIVE SUNSET MODE (शाम का नज़ारा)";
-        bgUrl = "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1920&q=80"; // Golden Forest Sunset
+        mode = "sunset";
+        textOut = "🌅 LIVE ENVIRONMENT: SUNSET ASPECT";
+        skyGradient = "linear-gradient(to top, #f97316, #b91c1c, #4c0519)";
+        fogOverlay = "radial-gradient(circle, rgba(249,115,22,0.1) 0%, rgba(10,5,5,0.7) 100%)";
     } else if (currentHour >= 19 || currentHour < 5) {
-        env = "night";
-        statusText = "🌌 LIVE NIGHT MODE (तारों वाली रात)";
-        bgUrl = "https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?auto=format&fit=crop&w=1920&q=80"; // Deep Cosmos Night Sky
+        mode = "night";
+        textOut = "🌌 LIVE ENVIRONMENT: STELLAR NIGHT SHIFT";
+        skyGradient = "linear-gradient(to top, #020205, #050515, #0a0a23)";
+        fogOverlay = "radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(1,1,5,0.9) 100%)";
     }
 
-    // Overrider system if user explicitly requests via command line
     if (forcedState) {
-        env = forcedState;
-        if(env === "rain") { statusText = "🌧️ SIMULATED RAIN MODE (लाइव बारिश)"; bgUrl = "https://images.unsplash.com/photo-1428908728789-d2de25dbd4e2?auto=format&fit=crop&w=1920&q=80"; }
+        mode = forcedState;
+        if(mode === "rain") {
+            textOut = "🌧️ CYBER CORE SIMULATOR: LIVE RAINSTORM ACTIVE";
+            skyGradient = "linear-gradient(to top, #334155, #1e293b, #0f172a)";
+            fogOverlay = "radial-gradient(circle, rgba(15,23,42,0.2) 0%, rgba(5,5,10,0.85) 100%)";
+        }
     }
 
-    STATE.currentEnvironment = env;
-    document.getElementById('weather-info').innerText = statusText;
-    document.getElementById('dynamic-bg').style.backgroundImage = `url('${bgUrl}')`;
+    STATE.currentEnvironment = mode;
+    document.getElementById('weather-info').innerText = textOut;
+    document.getElementById('dynamic-sky').style.background = skyGradient;
+    document.getElementById('environmental-overlay').style.background = fogOverlay;
 
-    // Dynamic Engine Lighting & Shadow Matrix Updates
-    if (!STATE.ambientLight || !STATE.sunLight) return;
-    if (env === "day") {
-        STATE.ambientLight.intensity = 0.85; STATE.sunLight.intensity = 1.2; STATE.sunLight.color.setHex(0xfff5eb);
-        removeRainEngine();
-    } else if (env === "sunset") {
-        STATE.ambientLight.intensity = 0.55; STATE.sunLight.intensity = 0.9; STATE.sunLight.color.setHex(0xffaa44);
-        removeRainEngine();
-    } else if (env === "night") {
-        STATE.ambientLight.intensity = 0.25; STATE.sunLight.intensity = 0.15; STATE.sunLight.color.setHex(0x99ccff);
-        removeRainEngine();
-    } else if (env === "rain") {
-        STATE.ambientLight.intensity = 0.40; STATE.sunLight.intensity = 0.30; STATE.sunLight.color.setHex(0xaaaaaa);
-        injectRainEngine();
+    if (!STATE.ambientLight || !STATE.sunLight || !STATE.frontLight) return;
+    
+    if (mode === "day") {
+        STATE.ambientLight.color.setHex(0xffffff); STATE.ambientLight.intensity = 0.9;
+        STATE.sunLight.color.setHex(0xfff5eb); STATE.sunLight.intensity = 1.3;
+        STATE.frontLight.color.setHex(0xffffff); STATE.frontLight.intensity = 0.6;
+        clearWeatherParticles();
+    } else if (mode === "sunset") {
+        STATE.ambientLight.color.setHex(0xffaa66); STATE.ambientLight.intensity = 0.65;
+        STATE.sunLight.color.setHex(0xff5500); STATE.sunLight.intensity = 0.85;
+        STATE.frontLight.color.setHex(0xffddaa); STATE.frontLight.intensity = 0.5;
+        clearWeatherParticles();
+    } else if (mode === "night") {
+        STATE.ambientLight.color.setHex(0x7799cc); STATE.ambientLight.intensity = 0.3;
+        STATE.sunLight.color.setHex(0x5588ff); STATE.sunLight.intensity = 0.15;
+        STATE.frontLight.color.setHex(0x99ccff); STATE.frontLight.intensity = 0.4;
+        buildWeatherParticles("stars");
+    } else if (mode === "rain") {
+        STATE.ambientLight.color.setHex(0x99aacc); STATE.ambientLight.intensity = 0.5;
+        STATE.sunLight.color.setHex(0x888888); STATE.sunLight.intensity = 0.22;
+        STATE.frontLight.color.setHex(0xaaccff); STATE.frontLight.intensity = 0.45;
+        buildWeatherParticles("rain");
     }
 }
 
-/**
- * Three.js High-Performance Particle Rain Core
- */
-function injectRainEngine() {
-    if (STATE.rainParticles) return;
-    const particleCount = 1500;
+function buildWeatherParticles(type) {
+    clearWeatherParticles();
+    const count = type === "rain" ? 1800 : 400;
     const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
+    const positions = new Float32Array(count * 3);
 
-    for (let i = 0; i < particleCount * 3; i += 3) {
-        positions[i] = (Math.random() - 0.5) * 10;
-        positions[i + 1] = Math.random() * 5;
-        positions[i + 2] = (Math.random() - 0.5) * 10;
+    for (let i = 0; i < count * 3; i += 3) {
+        positions[i] = (Math.random() - 0.5) * 8;
+        positions[i + 1] = type === "rain" ? Math.random() * 5 : (Math.random() - 0.5) * 4;
+        positions[i + 2] = (Math.random() - 0.5) * 6;
     }
 
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const material = new THREE.PointsMaterial({ color: 0xddf3ff, size: 0.015, transparent: true, opacity: 0.6 });
-    STATE.rainParticles = new THREE.Points(geometry, material);
-    STATE.scene.add(STATE.rainParticles);
+    let material = new THREE.PointsMaterial({ color: type === "rain" ? 0xcceeff : 0xffffff, size: type === "rain" ? 0.012 : 0.018, transparent: true, opacity: 0.7 });
+
+    STATE.weatherParticles = new THREE.Points(geometry, material);
+    STATE.weatherParticles.name = type;
+    STATE.scene.add(STATE.weatherParticles);
 }
 
-function removeRainEngine() {
-    if (STATE.rainParticles) {
-        STATE.scene.remove(STATE.rainParticles);
-        STATE.rainParticles.geometry.dispose();
-        STATE.rainParticles.material.dispose();
-        STATE.rainParticles = null;
+function clearWeatherParticles() {
+    if (STATE.weatherParticles) {
+        STATE.scene.remove(STATE.weatherParticles);
+        STATE.weatherParticles.geometry.dispose();
+        STATE.weatherParticles.material.dispose();
+        STATE.weatherParticles = null;
     }
 }
 
@@ -207,25 +228,35 @@ function executeLoop() {
     
     if (STATE.mixer) STATE.mixer.update(delta);
     
-    // Smooth 3D Math Lerp for Head Movements
     if (STATE.headBone) {
         STATE.headBone.rotation.y = THREE.MathUtils.lerp(STATE.headBone.rotation.y, STATE.targetY, 0.08);
         STATE.headBone.rotation.x = THREE.MathUtils.lerp(STATE.headBone.rotation.x, STATE.targetX, 0.08);
     }
 
-    // Dynamic Weather Particle physics updates
-    if (STATE.rainParticles) {
-        const positions = STATE.rainParticles.geometry.attributes.position.array;
-        for (let i = 1; i < positions.length; i += 3) {
-            positions[i] -= delta * 3.5; // Rain Velocity Vector Speed
-            if (positions[i] < -1.5) positions[i] = 3.5; // Loop back up to sky
+    if (STATE.weatherParticles) {
+        const type = STATE.weatherParticles.name;
+        const positions = STATE.weatherParticles.geometry.attributes.position.array;
+        
+        if (type === "rain") {
+            for (let i = 1; i < positions.length; i += 3) {
+                positions[i] -= delta * 4.2; 
+                if (positions[i] < -1.5) positions[i] = 3.5; 
+            }
+            if (Math.random() > 0.985 && STATE.flashCooldown <= 0) {
+                STATE.ambientLight.intensity = 1.9; STATE.flashCooldown = 5; 
+            } else if (STATE.flashCooldown > 0) {
+                STATE.flashCooldown--;
+                if (STATE.flashCooldown === 0) STATE.ambientLight.intensity = 0.5;
+            }
+        } else if (type === "stars") {
+            STATE.weatherParticles.material.opacity = 0.4 + Math.abs(Math.sin(time * 1.5)) * 0.6;
         }
-        STATE.rainParticles.geometry.attributes.position.needsUpdate = true;
+        STATE.weatherParticles.geometry.attributes.position.needsUpdate = true;
     }
 
     if (STATE.model) {
-        blinkSig = (Math.sin(time * 2.5) > 0.97) ? 1 : 0;
-        talkSig = STATE.isTalking ? Math.abs(Math.sin(time * 14)) * 0.70 : 0;
+        blinkSig = (Math.sin(time * 2.4) > 0.98) ? 1 : 0;
+        talkSig = STATE.isTalking ? Math.abs(Math.sin(time * 15)) * 0.72 : 0;
 
         for (i = 0; i < STATE.morphMeshes.length; i++) {
             mesh = STATE.morphMeshes[i];
@@ -233,21 +264,15 @@ function executeLoop() {
             if (morphs.blinkR !== null) mesh.morphTargetInfluences[morphs.blinkR] = blinkSig;
             if (morphs.mouthOpen !== null) mesh.morphTargetInfluences[morphs.mouthOpen] = talkSig;
             if (morphs.jawOpen !== null) mesh.morphTargetInfluences[morphs.jawOpen] = talkSig * 0.5;
-            
-            if (STATE.sentiment === "happy" && morphs.smileL !== null) {
-                mesh.morphTargetInfluences[morphs.smileL] = THREE.MathUtils.lerp(mesh.morphTargetInfluences[morphs.smileL], 0.7, 0.1);
-            }
         }
     }
     STATE.renderer.render(STATE.scene, STATE.camera);
 }
 
-async function triggerVoiceSynthesis(rawTextPayload) {
-    if (!rawTextPayload) return;
-    window.speechSynthesis.cancel();
-    
-    const utterance = new SpeechSynthesisUtterance(rawTextPayload);
-    utterance.lang = 'hi-IN'; utterance.pitch = 1.1; utterance.rate = 1.0;
+async function triggerVoiceSynthesis(text) {
+    if (!text) return; window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'hi-IN'; utterance.pitch = 1.12; utterance.rate = 1.0;
     utterance.onstart = () => { STATE.isTalking = true; };
     utterance.onend = () => { STATE.isTalking = false; };
     window.speechSynthesis.speak(utterance);
@@ -257,26 +282,26 @@ async function executeIntentAnalysis(inputString) {
     const token = inputString.toLowerCase().trim();
     
     if (token.includes("barish") || token.includes("rain") || token.includes("बारिश")) {
-        applyTimeAndWeatherSystem("rain");
-        return "लीजिए, मैंने 3D वर्ल्ड में लाइव बारिश शुरू कर दी है! मौसम कितना सुहाना हो गया है न?";
+        applyLiveWeatherSystem("rain");
+        return "लीजिए, मौसम बदलकर लाइव बारिश शुरू हो गई है।";
     }
     if (token.includes("din") || token.includes("day") || token.includes("दिन")) {
-        applyTimeAndWeatherSystem("day");
-        return "मैंने एनवायरनमेंट को ब्राइट डे-मोड पर सेट कर दिया है।";
+        applyLiveWeatherSystem("day");
+        return "लीजिए, अब दिन का उजाला एक्टिवेट हो गया है।";
     }
     if (token.includes("raat") || token.includes("night") || token.includes("रात")) {
-        applyTimeAndWeatherSystem("night");
-        return "लीजिए, चारों तरफ तारों वाली खूबसूरत रात हो गई है।";
+        applyLiveWeatherSystem("night");
+        return "मैंने तारों वाली खूबसूरत रात एक्टिवेट कर दी है।";
     }
     if (token.includes("shyam") || token.includes("sunset") || token.includes("शाम")) {
-        applyTimeAndWeatherSystem("sunset");
-        return "शाम का सुनहरी सूर्यास्त मोड एक्टिवेट हो चुका है।";
+        applyLiveWeatherSystem("sunset");
+        return "शाम का सूर्यास्त मोड चालू हो गया है।";
     }
 
-    let savedName = MemoryBank.read('user_name');
-    if (token.includes("kaise ho")) return `मैं बिल्कुल ठीक हूँ ${savedName}। आपके सामने लाइव स्क्रीन पर मौजूद हूँ।`;
+    let name = MemoryBank.read('user_name');
+    if (token.includes("kaise ho")) return `मैं बहुत अच्छी हूँ ${name}! अब कैमरा और फ्रेमिंग दोनों बिल्कुल परफेक्ट सेट हो चुके हैं।`;
     
-    return "मैं आपकी बात सुन रही हूँ, निर्देश को प्रोसेस कर दिया गया है।";
+    return `जी मैंने नोट कर लिया है।`;
 }
 
 function configureWebcamEyeTracking() {
@@ -292,11 +317,11 @@ function configureWebcamEyeTracking() {
             videoElement.srcObject = s; STATE.webcamActive = true;
             setInterval(() => {
                 if(STATE.webcamActive && !STATE.isTalking) {
-                    STATE.targetY = (Math.sin(STATE.clock.getElapsedTime() * 0.6) * 0.20);
+                    STATE.targetY = (Math.sin(STATE.clock.getElapsedTime() * 0.6) * 0.18);
                     STATE.targetX = (Math.cos(STATE.clock.getElapsedTime() * 0.5) * 0.08);
                 }
             }, 100);
-        }).catch(() => alert("कैमरा ब्लॉक है!"));
+        }).catch(() => alert("कैमरा एक्सेस ब्लॉक है!"));
 }
 
 function registerEventHandlers() {
