@@ -67,7 +67,7 @@ function executeRealisticTypewriterSubtitleStreamStream(targetSanitizedDisplaySt
 }
 
 function dispatchDynamicAvatarGestureTrigger(operationalGestureKeywordString) {
-    if (!coreAnimationMixerController || globalAnimationClipsBufferPool.length === 0) return;
+    if (!typeof coreAnimationMixerController !== 'undefined' || !window.globalAnimationClipsBufferPool || globalAnimationClipsBufferPool.length === 0) return;
 
     const compiledLowerGestureTokenString = operationalGestureKeywordString.toLowerCase();
     let targetedActionClipIndexValue = 0; 
@@ -106,7 +106,7 @@ function bridgeNetworkPayloadDirectlyIntoResponseEngine(incomingNetworkPayloadBu
 window.addEventListener('beforeunload', () => {
     safelyAbortActiveTypewriterStreamInteractions();
     globalLastReceivedResponsePayloadString = null;
-    activeSkinnedMeshSubnodesTrackArray = [];
+    if (typeof activeSkinnedMeshSubnodesTrackArray !== 'undefined') activeSkinnedMeshSubnodesTrackArray = [];
 });
 
 /*
@@ -114,39 +114,57 @@ window.addEventListener('beforeunload', () => {
   SUB-MODULE H: SYSTEM ENGINE MATRIX LIFECYCLE INITIALIZER LAUNCHER
   ------------------------------------------------------------------
 */
-// Core pipeline components initialization
-if (typeof initializeDeviceHarmonizedGraphicsPipeline === 'function') initializeDeviceHarmonizedGraphicsPipeline();
-if (typeof initWeatherAndSkyEngineMatrix === 'function') initWeatherAndSkyEngineMatrix();
+// Purane functions check karna, agar nahi mile toh crash hone se rokna
+if (typeof initializeDeviceHarmonizedGraphicsPipeline === 'function') {
+    initializeDeviceHarmonizedGraphicsPipeline();
+}
+if (typeof initWeatherAndSkyEngineMatrix === 'function') {
+    initWeatherAndSkyEngineMatrix();
+}
 
-// Safe Model Engine Injection Context
-if (typeof coreGLTFLoaderInstance !== 'undefined' && typeof coreThreeSceneInstance !== 'undefined') {
-    coreGLTFLoaderInstance.load(INTERACTION_MODEL_ASSET_URL, (gltfResponseStructure) => {
+// [FIXED AUTODETECT] Agar Loader variables defined nahi hain, toh unhe create karna taaki error na aaye
+let finalLoaderInstance = typeof coreGLTFLoaderInstance !== 'undefined' ? coreGLTFLoaderInstance : (typeof loader !== 'undefined' ? loader : null);
+let finalSceneInstance = typeof coreThreeSceneInstance !== 'undefined' ? coreThreeSceneInstance : (typeof scene !== 'undefined' ? scene : null);
+
+if (!finalLoaderInstance && typeof THREE !== 'undefined' && THREE.GLTFLoader) {
+    finalLoaderInstance = new THREE.GLTFLoader();
+}
+
+// Model Loading Sequence with Fallbacks
+if (finalLoaderInstance && finalSceneInstance) {
+    finalLoaderInstance.load(INTERACTION_MODEL_ASSET_URL, (gltfResponseStructure) => {
         const globalRenderedMeshModelInstance = gltfResponseStructure.scene;
         
-        // Auto-Fit Vector Calculations
+        // Auto-Fit calculations for mobile vs desktop screen sizes
         const evaluationIsMobileDevice = window.innerWidth < 768;
         const dynamicModelScaleFactor = evaluationIsMobileDevice ? 0.95 : 1.35;
         
         globalRenderedMeshModelInstance.scale.set(dynamicModelScaleFactor, dynamicModelScaleFactor, dynamicModelScaleFactor);
         globalRenderedMeshModelInstance.position.set(0, evaluationIsMobileDevice ? -1.1 : -1.4, 0);
 
-        // Skeletal Pose Tracking & Arm T-Pose Overwrite
+        // Auto T-Pose Correction Mapping
         globalRenderedMeshModelInstance.traverse((evaluatedBoneNode) => {
             if (evaluatedBoneNode.isBone && evaluatedBoneNode.name.includes('Arm')) {
                 evaluatedBoneNode.rotation.z = evaluatedBoneNode.name.includes('Left') ? -1.45 : 1.45;
                 evaluatedBoneNode.rotation.x = 0.15;
             }
-            if (evaluatedBoneNode.isSkinnedMesh) {
+            if (evaluatedBoneNode.isSkinnedMesh && typeof activeSkinnedMeshSubnodesTrackArray !== 'undefined') {
                 activeSkinnedMeshSubnodesTrackArray.push(evaluatedBoneNode);
             }
         });
 
-        coreThreeSceneInstance.add(globalRenderedMeshModelInstance);
+        finalSceneInstance.add(globalRenderedMeshModelInstance);
         console.log("Priya Model Engine Successfully Mounted!");
     }, undefined, (loadErrorContext) => {
         console.error("Critical Matrix Asset Loading Failure:", loadErrorContext);
     });
+} else {
+    console.warn("Three.js Scene or Loader variables initialized late. Waiting for core component script.");
 }
 
-// Global Application Loop Execution Trigger
-if (typeof masterApplicationRenderLoopExecutionCycle === 'function') masterApplicationRenderLoopExecutionCycle();
+// Global Render Loop Function execution check
+if (typeof masterApplicationRenderLoopExecutionCycle === 'function') {
+    masterApplicationRenderLoopExecutionCycle();
+} else if (typeof animate === 'function') {
+    animate();
+}
