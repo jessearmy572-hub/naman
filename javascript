@@ -6,8 +6,8 @@
         let globalTypewriterAnimationIntervalReference = null;
         let globalTextSanitizationRegExpPattern = /\[.*?\]/g;
 
-        // Model Link Integration Node
-        const INTERACTION_MODEL_ASSET_URL = "https://github.com/jessearmy572-hub/naman/raw/refs/heads/main/model.glb";
+        // [FIXED] GitHub CORS 404 Bypass Link Integrated Perfectly
+        const INTERACTION_MODEL_ASSET_URL = "https://raw.githubusercontent.com/jessearmy572-hub/naman/main/model.glb";
 
         async function processIncomingGeminiResponsePayload(rawIncomingGeminiStreamPayload) {
             if (!rawIncomingGeminiStreamPayload || rawIncomingGeminiStreamPayload.trim() === "") return;
@@ -112,16 +112,41 @@
           SUB-MODULE H: SYSTEM ENGINE MATRIX LIFECYCLE INITIALIZER LAUNCHER
           ------------------------------------------------------------------
         */
-        // GLTF Loader fallback alignment injection point
-        if (typeof coreGLTFLoaderInstance !== 'undefined') {
+        // Core pipelines ko pehle run karna zaroori hai taaki context create ho sake
+        initializeDeviceHarmonizedGraphicsPipeline();
+        initWeatherAndSkyEngineMatrix();
+
+        // [FIXED LOGIC] Pipeline initialize hone ke baad hi safe GLTF model injection execute hoga
+        if (typeof coreGLTFLoaderInstance !== 'undefined' && typeof coreThreeSceneInstance !== 'undefined') {
             coreGLTFLoaderInstance.load(INTERACTION_MODEL_ASSET_URL, (gltfResponseStructure) => {
                 const globalRenderedMeshModelInstance = gltfResponseStructure.scene;
+                
+                // Dynamic Auto-Fit Calculations for Mobile Viewports
+                const evaluationIsMobileDevice = window.innerWidth < 768;
+                const dynamicModelScaleFactor = evaluationIsMobileDevice ? 0.95 : 1.35;
+                
+                globalRenderedMeshModelInstance.scale.set(dynamicModelScaleFactor, dynamicModelScaleFactor, dynamicModelScaleFactor);
+                globalRenderedMeshModelInstance.position.set(0, evaluationIsMobileDevice ? -1.1 : -1.4, 0);
+
+                // Auto T-Pose Correction Mapping Layout logic
+                globalRenderedMeshModelInstance.traverse((evaluatedBoneNode) => {
+                    if (evaluatedBoneNode.isBone && evaluatedBoneNode.name.includes('Arm')) {
+                        evaluatedBoneNode.rotation.z = evaluatedBoneNode.name.includes('Left') ? -1.45 : 1.45;
+                        evaluatedBoneNode.rotation.x = 0.15;
+                    }
+                    if (evaluatedBoneNode.isSkinnedMesh) {
+                        activeSkinnedMeshSubnodesTrackArray.push(evaluatedBoneNode);
+                    }
+                });
+
                 coreThreeSceneInstance.add(globalRenderedMeshModelInstance);
+                console.log("Priya Model Engine Successfully Mounted!");
+            }, undefined, (loadErrorContext) => {
+                console.error("Critical Matrix Asset Loading Failure:", loadErrorContext);
             });
         }
 
-        initializeDeviceHarmonizedGraphicsPipeline();
-        initWeatherAndSkyEngineMatrix();
+        // Master animation thread start mapping loop
         masterApplicationRenderLoopExecutionCycle();
     </script>
 </body>
