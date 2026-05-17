@@ -3,91 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Priya AI - nv1 Next-Gen Core Pro</title>
+    <title>Priya AI - nv1 Engine v5.0 (Separate Grid)</title>
+    
     <style>
-        :root { 
-            --glow: #00f2ff; 
-            --panel: rgba(10, 10, 12, 0.82); 
+        :root {
+            --glow: #00f2ff;
+            --panel: rgba(8, 8, 12, 0.88);
             --border: rgba(0, 242, 255, 0.25);
         }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #050508; font-family: 'Inter', sans-serif; }
-        
-        /* FEATURE 1: Realistic Nature Beauty Background with Subtle Cinematic Blur */
-        .nature-bg {
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background: #020205;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased; user-select: none;
+        }
+
+        /* GPU Accelerated Cinematic Background */
+        .makkhan-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80') no-repeat center center;
-            background-size: cover;
-            z-index: 1;
-            filter: brightness(0.75) contrast(1.1);
+            background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=90') no-repeat center center;
+            background-size: cover; z-index: 1;
+            filter: brightness(0.6) contrast(1.15);
+            will-change: transform;
+            transform: translate3d(0, 0, 0); /* Forces Hardware Acceleration */
         }
 
-        /* Ambient Fog Layer over Background for 3D Depth */
-        .bg-overlay {
+        .overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(180deg, rgba(5,5,8,0.2) 0%, rgba(5,5,8,0.6) 100%);
-            z-index: 2;
+            background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(2,2,5,0.7) 100%);
+            z-index: 2; pointer-events: none;
         }
 
-        /* 3D Canvas Layer */
-        #canvas-container { width: 100%; height: 100%; position: absolute; z-index: 3; touch-action: none; }
-
-        /* HUD Status Monitor Panel */
-        .hud-top {
-            position: absolute; top: 25px; left: 25px; z-index: 10;
-            background: var(--panel); padding: 14px 20px; border-radius: 14px;
-            border: 1px solid var(--border); border-left: 4px solid var(--glow); 
-            color: white; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        #canvas-viewport {
+            width: 100%; height: 100%; position: absolute; z-index: 3;
+            touch-action: none; outline: none;
         }
-        .status-dot { width: 9px; height: 9px; background: var(--glow); border-radius: 50%; display: inline-block; margin-right: 9px; animation: pulse 1.8s infinite; }
-        #debug-log { font-size: 10px; color: #ff4444; margin-top: 6px; font-family: monospace; }
-        @keyframes pulse { 0% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,242,255,0.4); } 70% { opacity: 0.4; box-shadow: 0 0 0 6px rgba(0,242,255,0); } 100% { opacity: 1; } }
 
-        /* UI Input Glass Dock */
-        .ui-dock { position: absolute; bottom: 35px; width: 100%; display: flex; justify-content: center; z-index: 100; }
-        .glass-input {
+        /* HUD Diagnostics Panel */
+        .hud-monitor {
+            position: absolute; top: 30px; left: 30px; z-index: 10;
+            background: var(--panel); padding: 12px 20px; border-radius: 14px;
+            border: 1px solid var(--border); border-left: 4px solid var(--glow);
+            color: #ffffff; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        }
+
+        .status-container { display: flex; align-items: center; font-size: 13px; font-weight: bold; }
+        .pulse-dot {
+            width: 9px; height: 9px; background: var(--glow); border-radius: 50%;
+            display: inline-block; margin-right: 10px; box-shadow: 0 0 8px var(--glow);
+            animation: pulse 2s infinite ease-in-out;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .metrics { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 5px; text-transform: uppercase; }
+
+        /* Smooth Input Dock User Interface */
+        .control-dock {
+            position: absolute; bottom: 40px; width: 100%;
+            display: flex; justify-content: center; z-index: 100; pointer-events: none;
+        }
+        .glass-bar {
             background: var(--panel); border: 1px solid var(--border);
-            width: 88%; max-width: 520px; display: flex; align-items: center;
-            padding: 6px 18px; border-radius: 50px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.1);
-            transition: border 0.3s ease;
+            width: 90%; max-width: 520px; display: flex; align-items: center;
+            padding: 6px 18px; border-radius: 50px; backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+            pointer-events: auto; transition: border-color 0.3s ease;
         }
-        .glass-input:focus-within { border-color: var(--glow); box-shadow: 0 15px 35px rgba(0,242,255,0.15); }
-        input { flex: 1; background: none; border: none; color: white; height: 48px; font-size: 16px; outline: none; padding-left: 5px; }
-        input::placeholder { color: rgba(255,255,255,0.4); }
-        .action-icon { background: none; border: none; color: var(--glow); font-size: 22px; cursor: pointer; padding: 6px; transition: transform 0.2s, opacity 0.2s; }
-        .action-icon:active { transform: scale(0.88); opacity: 0.8; }
+        .glass-bar:focus-within { border-color: var(--glow); }
+        input[type="text"] { flex: 1; background: none; border: none; color: #fff; height: 45px; font-size: 16px; outline: none; padding: 0 8px; }
+        input::placeholder { color: rgba(255, 255, 255, 0.35); }
+        .btn-trigger { background: none; border: none; color: var(--glow); font-size: 22px; cursor: pointer; padding: 6px; display: flex; align-items: center; }
     </style>
 </head>
 <body>
 
-<div class="nature-bg"></div>
-<div class="bg-overlay"></div>
+    <div class="makkhan-bg"></div>
+    <div class="overlay"></div>
 
-<div class="hud-top">
-    <div><span class="status-dot"></span><b id="sys-status">nv1 ADVANCED CORE v2.0</b></div>
-    <div id="sub-label" style="font-size: 11px; opacity: 0.7; margin-top: 5px; letter-spacing: 0.5px;">SYSTEM STATS: STABLE</div>
-    <div id="debug-log"></div>
-</div>
-
-<div id="canvas-container"></div>
-
-<div class="ui-dock">
-    <div class="glass-input">
-        <button class="action-icon" id="mic" title="आवाज से बात करें">🎤</button>
-        <input type="text" id="in" placeholder="मुझसे बात करें या कमांड दें...">
-        <button class="action-icon" id="send" style="color:white" title="संदेश भेजें">➔</button>
+    <div class="hud-monitor">
+        <div class="status-container"><span class="pulse-dot"></span><span id="sys-status">nv1 CORE: BOOTING</span></div>
+        <div id="sub-label" class="metrics">MODULE LINKAGE: CONNECTING JS</div>
     </div>
-</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <div id="canvas-viewport"></div>
 
-<script>
-    window.GLOBAL_MODEL_URL = "https://github.com/jessearmy572-hub/naman/raw/refs/heads/main/model.glb";
-</script>
+    <div class="control-dock">
+        <div class="glass-bar">
+            <button class="btn-trigger" id="mic">🎤</button>
+            <input type="text" id="in" placeholder="प्रिया से बात करें...">
+            <button class="btn-trigger" id="send" style="color: #fff;">➔</button>
+        </div>
+    </div>
 
-<script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 
+    <script src="script.js"></script>
 </body>
 </html>
