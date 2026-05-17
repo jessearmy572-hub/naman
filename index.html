@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Priya AI - nv1 Engine v5.0 (Separate Grid)</title>
+    <title>Priya AI - Cyber Core v6.0 (Separate Files)</title>
     
     <style>
         :root {
             --glow: #00f2ff;
-            --panel: rgba(8, 8, 12, 0.88);
-            --border: rgba(0, 242, 255, 0.25);
+            --panel: rgba(10, 10, 18, 0.88);
+            --border: rgba(0, 242, 255, 0.3);
         }
 
         body, html {
@@ -19,19 +19,18 @@
             -webkit-font-smoothing: antialiased; user-select: none;
         }
 
-        /* GPU Accelerated Cinematic Background */
-        .makkhan-bg {
+        /* HD Cinematic Background */
+        .scenic-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=90') no-repeat center center;
             background-size: cover; z-index: 1;
-            filter: brightness(0.6) contrast(1.15);
-            will-change: transform;
-            transform: translate3d(0, 0, 0); /* Forces Hardware Acceleration */
+            filter: brightness(0.65) contrast(1.15);
+            will-change: transform; transform: translate3d(0, 0, 0);
         }
 
         .overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(2,2,5,0.7) 100%);
+            background: radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(2,2,5,0.75) 100%);
             z-index: 2; pointer-events: none;
         }
 
@@ -43,56 +42,64 @@
         /* HUD Diagnostics Panel */
         .hud-monitor {
             position: absolute; top: 30px; left: 30px; z-index: 10;
-            background: var(--panel); padding: 12px 20px; border-radius: 14px;
-            border: 1px solid var(--border); border-left: 4px solid var(--glow);
-            color: #ffffff; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            background: var(--panel); padding: 14px 24px; border-radius: 16px;
+            border: 1px solid var(--border); border-left: 5px solid var(--glow);
+            color: #ffffff; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.6);
         }
 
-        .status-container { display: flex; align-items: center; font-size: 13px; font-weight: bold; }
-        .pulse-dot {
-            width: 9px; height: 9px; background: var(--glow); border-radius: 50%;
-            display: inline-block; margin-right: 10px; box-shadow: 0 0 8px var(--glow);
-            animation: pulse 2s infinite ease-in-out;
+        .status-container { display: flex; align-items: center; font-size: 13px; font-weight: bold; letter-spacing: 0.5px; }
+        .pulse-node {
+            width: 8px; height: 8px; background: var(--glow); border-radius: 50%;
+            display: inline-block; margin-right: 12px; box-shadow: 0 0 10px var(--glow);
+            animation: heartbeat 2s infinite ease-in-out;
         }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .metrics { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 5px; text-transform: uppercase; }
+        @keyframes heartbeat { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.4; } }
+        .metrics { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 6px; font-family: monospace; text-transform: uppercase; }
 
-        /* Smooth Input Dock User Interface */
+        #cam-indicator { font-size: 10px; color: #34c759; margin-top: 4px; display: none; font-weight: bold; }
+
+        /* Glassmorphic Input Dock */
         .control-dock {
             position: absolute; bottom: 40px; width: 100%;
             display: flex; justify-content: center; z-index: 100; pointer-events: none;
         }
         .glass-bar {
             background: var(--panel); border: 1px solid var(--border);
-            width: 90%; max-width: 520px; display: flex; align-items: center;
-            padding: 6px 18px; border-radius: 50px; backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px); box-shadow: 0 20px 40px rgba(0,0,0,0.7);
-            pointer-events: auto; transition: border-color 0.3s ease;
+            width: 90%; max-width: 540px; display: flex; align-items: center;
+            padding: 8px 20px; border-radius: 50px; backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px); box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+            pointer-events: auto; transition: border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .glass-bar:focus-within { border-color: var(--glow); }
-        input[type="text"] { flex: 1; background: none; border: none; color: #fff; height: 45px; font-size: 16px; outline: none; padding: 0 8px; }
-        input::placeholder { color: rgba(255, 255, 255, 0.35); }
-        .btn-trigger { background: none; border: none; color: var(--glow); font-size: 22px; cursor: pointer; padding: 6px; display: flex; align-items: center; }
+        input[type="text"] { flex: 1; background: none; border: none; color: #fff; height: 48px; font-size: 16px; outline: none; padding: 0 10px; }
+        input::placeholder { color: rgba(255, 255, 255, 0.3); }
+        .btn-trigger { background: none; border: none; color: var(--glow); font-size: 24px; cursor: pointer; padding: 6px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s ease; }
+        .btn-trigger:active { transform: scale(0.9); }
+        
+        #webcam-feed { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
     </style>
 </head>
 <body>
 
-    <div class="makkhan-bg"></div>
+    <div class="scenic-bg"></div>
     <div class="overlay"></div>
 
     <div class="hud-monitor">
-        <div class="status-container"><span class="pulse-dot"></span><span id="sys-status">nv1 CORE: BOOTING</span></div>
-        <div id="sub-label" class="metrics">MODULE LINKAGE: CONNECTING JS</div>
+        <div class="status-container"><span class="pulse-node"></span><span id="sys-status">PRIYA_AI // COLD BOOT</span></div>
+        <div id="sub-label" class="metrics">LOADING CORE LIBRARIES...</div>
+        <div id="cam-indicator">👁️ WEBCAM FACE TRACKING ACTIVE</div>
     </div>
 
+    <video id="webcam-feed" autoplay playsinline muted></video>
     <div id="canvas-viewport"></div>
 
     <div class="control-dock">
         <div class="glass-bar">
-            <button class="btn-trigger" id="mic">🎤</button>
-            <input type="text" id="in" placeholder="प्रिया से बात करें...">
-            <button class="btn-trigger" id="send" style="color: #fff;">➔</button>
+            <button class="btn-trigger" id="webcam-toggle" title="Cam Tracking" style="margin-right: 8px; font-size: 20px;">📷</button>
+            <button class="btn-trigger" id="mic" title="Voice Input">🎤</button>
+            <input type="text" id="in" placeholder="प्रिया से कुछ पूछें या 'Red dress पहनो' बोलें...">
+            <button class="btn-trigger" id="send" style="color: #fff;" title="Send Vector">➔</button>
         </div>
     </div>
 
