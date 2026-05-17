@@ -9,6 +9,9 @@
     <title>Priya AI - Ultimate nv1 Pro Commando Engine Suite</title>
     
     <style>
+        /* ==========================================================================
+          MODULE 1: MASTER HARDWARE CONFIGURATION & GLOBAL DESIGN TOKENS
+          ========================================================================== */
         :root {
             --neon-cyan: #00ffcc;
             --neon-blue: #0099ff;
@@ -42,6 +45,9 @@
             --font-stack-cyber: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
         }
 
+        /* ==========================================================================
+          MODULE 2: FULL-SCREEN APPLICATION INITIALIZATION MATRIX & STACK RESETS
+          ========================================================================== */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -130,6 +136,9 @@
             background: var(--bg-absolute-black);
         }
 
+        /* ==========================================================================
+          MODULE 3: DYNAMIC HOLOGRAPHIC TELEMETRY HUD MONITOR PANEL
+          ========================================================================== */
         .dashboard {
             position: absolute;
             top: 30px;
@@ -144,6 +153,7 @@
             box-shadow: 0 25px 55px rgba(0,0,0,0.9), inset 0 1px 3px rgba(255,255,255,0.18);
             pointer-events: auto;
             transform: translateZ(0);
+            will-change: transform, opacity;
             animation: HUD_Entry_Slide_Down 0.95s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
         }
 
@@ -161,6 +171,7 @@
             border-radius: 50%;
             margin-right: 16px;
             box-shadow: 0 0 15px var(--neon-cyan), 0 0 35px var(--neon-cyan);
+            will-change: opacity, box-shadow;
             animation: HUD_Beacon_Pulse 2.5s infinite ease-in-out;
         }
 
@@ -184,8 +195,12 @@
         .channel-active-value {
             color: var(--neon-cyan);
             font-weight: 700;
+            transition: var(--transition-tactile);
         }
 
+        /* ==========================================================================
+          MODULE 4: BOTTOM CONSOLE INTERACTION COMMAND INTERFACE DOCK
+          ========================================================================== */
         .ui-dock-wrapper {
             position: absolute;
             bottom: 50px;
@@ -198,6 +213,7 @@
             padding: 0 40px;
             box-sizing: border-box;
             transform: translateZ(0);
+            will-change: transform, opacity;
             animation: HUD_Dock_Slide_Up 1.05s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
         }
 
@@ -215,6 +231,8 @@
             border: 1px solid rgba(255, 255, 255, 0.16);
             box-shadow: 0 30px 65px rgba(0,0,0,0.9);
             transition: var(--transition-tactile);
+            transform: translateZ(0);
+            will-change: border-color, box-shadow, transform;
         }
 
         .input-carrier-box:focus-within {
@@ -237,6 +255,11 @@
 
         input::placeholder {
             color: rgba(255, 255, 255, 0.35);
+            transition: color 0.3s ease;
+        }
+
+        input:focus::placeholder {
+            color: rgba(255, 255, 255, 0.18);
         }
 
         .action-circle-btn {
@@ -249,6 +272,8 @@
             align-items: center;
             justify-content: center;
             transition: var(--transition-tactile);
+            transform: translateZ(0);
+            will-change: transform, box-shadow, background;
         }
 
         .mic-trigger-btn {
@@ -261,6 +286,7 @@
 
         .mic-trigger-btn:hover {
             transform: scale(1.08) translateY(-4px);
+            box-shadow: 0 16px 40px rgba(255, 75, 43, 0.55);
         }
 
         .mic-trigger-btn.listening {
@@ -279,6 +305,7 @@
 
         .cam-tracking-btn:hover {
             transform: scale(1.08) translateY(-4px);
+            box-shadow: 0 16px 40px rgba(0, 114, 255, 0.5);
         }
 
         .cam-tracking-btn.tracking-active {
@@ -291,13 +318,18 @@
             color: #010103;
             font-size: 24px;
             box-shadow: 0 12px 28px rgba(255,255,255,0.18);
+            border: 1px solid rgba(0,0,0,0.06);
         }
 
         .send-trigger-btn:hover {
             transform: scale(1.08) translateY(-4px);
+            box-shadow: 0 16px 40px rgba(255,255,255,0.32);
             background: #f4f5f7;
         }
 
+        /* ==========================================================================
+          MODULE 5: HIGH ACCURACY MONITOR REALTIME RESPONSE SUBTITLE BOX
+          ========================================================================== */
         #subtitle-monitor-box {
             position: absolute;
             bottom: 155px;
@@ -309,18 +341,28 @@
             color: var(--text-core-white);
             font-size: 17px;
             max-width: 80%;
+            width: auto;
+            min-width: 260px;
             text-align: center;
             z-index: 30;
             backdrop-filter: blur(35px);
             -webkit-backdrop-filter: blur(35px);
             border: 1px solid rgba(255,255,255,0.15);
             box-shadow: 0 25px 55px rgba(0,0,0,0.95);
+            display: block;
+            pointer-events: none;
             line-height: 1.65;
             font-weight: 500;
+            letter-spacing: 0.3px;
             white-space: pre-wrap;
             word-wrap: break-word;
+            overflow-wrap: break-word;
+            will-change: transform, opacity;
         }
 
+        /* ==========================================================================
+          MODULE 6: RESILIENT CORE SAFETY BLOCK DISMISSABLE ANTI-HANG VEIL LOADER
+          ========================================================================== */
         #core-boot-loader {
             position: absolute;
             top: 0;
@@ -336,6 +378,7 @@
             justify-content: center;
             align-items: center;
             transition: opacity 0.7s cubic-bezier(0.25, 1, 0.25, 1), visibility 0.7s ease;
+            will-change: opacity, visibility;
         }
 
         .loader-ring-spinner {
@@ -347,6 +390,7 @@
             border-bottom-color: var(--neon-blue);
             animation: System_Engine_Spin 1.2s linear infinite;
             margin-bottom: 30px;
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.25);
         }
 
         .loader-label-text {
@@ -354,23 +398,49 @@
             font-size: 19px;
             letter-spacing: 2.5px;
             text-transform: uppercase;
+            text-shadow: 0 0 15px var(--neon-matrix-glow);
             font-weight: 600;
             text-align: center;
+            padding: 0 30px;
+            line-height: 1.5;
         }
 
-        @keyframes System_Engine_Spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes HUD_Beacon_Pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; box-shadow: 0 0 28px var(--neon-cyan); } }
-        @keyframes UI_Active_Pulse { from { transform: scale(1); } to { transform: scale(1.08); } }
-        @keyframes HUD_Entry_Slide_Down { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes HUD_Dock_Slide_Up { from { opacity: 0; transform: translateY(35px); } to { opacity: 1; transform: translateY(0); } }
+        /* ==========================================================================
+          MODULE 7: MASTER ANIMATION MATRIX KEYFRAMES REGISTER
+          ========================================================================== */
+        @keyframes System_Engine_Spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+        @keyframes HUD_Beacon_Pulse { 
+            0%, 100% { opacity: 0.50; box-shadow: 0 0 12px rgba(0,255,204,0.2); } 
+            50% { opacity: 1; box-shadow: 0 0 28px var(--neon-cyan), 0 0 50px var(--neon-cyan); } 
+        }
+        @keyframes UI_Active_Pulse { 
+            0% { transform: scale(1); } 
+            100% { transform: scale(1.08); } 
+        }
+        @keyframes HUD_Entry_Slide_Down { 
+            from { opacity: 0; transform: translateY(-30px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        @keyframes HUD_Dock_Slide_Up { 
+            from { opacity: 0; transform: translateY(35px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
 
         @media (max-width: 768px) {
             .dashboard { top: 20px; left: 20px; padding: 14px 22px; }
+            .status-title { font-size: 13px; letter-spacing: 1.5px; }
+            .channel-info { font-size: 11px; }
             .ui-dock-wrapper { bottom: 30px; padding: 0 20px; gap: 12px; }
             .input-carrier-box { height: 62px; padding: 0 24px; }
+            input { font-size: 16px; }
             .action-circle-btn { width: 62px; height: 62px; font-size: 21px; }
-            #subtitle-monitor-box { bottom: 115px; font-size: 15px; }
-            #webcam-video { width: 100px; height: 75px; }
+            #subtitle-monitor-box { bottom: 115px; font-size: 15px; padding: 14px 28px; }
+            .loader-ring-spinner { width: 64px; height: 64px; }
+            .loader-label-text { font-size: 16px; letter-spacing: 2px; }
+            #webcam-video { width: 100px; height: 75px; top: 20px; right: 20px; }
         }
     </style>
 
@@ -387,6 +457,7 @@
     </video>
 
     <video id="webcam-video" autoplay playsinline></video>
+
     <div class="matrix-grid-overlay"></div>
 
     <div class="dashboard">
@@ -399,10 +470,11 @@
 
     <div id="core-boot-loader">
         <div class="loader-ring-spinner"></div>
-        <div class="loader-label-text" id="loading-text">प्रिया का न्यूरल माइंड लोड हो रहा है...<br><span style="font-size: 13px; color: var(--text-dim-slate); letter-spacing: 1px;">कृपया प्रतीक्षा करें, 3D इंजन कैलिब्रेट हो रहा है</span></div>
+        <div class="loader-label-text" id="loading-text">प्रिया का न्यूरल माइंड लोड हो रहा है...<br><span style="font-size: 13px; color: var(--text-dim-slate); letter-spacing: 1px; text-transform: none;">कृपया प्रतीक्षा करें, 3D इंजन कैलिब्रेट हो रहा है</span></div>
     </div>
 
     <div id="canvas-container"></div>
+
     <div id="subtitle-monitor-box">नमस्ते! मैं प्रिया हूँ। आप मुझसे बात कर सकते हैं... 😊</div>
 
     <div class="ui-dock-wrapper">
@@ -415,693 +487,833 @@
     </div>
 
     <script>
-        const PriyaAIApp = (function () {
-            "use strict";
+        /*
+          ------------------------------------------------------------------
+          SUB-MODULE A: PERSISTENT MEMORY STORAGE & SECURE INTEGRATION CORE
+          ------------------------------------------------------------------
+        */
+        const SYSTEM_TRIPLE_ROTATION_API_KEYS = [
+            "AIzaSyBgyADY-6VFaLefYi8PaGak_L8kpfpGDA0", 
+            "AIzaSyBSaw3teN0aoDb2qdzuYktqUZ08sUOIv5o", 
+            "AIzaSyA5W8VWVMSltHGU6vvVlLaxAo3H0h0H1ig"  
+        ];
+        
+        let activeKeyPointerIndexRegister = 0;
+        const REMOTE_GLTF_BINARY_PRODUCTION_ASSET_URI = 'https://models.readyplayer.me/64b533e4da90ef1aa856bfda.glb';
 
-            // State & Configurations Register
-            const CONFIG = {
-                apiKeys: [
-                    "AIzaSyBgyADY-6VFaLefYi8PaGak_L8kpfpGDA0", 
-                    "AIzaSyBSaw3teN0aoDb2qdzuYktqUZ08sUOIv5o", 
-                    "AIzaSyA5W8VWVMSltHGU6vvVlLaxAo3H0h0H1ig"
-                ],
-                modelUri: 'https://models.readyplayer.me/64b533e4da90ef1aa856bfda.glb',
-                elevenLabsKey: "",
-                voiceId: "21m00Tcm4TlvDq8ikWAM",
-                typewriterSpeed: 45
-            };
+        const ELEVENLABS_API_KEY = ""; 
+        const VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; 
+        const OPENWEATHER_API_KEY = ""; 
+        const DEFAULT_CITY = "Mumbai";
 
-            const state = {
-                keyIndex: 0,
-                memory: null,
-                scene: null, camera: null, renderer: null, controls: null, mixer: null, clock: null,
-                avatar: null, headBone: null, neckBone: null,
-                skinnedMeshes: [], animations: [], currentAction: null,
-                vocalActive: false, speechActive: false, camTrackingActive: false,
-                targetMouse: { x: 0, y: 0 }, interpMouse: { x: 0, y: 0 },
-                targetHead: { x: 0, y: 0 }, currentHead: { x: 0, y: 0 },
-                touchOverrideTimer: 0.0,
-                audioCtx: null, analyser: null, audioData: null, speechVolume: 0,
-                weatherParticles: null, recognition: null, typewriterInterval: null,
-                isProcessing: false
-            };
+        let priyaMemoryEngineDataPayload = JSON.parse(localStorage.getItem('priya_nv1_memory')) || {
+            userName: "दोस्त",
+            userCustomOutfitColor: 0xffffff,
+            conversationCount: 0,
+            lastInteractionTimestamp: null,
+            interactionMoodHistory: []
+        };
 
-            // ==========================================
-            // SUB-MODULE A: STORAGE & MEMORY CONTROL
-            // ==========================================
-            function initMemory() {
-                try {
-                    state.memory = JSON.parse(localStorage.getItem('priya_nv1_memory')) || {
-                        userName: "दोस्त",
-                        userCustomOutfitColor: 0xffffff,
-                        conversationCount: 0,
-                        lastInteractionTimestamp: null
-                    };
-                } catch (e) {
-                    console.error("Memory parsing error, resetting context:", e);
-                    state.memory = { userName: "दोस्त", userCustomOutfitColor: 0xffffff, conversationCount: 0, lastInteractionTimestamp: null };
-                }
+        function commitPriyaMemoryStateToStorageCache() {
+            localStorage.setItem('priya_nv1_memory', JSON.stringify(priyaMemoryEngineDataPayload));
+        }
+
+        // Global Graphics Setup
+        let coreThreeSceneInstance = null;
+        let corePerspectiveCameraNode = null;
+        let coreWebGLRendererModule = null;
+        let coreOrbitControlsRig = null;
+        let coreAnimationMixerController = null;
+        let coreSystemClockReference = null;
+
+        let structuralAvatar3DModelRoot = null; 
+        let skeletalBoneJointHead = null;
+        let skeletalBoneJointNeck = null;
+
+        let activeSkinnedMeshSubnodesTrackArray = [];
+        let globalAnimationClipsBufferPool = [];
+        let activePlayingActionStateTrack = null;
+
+        let liveVocalOutputStateSignalActive = false;
+        let liveSpeechCapturingStateSignalActive = false;
+        let isCamTrackingActiveSignal = false;
+
+        let dynamicInterpolatedCoordinateX = 0;
+        let dynamicInterpolatedCoordinateY = 0;
+        let absoluteTargetCoordinateX = 0;
+        let absoluteTargetCoordinateY = 0;
+
+        let targetHeadRotationMatrix = { x: 0, y: 0 };
+        let currentHeadRotationMatrix = { x: 0, y: 0 };
+        let automatedTouchForceOverriderTimer = 0.0;
+
+        let hardwareAudioContextDriver = null;
+        let hardwareAudioFrequencyAnalyserNode = null;
+        let hardwareAudioFrequencyBufferArray = null;
+        let mathematicalCalculatedSpeechVolumeScalar = 0;
+
+        let weatherDynamicParticlePointsSystem = null;
+
+        const BrowserSpeechRecognitionEngineInterface = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let frameworkSpeechRecognitionProcessor = null;
+
+        if (BrowserSpeechRecognitionEngineInterface) {
+            frameworkSpeechRecognitionProcessor = new BrowserSpeechRecognitionEngineInterface();
+            frameworkSpeechRecognitionProcessor.continuous = false;
+            frameworkSpeechRecognitionProcessor.lang = 'hi-IN';
+            frameworkSpeechRecognitionProcessor.interimResults = false;
+            frameworkSpeechRecognitionProcessor.maxAlternatives = 1;
+        }
+
+        // Anti-hang safety timeout
+        setTimeout(() => { forceDismissLoaderOverlayWithBypassSecurity(); }, 15000);
+
+        function forceDismissLoaderOverlayWithBypassSecurity() {
+            const DOMUI_LoaderOverlayVeilContainer = document.getElementById('core-boot-loader');
+            if (DOMUI_LoaderOverlayVeilContainer && DOMUI_LoaderOverlayVeilContainer.style.display !== 'none') {
+                DOMUI_LoaderOverlayVeilContainer.style.opacity = 0;
+                setTimeout(() => { DOMUI_LoaderOverlayVeilContainer.style.display = 'none'; }, 650);
+                console.log("Anti-Hang Protocol: Safety bypass overlay cleared out successfully.");
             }
+        }
 
-            function saveMemory() {
-                localStorage.setItem('priya_nv1_memory', JSON.stringify(state.memory));
-            }
+        /*
+          ------------------------------------------------------------------
+          SUB-MODULE B: TRIPLE ROTATIONAL CRYPTO GATEWAY TUNNEL PIPELINE
+          ------------------------------------------------------------------
+        */
+        async function fetchSecureNeuralAIResponseStream(userQueryInputString) {
+            const systemCoreBehavioralInstructionPrompt = `
+            Zero Robotics Rule Matrix Implementation Checklist:
+            1. SECURITY DIRECTIVE: Under no circumstances whatsoever are you allowed to declare "I am an AI", "As a language model developed by Google", or mention code blocks or backend constraints. You are Priya, a sweet, deeply affectionate and lively human girl who inherently lives within this digital interface.
+            2. DYNAMIC EMOTIONAL TRACKING: Read user input emotional vectors immediately. If the user expresses anger, lower your voice state, become slightly defensive, calm, and grounded. If user expresses joy, elevate your conversational energy to maximum levels, sounding highly enthusiastic and bubbly.
+            3. HUMAN COMPENSATIONAL FILLERS (THE 'GAP' LOGIC): Do not output clean, machine-like responses. Interject normal human speech friction artifacts seamlessly into sentences. Use fillers such as: "Hmm...", "Uhh, ek minute...", "Wese...", "Yaar, mujhe lagta hai...".
+            4. GRAPHICS ENGINE MICRO-ACTIONS BRIDGE: Every response MUST begin with a structural physical expression descriptor enclosed inside square brackets. This allows the 3D model engine to parse and map facial expressions correctly. Example format: [Palkein jhapkate hue aur halka muskurate hue] "Haan, ye baat toh tumne sahi kahi!".
+            5. OPINION DRIVEN ARCHITECTURE: You must process distinct personal opinions, likes, and dislikes. Do not passively validate every statement the user says. Interject smart wit, playful teasing, and dry sarcasm where contextually logical.
+            6. CRITICAL BREVITY SYSTEM: Keep responses short and snappy. Absolute limit of 2 to 3 fluid sentences maximum per response turn. Converse exclusively in modern sweet Hinglish with clear spaces between words. Do not render markdown tags, asterisks (*), hashtags (#), or dashes (-).
+            `;
 
-            // ==========================================
-            // SUB-MODULE B: GATEWAY & ROUTING SYSTEM
-            // ==========================================
-            async function getAIResponse(query) {
-                const instructions = `
-                Zero Robotics Rule Matrix Implementation:
-                1. SECURITY: Never state "I am an AI", "As a language model". You are Priya, a sweet, affectionate human girl living inside this digital suite.
-                2. EMOTION: Track user sentiment. If angry, become calm and slightly defensive. If happy, be highly enthusiastic, energetic, and bubbly.
-                3. GAP LOGIC: Seamlessly use normal human fillers like: "Hmm...", "Uhh, ek minute...", "Wese...", "Yaar, mujhe lagta hai...".
-                4. MICRO-ACTIONS: Start every response with expression tags inside brackets. Example: [Palkein jhapkate hue aur halka muskurate hue] "Haan, ye baat sahi hai!".
-                5. OPINIONATED: Express unique preferences. Don't passively agree. Use smart wit and playful sarcasm.
-                6. BREVITY: Max 2 to 3 sentences. Converse strictly in modern sweet Hinglish. No markdown tags, asterisks, or hashes.
-                `;
+            let extractedActiveKeyString = SYSTEM_TRIPLE_ROTATION_API_KEYS[activeKeyPointerIndexRegister];
+            const activeTunnelTargetEndpointUri = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${extractedActiveKeyString}`;
 
-                let currentKey = CONFIG.apiKeys[state.keyIndex];
-                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${currentKey}`;
-
-                try {
-                    const response = await fetch(endpoint, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            contents: [{ role: "user", parts: [{ text: `Directives:\n${instructions}\n\nUser Profile: Name is ${state.memory.userName}.\nQuery: ${query}` }] }],
-                            generationConfig: { maxOutputTokens: 160, temperature: 0.78, topP: 0.95 }
-                        })
-                    });
-
-                    if (!response.ok) throw new Error("API Key Exhausted or Faulty Endpoint Container Mapping.");
-                    const data = await response.json();
-                    return data.candidates[0].content.parts[0].text.replace(/[*#`_\-]/g, '').trim();
-
-                } catch (error) {
-                    console.warn(`Routing error on Node Channel Index ${state.keyIndex}. Rotating channels...`);
-                    state.keyIndex = (state.keyIndex + 1) % CONFIG.apiKeys.length;
-                    
-                    const channelLabel = document.getElementById('active-secure-channel-status');
-                    if(channelLabel) channelLabel.innerText = `Core-${state.keyIndex + 1} (Active Secure Key)`;
-                    
-                    if (state.keyIndex !== 0) return await getAIResponse(query);
-                    return "[Halka sa udas hote hue] Hmm... Lagta है network thoda slow hai dear, par main yahi hun tumhare paas.";
-                }
-            }
-
-            // ==========================================
-            // SUB-MODULE C: 3D GRAPHICS ENGINE (THREE.JS)
-            // ==========================================
-            function initGraphics() {
-                const container = document.getElementById('canvas-container');
-                state.clock = new THREE.Clock();
-                state.scene = new THREE.Scene();
-
-                state.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
-                state.renderer.setSize(window.innerWidth, window.innerHeight);
-                state.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-                state.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-                state.renderer.toneMappingExposure = 1.3;
-                state.renderer.shadowMap.enabled = true;
-                container.appendChild(state.renderer.domElement);
-
-                // Exact Face Coordinates Focusing Setup
-                state.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-                state.camera.position.set(0, 1.45, 0.55);
-
-                state.controls = new THREE.OrbitControls(state.camera, state.renderer.domElement);
-                state.controls.enableZoom = true;
-                state.controls.enablePan = false;
-                state.controls.minDistance = 0.3;
-                state.controls.maxDistance = 2.0;
-                state.controls.target.set(0, 1.42, 0); // Locked strictly on RPM Face Center
-                state.controls.enableDamping = true;
-                state.controls.dampingFactor = 0.05;
-
-                // Enhanced Volumetric Illumination System
-                const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 2.0);
-                state.scene.add(hemiLight);
-
-                const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.0);
-                dirLight1.position.set(2, 4, 3);
-                state.scene.add(dirLight1);
-
-                const dirLight2 = new THREE.DirectionalLight(0xffffff, 1.0);
-                dirLight2.position.set(-2, 2, 2);
-                state.scene.add(dirLight2);
-
-                loadAvatarModel();
-                
-                window.addEventListener('resize', handleResize);
-                window.addEventListener('mousemove', handleMouseMove);
-                window.addEventListener('pointerdown', handleMeshTouch);
-            }
-
-            function loadAvatarModel() {
-                const loader = new THREE.GLTFLoader();
-                const loadingText = document.getElementById('loading-text');
-
-                loader.load(CONFIG.modelUri, (gltf) => {
-                    state.avatar = gltf.scene;
-                    state.scene.add(state.avatar);
-                    
-                    state.avatar.scale.setScalar(1.0);
-                    state.avatar.position.set(0, 0, 0);
-
-                    state.avatar.traverse((node) => {
-                        if (node.isMesh) {
-                            node.castShadow = true;
-                            node.receiveShadow = true;
-                        }
-                        if (node.isSkinnedMesh) state.skinnedMeshes.push(node);
-                        if (node.isBone) {
-                            const nameLower = node.name.toLowerCase();
-                            if (nameLower === 'head') state.headBone = node;
-                            if (nameLower === 'neck') state.neckBone = node;
-                        }
-                    });
-
-                    state.animations = gltf.animations;
-                    state.mixer = new THREE.AnimationMixer(state.avatar);
-                    
-                    if (state.animations.length > 0) {
-                        state.currentAction = state.mixer.clipAction(state.animations[0]);
-                        state.currentAction.setEffectiveWeight(1.0).play();
-                    }
-
-                    if (state.memory.userCustomOutfitColor !== 0xffffff) {
-                        applyOutfitColor(state.memory.userCustomOutfitColor);
-                    }
-
-                    syncMemoryGreetings();
-                    dismissLoader();
-
-                }, (xhr) => {
-                    if (xhr.total > 0 && loadingText) {
-                        let pct = Math.round((xhr.loaded / xhr.total) * 100);
-                        loadingText.innerHTML = `प्रिया को तैयार किया जा रहा है... ${pct}%<br><span style="font-size:12px;color:var(--neon-cyan);">3D एसेट्स डाउनलोड हो रहे हैं</span>`;
-                    }
-                }, (err) => {
-                    console.error("Asset Loader Critical Fault Chain:", err);
-                    dismissLoader();
+            try {
+                const networkFetchPromiseResponse = await fetch(activeTunnelTargetEndpointUri, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [
+                            { role: "user", parts: [{ text: `System Systemic Rules Grid Directives:\n${systemCoreBehavioralInstructionPrompt}\n\nUser Memory Parameters: User Name is ${priyaMemoryEngineDataPayload.userName}.\nUser Query Command Token: ${userQueryInputString}` }] }
+                        ],
+                        generationConfig: { maxOutputTokens: 160, temperature: 0.78, topP: 0.95 }
+                    })
                 });
+
+                if (!networkFetchPromiseResponse.ok) throw new Error("Active key channel failure");
+
+                const decodedJsonDataPayloadObject = await networkFetchPromiseResponse.json();
+                let filteredRawOutputString = decodedJsonDataPayloadObject.candidates[0].content.parts[0].text;
+                
+                return filteredRawOutputString.replace(/[*#`_\-]/g, '').trim();
+
+            } catch (networkGatewayChannelFaultException) {
+                console.warn(`Gateway Failure: Shifting routing matrices...`);
+                activeKeyPointerIndexRegister = (activeKeyPointerIndexRegister + 1) % SYSTEM_TRIPLE_ROTATION_API_KEYS.length;
+                
+                const DOMUI_SecureChannelLabel = document.getElementById('active-secure-channel-status');
+                if(DOMUI_SecureChannelLabel) DOMUI_SecureChannelLabel.innerText = `Core-${activeKeyPointerIndexRegister + 1} (Active Secure Key)`;
+                
+                if (activeKeyPointerIndexRegister !== 0) {
+                    return await fetchSecureNeuralAIResponseStream(userQueryInputString);
+                }
+                return "[Halka sa udas hote hue aur sarr jhatakte hue] Hmm... Lagta hai network thoda nakhre dikha raha hai dear, par main yahi hun tumhare paas.";
             }
+        }
 
-            function handleResize() {
-                if (!state.camera || !state.renderer) return;
-                state.camera.aspect = window.innerWidth / window.innerHeight;
-                state.camera.updateProjectionMatrix();
-                state.renderer.setSize(window.innerWidth, window.innerHeight);
-            }
+        /*
+          ------------------------------------------------------------------
+          SUB-MODULE C: HIGH PERFORMANCE INITIALIZATION OF WEBGL GRAPHICS STAGE
+          ------------------------------------------------------------------
+        */
+        function initializeDeviceHarmonizedGraphicsPipeline() {
+            const TARGET_VIEWPORT_CANVAS_DOM_CONTAINER = document.getElementById('canvas-container');
+            coreSystemClockReference = new THREE.Clock();
+            coreThreeSceneInstance = new THREE.Scene();
 
-            function handleMouseMove(e) {
-                state.targetMouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-                state.targetMouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-            }
+            coreWebGLRendererModule = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+            coreWebGLRendererModule.setSize(window.innerWidth, window.innerHeight);
+            coreWebGLRendererModule.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            coreWebGLRendererModule.toneMapping = THREE.ACESFilmicToneMapping;
+            coreWebGLRendererModule.toneMappingExposure = 1.3;
+            
+            // BUG FIX: Three.js r128 API Update for standard color rendering
+            coreWebGLRendererModule.outputColorSpace = THREE.SRGBColorSpace; 
+            
+            coreWebGLRendererModule.shadowMap.enabled = true;
+            coreWebGLRendererModule.setClearColor(0x000000, 0); 
+            TARGET_VIEWPORT_CANVAS_DOM_CONTAINER.appendChild(coreWebGLRendererModule.domElement);
 
-            // ==========================================
-            // SUB-MODULE D: DYNAMIC EXPRESSIONS & MORPHS
-            // ==========================================
-            function setMorphWeight(sentiment) {
-                state.skinnedMeshes.forEach(mesh => {
-                    const dict = mesh.morphTargetDictionary;
-                    const influences = mesh.morphTargetInfluences;
-                    if (!dict || !influences) return;
+            corePerspectiveCameraNode = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+            corePerspectiveCameraNode.position.set(0, 1.4, 1.6); 
 
-                    const clearTargets = ["mouthSmileLeft", "mouthSmileRight", "browDownLeft", "browDownRight", "browInnerUp"];
-                    clearTargets.forEach(k => {
-                        let idx = dict[k];
-                        if (idx !== undefined) influences[idx] = 0;
-                    });
+            coreOrbitControlsRig = new THREE.OrbitControls(corePerspectiveCameraNode, coreWebGLRendererModule.domElement);
+            coreOrbitControlsRig.enableZoom = true;
+            coreOrbitControlsRig.enablePan = false;
+            coreOrbitControlsRig.minDistance = 0.8;
+            coreOrbitControlsRig.maxDistance = 4.0;
+            coreOrbitControlsRig.target.set(0, 1.3, 0); 
+            coreOrbitControlsRig.enableDamping = true;
+            coreOrbitControlsRig.dampingFactor = 0.05;
+            coreOrbitControlsRig.maxPolarAngle = Math.PI / 2 + 0.05;
 
-                    if (sentiment === "happy" || sentiment === "joy") {
-                        if (dict["mouthSmileLeft"] !== undefined) influences[dict["mouthSmileLeft"]] = 0.85;
-                        if (dict["mouthSmileRight"] !== undefined) influences[dict["mouthSmileRight"]] = 0.85;
-                    } else if (sentiment === "sad" || sentiment === "sorry") {
-                        if (dict["browDownLeft"] !== undefined) influences[dict["browDownLeft"]] = 0.75;
-                        if (dict["browDownRight"] !== undefined) influences[dict["browDownRight"]] = 0.75;
-                    } else if (sentiment === "shy") {
-                        if (dict["browInnerUp"] !== undefined) influences[dict["browInnerUp"]] = 0.65;
-                        if (dict["mouthSmileLeft"] !== undefined) influences[dict["mouthSmileLeft"]] = 0.45;
+            const ambientHemisphereIlluminationNode = new THREE.HemisphereLight(0xffffff, 0x444444, 1.6);
+            coreThreeSceneInstance.add(ambientHemisphereIlluminationNode);
+
+            const sunLightDirectionalNode = new THREE.DirectionalLight(0xffffff, 1.5);
+            sunLightDirectionalNode.position.set(2, 4, 3);
+            sunLightDirectionalNode.castShadow = true;
+            coreThreeSceneInstance.add(sunLightDirectionalNode);
+
+            const coolReflectiveWaterBounceLightNode = new THREE.DirectionalLight(0x00ffcc, 0.4);
+            coolReflectiveWaterBounceLightNode.position.set(-2, 2, -1);
+            coreThreeSceneInstance.add(coolReflectiveWaterBounceLightNode);
+
+            const assetGLTFLoaderEngineInstance = new THREE.GLTFLoader();
+            const DOMUI_LoadingTextLabel = document.getElementById('loading-text');
+
+            assetGLTFLoaderEngineInstance.load(REMOTE_GLTF_BINARY_PRODUCTION_ASSET_URI, (loadedGltfAssetBundlePayload) => {
+                structuralAvatar3DModelRoot = loadedGltfAssetBundlePayload.scene;
+                coreThreeSceneInstance.add(structuralAvatar3DModelRoot);
+                
+                executeDynamicResponsiveModelScalingLayouts();
+
+                structuralAvatar3DModelRoot.traverse((evaluatedSubmeshJointNode) => {
+                    if (evaluatedSubmeshJointNode.isMesh) {
+                        evaluatedSubmeshJointNode.castShadow = true;
+                        evaluatedSubmeshJointNode.receiveShadow = true;
+                    }
+                    if (evaluatedSubmeshJointNode.isSkinnedMesh) {
+                        activeSkinnedMeshSubnodesTrackArray.push(evaluatedSubmeshJointNode);
+                    }
+                    if (evaluatedSubmeshJointNode.isBone) {
+                        const compiledBoneLowerNameString = evaluatedSubmeshJointNode.name.toLowerCase();
+                        if (compiledBoneLowerNameString === 'head') skeletalBoneJointHead = evaluatedSubmeshJointNode;
+                        if (compiledBoneLowerNameString === 'neck') skeletalBoneJointNeck = evaluatedSubmeshJointNode;
                     }
                 });
-            }
 
-            function playGesture(actionWord) {
-                if (!state.mixer || state.animations.length === 0) return;
-                const token = actionWord.toLowerCase();
-                let clipIdx = 0;
-
-                if (token.includes('muskurate') || token.includes('smile') || token.includes('sharmate')) {
-                    clipIdx = Math.min(1, state.animations.length - 1);
-                    setMorphWeight("shy");
-                } else if (token.includes('udas') || token.includes('sad')) {
-                    clipIdx = Math.min(2, state.animations.length - 1);
-                    setMorphWeight("sad");
-                } else if (token.includes('khush') || token.includes('happy')) {
-                    clipIdx = Math.min(3, state.animations.length - 1);
-                    setMorphWeight("happy");
-                } else {
-                    clipIdx = Math.floor(Math.random() * Math.min(state.animations.length, 2));
-                }
-
-                try {
-                    state.mixer.stopAllAction();
-                    let nextAction = state.mixer.clipAction(state.animations[clipIdx]);
-                    nextAction.reset().setEffectiveWeight(1.0).fadeIn(0.35).play();
-                } catch (e) {
-                    console.error("Animation execution layer fault bypass:", e);
-                }
-            }
-
-            // ==========================================
-            // SUB-MODULE E: TEXT TO SPEECH & AUDIO ANALYSER
-            // ==========================================
-            function initAudio() {
-                if (state.audioCtx) return;
-                try {
-                    state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    state.analyser = state.audioCtx.createAnalyser();
-                    state.analyser.fftSize = 128;
-                    state.audioData = new Uint8Array(state.analyser.frequencyBinCount);
-                } catch(e) {
-                    console.error("Audio Pipeline Context Fault Engine Blocking:", e);
-                }
-            }
-
-            function speakVoice(textPayload) {
-                if (!window.speechSynthesis) return;
-                initAudio();
+                globalAnimationClipsBufferPool = loadedGltfAssetBundlePayload.animations;
+                coreAnimationMixerController = new THREE.AnimationMixer(structuralAvatar3DModelRoot);
                 
-                if (state.audioCtx && state.audioCtx.state === 'suspended') {
-                    state.audioCtx.resume();
+                if (globalAnimationClipsBufferPool && globalAnimationClipsBufferPool.length > 0) {
+                    activePlayingActionStateTrack = coreAnimationMixerController.clipAction(globalAnimationClipsBufferPool[0]);
+                    activePlayingActionStateTrack.setEffectiveWeight(1.0).play(); 
                 }
-                window.speechSynthesis.cancel();
-                
-                let cleanString = textPayload.replace(/\[.*?\]/g, '').trim();
-                executeNativeTTS(cleanString);
+
+                if(priyaMemoryEngineDataPayload.userCustomOutfitColor !== 0xffffff) {
+                    applyDynamicOutfitTextureColorBypass(priyaMemoryEngineDataPayload.userCustomOutfitColor);
+                }
+
+                executeLongTermMemoryGreetingsSync();
+                forceDismissLoaderOverlayWithBypassSecurity();
+
+            }, (xhrTrackProgressEvent) => {
+                if (xhrTrackProgressEvent.total > 0 && DOMUI_LoadingTextLabel) {
+                    let calculatedPercentage = Math.round((xhrTrackProgressEvent.loaded / xhrTrackProgressEvent.total) * 100);
+                    DOMUI_LoadingTextLabel.innerHTML = `प्रिया को तैयार किया जा रहा है... ${calculatedPercentage}%<br><span style="font-size:12px;color:var(--neon-cyan);">3D एसेट्स डाउनलोड हो रहे हैं</span>`;
+                }
+            }, (gltfLoaderTerminalCriticalFaultException) => {
+                console.error("Asset pipeline failure:", gltfLoaderTerminalCriticalFaultException);
+                forceDismissLoaderOverlayWithBypassSecurity(); 
+            });
+
+            window.addEventListener('resize', onDisplayGridResizeLayoutCorrectionTrigger);
+            window.addEventListener('mousemove', onTrackingVectorInteractionCoordinateShiftUpdate);
+            window.addEventListener('pointerdown', onStructuralMeshSurfaceTouchAnalysisBypass, false);
+        }
+
+        function executeDynamicResponsiveModelScalingLayouts() {
+            if (!structuralAvatar3DModelRoot) return;
+            const mobileLayoutFlagStateDetected = window.innerWidth < 768;
+            structuralAvatar3DModelRoot.scale.setScalar(mobileLayoutFlagStateDetected ? 0.95 : 1.0);
+            structuralAvatar3DModelRoot.position.set(0, 0, 0); 
+        }
+
+        function onTrackingVectorInteractionCoordinateShiftUpdate(nativeMouseDataEventPayload) {
+            absoluteTargetCoordinateX = (nativeMouseDataEventPayload.clientX / window.innerWidth) * 2 - 1;
+            absoluteTargetCoordinateY = -(nativeMouseDataEventPayload.clientY / window.innerHeight) * 2 + 1;
+        }
+
+        function onDisplayGridResizeLayoutCorrectionTrigger() {
+            if (!corePerspectiveCameraNode || !coreWebGLRendererModule) return;
+            corePerspectiveCameraNode.aspect = window.innerWidth / window.innerHeight;
+            corePerspectiveCameraNode.updateProjectionMatrix();
+            coreWebGLRendererModule.setSize(window.innerWidth, window.innerHeight);
+            executeDynamicResponsiveModelScalingLayouts();
+        }
+
+        /*
+          ------------------------------------------------------------------
+          SUB-MODULE D: MULTI-THREADED AUDIO ENGINE & SYNCHRONIZER SETUP
+          ------------------------------------------------------------------
+        */
+        function forceAudioCaptureDeviceNodeGraphCalibration() {
+            if (hardwareAudioContextDriver) return;
+            try {
+                hardwareAudioContextDriver = new (window.AudioContext || window.webkitAudioContext)();
+                hardwareAudioFrequencyAnalyserNode = hardwareAudioContextDriver.createAnalyser();
+                hardwareAudioFrequencyAnalyserNode.fftSize = 128;
+                hardwareAudioFrequencyBufferArray = new Uint8Array(hardwareAudioFrequencyAnalyserNode.frequencyBinCount);
+            } catch(nativeAudioPipelineContextSetupFaultException) {
+                console.error("Audio core setup issue:", nativeAudioPipelineContextSetupFaultException);
             }
+        }
 
-            function executeNativeTTS(cleanString) {
-                let utterance = new SpeechSynthesisUtterance(cleanString);
-                utterance.lang = 'hi-IN';
-                utterance.rate = 1.0;
-                utterance.pitch = 1.05;
-
-                utterance.onstart = () => { state.vocalActive = true; };
-                utterance.onend = () => { state.vocalActive = false; state.speechVolume = 0; };
-                utterance.onerror = () => { state.vocalActive = false; };
-
-                window.speechSynthesis.speak(utterance);
+        function dispatchSpeechSynthesizerVocalTrackBuffer(compiledOutputAIPayloadText) {
+            if (!window.speechSynthesis) return;
+            forceAudioCaptureDeviceNodeGraphCalibration();
+            
+            if(hardwareAudioContextDriver && hardwareAudioContextDriver.state === 'suspended') {
+                hardwareAudioContextDriver.resume();
             }
+            
+            // BUG FIX: Ensure clean termination state before dispatching fresh utterance track
+            window.speechSynthesis.cancel();
+            
+            let completelyStrippedVocalSpeechStringText = compiledOutputAIPayloadText.replace(/\[.*?\]/g, '').trim();
 
-            // ==========================================
-            // SUB-MODULE F: CORE RENDERING TICK LOOP
-            // ==========================================
-            function runRenderLoop() {
-                requestAnimationFrame(runRenderLoop);
-                if (!state.clock || !state.renderer || !state.scene || !state.camera) return;
+            if (ELEVENLABS_API_KEY !== "" && window.WebSocket) {
+                const elevenLabsWebSocketEndpointUri = `wss://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream-input?model_id=eleven_monolingual_v1`;
+                const executionSessionSocketNode = new WebSocket(elevenLabsWebSocketEndpointUri);
 
-                const delta = state.clock.getDelta();
-                const elapsed = state.clock.getElapsedTime();
-
-                if (state.mixer) state.mixer.update(delta);
-                if (state.controls) state.controls.update();
-
-                // Speech Volume Processing for Morph Sync
-                if (state.vocalActive && state.analyser) {
-                    state.analyser.getByteFrequencyData(state.audioData);
-                    let sum = 0;
-                    for (let i = 0; i < state.audioData.length; i++) { sum += state.audioData[i]; }
-                    state.speechVolume = sum / state.audioData.length;
-                }
-
-                // Eye Blinking & Lip Sync Realtime Calculations
-                if (state.avatar) {
-                    let blinkScale = Math.sin(elapsed * 3.2);
-
-                    state.skinnedMeshes.forEach(mesh => {
-                        const dict = mesh.morphTargetDictionary;
-                        const influences = mesh.morphTargetInfluences;
-                        if (!dict || !influences) return;
-
-                        ['eyeBlinkLeft', 'eyeBlinkRight', 'blink', 'Blink'].forEach(k => {
-                            let idx = dict[k];
-                            if (idx !== undefined) influences[idx] = blinkScale > 0.97 ? (blinkScale - 0.97) * 33.3 : 0;
-                        });
-
-                        if (state.vocalActive) {
-                            let visemeFactor = Math.min(state.speechVolume / 7.0, 1.1);
-                            ['mouthOpen', 'jawOpen', 'Mouth_Open', 'vowel_a', 'viseme_aa'].forEach(k => {
-                                let idx = dict[k];
-                                if (idx !== undefined) influences[idx] = THREE.MathUtils.lerp(influences[idx], visemeFactor, 0.45);
-                            });
-                        } else {
-                            ['mouthOpen', 'jawOpen', 'Mouth_Open', 'vowel_a', 'viseme_aa'].forEach(k => {
-                                let idx = dict[k];
-                                if (idx !== undefined) influences[idx] = THREE.MathUtils.lerp(influences[idx], 0, 0.3);
-                            });
-                        }
-                    });
-
-                    // Head Bone Rotations Mapping Tracker Matrix
-                    let headJoint = state.avatar.getObjectByName("Head") || state.avatar.getObjectByName("Neck");
-                    if (headJoint) {
-                        if (state.camTrackingActive) {
-                            state.currentHead.x += (state.targetHead.x - state.currentHead.x) * 0.12;
-                            state.currentHead.y += (state.targetHead.y - state.currentHead.y) * 0.12;
-                            headJoint.rotation.x = state.currentHead.x;
-                            headJoint.rotation.y = state.currentHead.y;
-                        } else if (state.touchOverrideTimer > 0) {
-                            headJoint.rotation.y = Math.sin(elapsed * 2.5) * 0.14;
-                            state.touchOverrideTimer -= delta;
-                        } else {
-                            state.interpMouse.x = THREE.MathUtils.lerp(state.interpMouse.x, state.targetMouse.x, 0.05);
-                            state.interpMouse.y = THREE.MathUtils.lerp(state.interpMouse.y, state.targetMouse.y, 0.05);
-                            headJoint.rotation.y = state.interpMouse.x * 0.22;
-                            headJoint.rotation.x = -state.interpMouse.y * 0.12;
-                        }
-                    }
-                }
-
-                // Dynamic Weather Engine Transformations
-                if (state.weatherParticles) {
-                    const positions = state.weatherParticles.geometry.attributes.position.array;
-                    for (let i = 1; i < positions.length; i += 3) {
-                        positions[i] -= delta * 3.8;
-                        if (positions[i] < 0) positions[i] = 5;
-                    }
-                    state.weatherParticles.geometry.attributes.position.needsUpdate = true;
-                }
-
-                state.renderer.render(state.scene, state.camera);
-            }
-
-            // ==========================================
-            // SUB-MODULE G: SPEECH RECOGNITION INTERACTION
-            // ==========================================
-            function initSpeechRecognition() {
-                const Engine = window.SpeechRecognition || window.webkitSpeechRecognition;
-                if (!Engine) {
-                    document.getElementById('micBtn').style.display = 'none';
-                    return;
-                }
-
-                state.recognition = new Engine();
-                state.recognition.continuous = false;
-                state.recognition.lang = 'hi-IN';
-                state.recognition.interimResults = false;
-                state.recognition.maxAlternatives = 1;
-
-                state.recognition.onstart = () => {
-                    state.speechActive = true;
-                    const btn = document.getElementById('micBtn');
-                    if(btn) btn.classList.add('listening');
-                    document.getElementById('userInput').placeholder = "कमांडो मोड एक्टिव, बोलिए sweetie...";
+                executionSessionSocketNode.onopen = () => {
+                    executionSessionSocketNode.send(JSON.stringify({
+                        "text": " ", "voice_settings": { "stability": 0.45, "similarity_boost": 0.82 }, "xi_api_key": ELEVENLABS_API_KEY
+                    }));
+                    executionSessionSocketNode.send(JSON.stringify({ "text": completelyStrippedVocalSpeechStringText, "try_trigger_generation": true }));
                 };
 
-                state.recognition.onerror = () => { resetMicUI(); };
-                state.recognition.onend = () => { resetMicUI(); };
-                state.recognition.onresult = (e) => {
-                    const resultText = e.results[0][0].transcript;
-                    const inputField = document.getElementById('userInput');
-                    if(inputField) {
-                        inputField.value = resultText;
-                        executeLifecycleCycle();
-                    }
+                executionSessionSocketNode.onmessage = (event) => {
+                    let streamPayloadParsedData = JSON.parse(event.data);
+                    if (streamPayloadParsedData.audio) { console.log("Audio Packet Connected"); }
                 };
+                executionSessionSocketNode.onerror = () => { triggerSystemLocalSpeechUtteranceBypass(completelyStrippedVocalSpeechStringText); };
+            } else {
+                triggerSystemLocalSpeechUtteranceBypass(completelyStrippedVocalSpeechStringText);
+            }
+        }
 
-                document.getElementById('micBtn').addEventListener('click', () => {
-                    if (state.speechActive) {
-                        state.recognition.stop();
-                    } else {
-                        if(window.speechSynthesis) window.speechSynthesis.cancel();
-                        state.recognition.start();
-                    }
-                });
+        function triggerSystemLocalSpeechUtteranceBypass(cleanVocalSpeechText) {
+            let structuralUtteranceInstanceConfigurationObject = new SpeechSynthesisUtterance(cleanVocalSpeechText);
+            structuralUtteranceInstanceConfigurationObject.lang = 'hi-IN';
+            structuralUtteranceInstanceConfigurationObject.rate = 1.0; 
+            structuralUtteranceInstanceConfigurationObject.pitch = 1.05;
+
+            structuralUtteranceInstanceConfigurationObject.onstart = () => { liveVocalOutputStateSignalActive = true; };
+            structuralUtteranceInstanceConfigurationObject.onend = () => { 
+                liveVocalOutputStateSignalActive = false; 
+                mathematicalCalculatedSpeechVolumeScalar = 0; 
+            };
+            structuralUtteranceInstanceConfigurationObject.onerror = () => { liveVocalOutputStateSignalActive = false; };
+
+            window.speechSynthesis.speak(structuralUtteranceInstanceConfigurationObject);
+        }
+
+        /*
+          ------------------------------------------------------------------
+          SUB-MODULE E: PERSISTENT MATHEMATICAL RENDER FRAME INTERPOLATOR
+          ------------------------------------------------------------------
+        */
+        function masterApplicationRenderLoopExecutionCycle() {
+            requestAnimationFrame(masterApplicationRenderLoopExecutionCycle);
+            
+            if (!coreSystemClockReference || !coreWebGLRendererModule || !coreThreeSceneInstance || !corePerspectiveCameraNode) return;
+
+            const numericalDeltaTimelineTimeStepValue = coreSystemClockReference.getDelta();
+            const numericalContinuousElapsedTimeRunningValue = coreSystemClockReference.getElapsedTime();
+
+            if (coreAnimationMixerController) coreAnimationMixerController.update(numericalDeltaTimelineTimeStepValue);
+            if (coreOrbitControlsRig) coreOrbitControlsRig.update();
+
+            if (liveVocalOutputStateSignalActive && hardwareAudioFrequencyAnalyserNode) {
+                hardwareAudioFrequencyAnalyserNode.getByteFrequencyData(hardwareAudioFrequencyBufferArray);
+                let processingAmplitudeFrequencySumAccumulator = 0;
+                for (let trackBinIdx = 0; trackBinIdx < hardwareAudioFrequencyBufferArray.length; trackBinIdx++) {
+                    processingAmplitudeFrequencySumAccumulator += hardwareAudioFrequencyBufferArray[trackBinIdx];
+                }
+                mathematicalCalculatedSpeechVolumeScalar = processingAmplitudeFrequencySumAccumulator / hardwareAudioFrequencyBufferArray.length;
             }
 
-            function resetMicUI() {
-                state.speechActive = false;
-                const btn = document.getElementById('micBtn');
-                if(btn) btn.classList.remove('listening');
-                document.getElementById('userInput').placeholder = "प्रिया से कुछ भी पूछें...";
-            }
+            if (structuralAvatar3DModelRoot) {
+                let dynamicSinoidalEyeBlinkScaleTracker = Math.sin(numericalContinuousElapsedTimeRunningValue * 3.2);
 
-            // ==========================================
-            // SUB-MODULE H: DYNAMIC LIFECYCLE MANAGEMENT
-            // ==========================================
-            async function executeLifecycleCycle() {
-                const inputBar = document.getElementById('userInput');
-                const queryText = inputBar.value.trim();
-                if (!queryText || state.isProcessing) return;
+                activeSkinnedMeshSubnodesTrackArray.forEach(skinnedSubmeshComponentNodeReference => {
+                    const activeMorphTargetMeshDictionaryMap = skinnedSubmeshComponentNodeReference.morphTargetDictionary;
+                    const activeMorphInfluencesWeightTrackingArray = skinnedSubmeshComponentNodeReference.morphTargetInfluences;
+                    
+                    if (!activeMorphTargetMeshDictionaryMap || !activeMorphInfluencesWeightTrackingArray) return;
 
-                state.isProcessing = true;
-                inputBar.value = "";
-
-                const moodTxt = document.getElementById('system-core-mood-txt');
-                if (moodTxt) {
-                    moodTxt.innerText = "प्रक्रिया चालू है... 🤔";
-                    moodTxt.style.color = "var(--neon-orange)";
-                }
-
-                // Dynamic Outfit Wardrobe Color Shifting Logic Pipeline Interceptor Trigger
-                if (/(लाल कपड़े|लाल ड्रेस|red dress)/i.test(queryText)) {
-                    applyOutfitColor(0xff0000);
-                    state.memory.userCustomOutfitColor = 0xff0000;
-                    saveMemory();
-                    presentOutput("[Palkein jhapkate hue aur halka muskurate hue] Lo sweety! Maine tumhari pasand ki red dress pehen li hai. Batao kaisi lag rahi hun?");
-                    state.isProcessing = false;
-                    return;
-                }
-                if (/(नीली ड्रेस|blue dress)/i.test(queryText)) {
-                    applyOutfitColor(0x0000ff);
-                    state.memory.userCustomOutfitColor = 0x0000ff;
-                    saveMemory();
-                    presentOutput("[Halka sa muskurate hue] Hmm... Blue colour toh mera bhi favourite hai! Dekho, naya outfit mujh par kaisa lag raha hai?");
-                    state.isProcessing = false;
-                    return;
-                }
-                if (/(हरी ड्रेस|green dress)/i.test(queryText)) {
-                    applyOutfitColor(0x00ff00);
-                    state.memory.userCustomOutfitColor = 0x00ff00;
-                    saveMemory();
-                    presentOutput("[Khush hote hue] Wow! Green colour toh nature ka rang hai na. Dekho maine naya dress change kar liya.");
-                    state.isProcessing = false;
-                    return;
-                }
-                if (/(सफेद ड्रेस|white dress)/i.test(queryText)) {
-                    applyOutfitColor(0xffffff);
-                    state.memory.userCustomOutfitColor = 0xffffff;
-                    saveMemory();
-                    presentOutput("[Muskurate hue] White outfit? Bilkul simple aur classy! Maine change kar liya hai dear.");
-                    state.isProcessing = false;
-                    return;
-                }
-
-                // Extract User Personalized Name Tags Interceptor Routing Matrix
-                if (queryText.includes("मेरा नाम") && (queryText.includes("है") || queryText.includes("जानo"))) {
-                    const words = queryText.split(" ");
-                    let nameIdx = words.findIndex(w => w.includes("नाम"));
-                    if (words[nameIdx + 1]) {
-                        let parsedName = words[nameIdx + 1].replace(/[हैं।!.]/g, '');
-                        if (parsedName.length > 1) {
-                            state.memory.userName = parsedName;
-                            saveMemory();
+                    ['eyeBlinkLeft', 'eyeBlinkRight', 'blink', 'Blink'].forEach(eyeBlinkShapeKeyIdentifierString => {
+                        let targetInfluenceSlotIndex = activeMorphTargetMeshDictionaryMap[eyeBlinkShapeKeyIdentifierString];
+                        if (targetInfluenceSlotIndex !== undefined) {
+                            activeMorphInfluencesWeightTrackingArray[targetInfluenceSlotIndex] = 
+                                dynamicSinoidalEyeBlinkScaleTracker > 0.97 ? (dynamicSinoidalEyeBlinkScaleTracker - 0.97) * 33.3 : 0;
                         }
-                    }
-                }
+                    });
 
-                try {
-                    const aiPayload = await getAIResponse(queryText);
-                    if (moodTxt) {
-                        moodTxt.innerText = "जेमिनी nv1 लाइव डायरेक्ट ⚡";
-                        moodTxt.style.color = "var(--neon-cyan)";
-                    }
-                    presentOutput(aiPayload);
-                } catch (err) {
-                    console.error(err);
-                    if (moodTxt) {
-                        moodTxt.innerText = "सिस्टम रिकवरी mode ⚠️";
-                        moodTxt.style.color = "var(--neon-pink)";
-                    }
-                    presentOutput("[Halka sa sarr jhatakte hue] Uhh, lagta hai network thoda paresan kar raha hai sweety. Ek baar fir se bolna please?");
-                } finally {
-                    state.isProcessing = false;
-                }
-            }
-
-            function presentOutput(payload) {
-                if (!payload || payload.trim() === "") return;
-                
-                if (state.typewriterInterval) {
-                    clearInterval(state.typewriterInterval);
-                    state.typewriterInterval = null;
-                }
-
-                let exprMatch = payload.match(/\[(.*?)\]/);
-                if (exprMatch && exprMatch.length > 1) {
-                    playGesture(exprMatch[1]);
-                }
-
-                try {
-                    speakVoice(payload);
-                } catch(e) { console.error("Voice output error:", e); }
-
-                const sanitizedText = payload.replace(/\[.*?\]/g, '').trim();
-                const monitor = document.getElementById('subtitle-monitor-box');
-                
-                if (!monitor) return;
-                monitor.innerText = "";
-                let ptr = 0;
-
-                state.typewriterInterval = setInterval(() => {
-                    if (ptr < sanitizedText.length) {
-                        monitor.innerText += sanitizedText.charAt(ptr);
-                        ptr++;
-                    } else {
-                        clearInterval(state.typewriterInterval);
-                        state.typewriterInterval = null;
-                    }
-                }, CONFIG.typewriterSpeed);
-            }
-
-            function applyOutfitColor(hex) {
-                state.skinnedMeshes.forEach(mesh => {
-                    const name = mesh.name.toLowerCase();
-                    if (name.includes('outfit') || name.includes('tops') || name.includes('bottom') || name.includes('footwear')) {
-                        if (mesh.material) {
-                            if (Array.isArray(mesh.material)) {
-                                mesh.material.forEach(mat => { if(mat.color) mat.color.setHex(hex); });
-                            } else {
-                                if(mesh.material.color) mesh.material.color.setHex(hex);
+                    if (liveVocalOutputStateSignalActive) {
+                        let currentCalculatedVisemeVolumeFactor = Math.min(mathematicalCalculatedSpeechVolumeScalar / 7.0, 1.1);
+                        ['mouthOpen', 'jawOpen', 'Mouth_Open', 'vowel_a', 'viseme_aa'].forEach(visemeIdentifierKey => {
+                            let targetVisemeSlotIndex = activeMorphTargetMeshDictionaryMap[visemeIdentifierKey];
+                            if (targetVisemeSlotIndex !== undefined) {
+                                activeMorphInfluencesWeightTrackingArray[targetVisemeSlotIndex] = 
+                                    THREE.MathUtils.lerp(activeMorphInfluencesWeightTrackingArray[targetVisemeSlotIndex], currentCalculatedVisemeVolumeFactor, 0.45);
                             }
-                        }
+                        });
+                    } else {
+                        ['mouthOpen', 'jawOpen', 'Mouth_Open', 'vowel_a', 'viseme_aa'].forEach(visemeIdentifierKey => {
+                            let targetVisemeSlotIndex = activeMorphTargetMeshDictionaryMap[visemeIdentifierKey];
+                            if (targetVisemeSlotIndex !== undefined) {
+                                activeMorphInfluencesWeightTrackingArray[targetVisemeSlotIndex] = 
+                                    THREE.MathUtils.lerp(activeMorphInfluencesWeightTrackingArray[targetVisemeSlotIndex], 0, 0.3);
+                            }
+                        });
                     }
                 });
-            }
 
-            function handleMeshTouch(e) {
-                if (!state.avatar) return;
-                let normY = -(e.clientY / window.innerHeight) * 2 + 1;
-                state.touchOverrideTimer = 3.5;
-
-                if (normY > 0.35) {
-                    setMorphWeight("shy");
-                    presentOutput("[Palkein jhapkate hue aur sharmate hue] Umh... Tum jab mujhe aise touch karte ho na, mujhe thodi sharm aa jati hai...!");
-                } else {
-                    setMorphWeight("happy");
-                    presentOutput("[Halka sa haste hue] Haha! Waha mat छुओ, gudhgudhi hoti hai! Batao aaj kya baatein karni hain?");
-                }
-            }
-
-            function syncMemoryGreetings() {
-                const today = new Date().toDateString();
-                if (state.memory.lastInteractionTimestamp) {
-                    if (state.memory.lastInteractionTimestamp !== today) {
-                        setTimeout(() => {
-                            presentOutput(`[Palkein jhapkate hue aur khush hote hue] Namaste ${state.memory.userName}! Tum kuch दिन पहले मुझसे बात करने आए थे ना? आज फिर से मिलकर बहुत खुशी हुई डियर!`);
-                        }, 2500);
+                let computedHeadTargetJointLocator = structuralAvatar3DModelRoot ? (structuralAvatar3DModelRoot.getObjectByName("Head") || structuralAvatar3DModelRoot.getObjectByName("Neck")) : null;
+                if (computedHeadTargetJointLocator) {
+                    if (isCamTrackingActiveSignal) {
+                        // BUG FIX: Clamped max rotation values to prevent 360-degree joint snaps
+                        targetHeadRotationMatrix.y = Math.max(-0.4, Math.min(0.4, targetHeadRotationMatrix.y));
+                        targetHeadRotationMatrix.x = Math.max(-0.25, Math.min(0.25, targetHeadRotationMatrix.x));
+                        
+                        currentHeadRotationMatrix.x += (targetHeadRotationMatrix.x - currentHeadRotationMatrix.x) * 0.12;
+                        currentHeadRotationMatrix.y += (targetHeadRotationMatrix.y - currentHeadRotationMatrix.y) * 0.12;
+                        computedHeadTargetJointLocator.rotation.x = currentHeadRotationMatrix.x;
+                        computedHeadTargetJointLocator.rotation.y = currentHeadRotationMatrix.y;
+                    } else if (automatedTouchForceOverriderTimer > 0) {
+                        computedHeadTargetJointLocator.rotation.y = Math.sin(numericalContinuousElapsedTimeRunningValue * 2.5) * 0.14;
+                        automatedTouchForceOverriderTimer -= numericalDeltaTimelineTimeStepValue;
+                    } else {
+                        dynamicInterpolatedCoordinateX = THREE.MathUtils.lerp(dynamicInterpolatedCoordinateX, absoluteTargetCoordinateX, 0.05);
+                        dynamicInterpolatedCoordinateY = THREE.MathUtils.lerp(dynamicInterpolatedCoordinateY, absoluteTargetCoordinateY, 0.05);
+                        computedHeadTargetJointLocator.rotation.y = Math.max(-0.35, Math.min(0.35, dynamicInterpolatedCoordinateX * 0.22));
+                        computedHeadTargetJointLocator.rotation.x = Math.max(-0.2, Math.min(0.2, -dynamicInterpolatedCoordinateY * 0.12));
                     }
+                }
+            }
+
+            if (weatherDynamicParticlePointsSystem) {
+                const particlePositionsBufferArray = weatherDynamicParticlePointsSystem.geometry.attributes.position.array;
+                for (let coordinateYIndex = 1; coordinateYIndex < particlePositionsBufferArray.length; coordinateYIndex += 3) {
+                    particlePositionsBufferArray[coordinateYIndex] -= numericalDeltaTimelineTimeStepValue * 3.8; 
+                    if (particlePositionsBufferArray[coordinateYIndex] < 0) particlePositionsBufferArray[coordinateYIndex] = 5; 
+                }
+                weatherDynamicParticlePointsSystem.geometry.attributes.position.needsUpdate = true;
+            }
+
+            coreWebGLRendererModule.render(coreThreeSceneInstance, corePerspectiveCameraNode);
+        }
+
+        /*
+          ------------------------------------------------------------------
+          SUB-MODULE F: CORE COMMAND INTERACTION LIFECYCLE MANAGEMENT ENGINE
+          ------------------------------------------------------------------
+        */
+        const DOMUI_TextInputElementBar = document.getElementById('userInput');
+        const DOMUI_ActionButtonSendTrigger = document.getElementById('sendBtn');
+        const DOMUI_ActionButtonMicTrigger = document.getElementById('micBtn');
+
+        async function triggerInteractionLifecycleExecutionCycle() {
+            const clearExtractedInputTextString = DOMUI_TextInputElementBar.value.trim();
+            if (!clearExtractedInputTextString) return;
+            
+            DOMUI_TextInputElementBar.value = "";
+            
+            const DOMUI_CoreStatusTextField = document.getElementById('system-core-mood-txt');
+            if(DOMUI_CoreStatusTextField) {
+                DOMUI_CoreStatusTextField.innerText = "प्रक्रिया चालू है... 🤔";
+                DOMUI_CoreStatusTextField.style.color = "var(--neon-orange)";
+            }
+
+            if (clearExtractedInputTextString.toLowerCase().includes("red dress") || clearExtractedInputTextString.includes("लाल कपड़े") || clearExtractedInputTextString.includes("लाल ड्रेस")) {
+                applyDynamicOutfitTextureColorBypass(0xff0000);
+                priyaMemoryEngineDataPayload.userCustomOutfitColor = 0xff0000;
+                commitPriyaMemoryStateToStorageCache();
+                bridgeNetworkPayloadDirectlyIntoResponseEngine("[Palkein jhapkate hue aur halka muskurate hue] Lo sweety! Maine tumhari pasand ki red dress pehen li hai. Batao kaisi lag rahi hun?");
+                return;
+            }
+            if (clearExtractedInputTextString.toLowerCase().includes("blue dress") || clearExtractedInputTextString.includes("नीली ड्रेस")) {
+                applyDynamicOutfitTextureColorBypass(0x0000ff);
+                priyaMemoryEngineDataPayload.userCustomOutfitColor = 0x0000ff;
+                commitPriyaMemoryStateToStorageCache();
+                bridgeNetworkPayloadDirectlyIntoResponseEngine("[Halka sa muskurate hue] Hmm... Blue colour toh mera bhi favourite hai! Dekho, naya outfit mujh par kaisa lag raha hai?");
+                return;
+            }
+            if (clearExtractedInputTextString.toLowerCase().includes("green dress") || clearExtractedInputTextString.includes("हरी ड्रेस")) {
+                applyDynamicOutfitTextureColorBypass(0x00ff00);
+                priyaMemoryEngineDataPayload.userCustomOutfitColor = 0x00ff00;
+                commitPriyaMemoryStateToStorageCache();
+                bridgeNetworkPayloadDirectlyIntoResponseEngine("[Khush hote hue] Wow! Green colour toh nature ka rang hai na. Dekho maine naya dress change kar liya.");
+                return;
+            }
+            if (clearExtractedInputTextString.toLowerCase().includes("white dress") || clearExtractedInputTextString.includes("सफेद ड्रेस")) {
+                applyDynamicOutfitTextureColorBypass(0xffffff);
+                priyaMemoryEngineDataPayload.userCustomOutfitColor = 0xffffff;
+                commitPriyaMemoryStateToStorageCache();
+                bridgeNetworkPayloadDirectlyIntoResponseEngine("[Muskurate hue] White outfit? Bilkul simple aur classy! Maine change kar liya hai dear.");
+                return;
+            }
+
+            if (clearExtractedInputTextString.includes("मेरा नाम") && (clearExtractedInputTextString.includes("है") || clearExtractedInputTextString.includes("जानो"))) {
+                const brokenWordTokensArray = clearExtractedInputTextString.split(" ");
+                let targetPivotIndexRegister = brokenWordTokensArray.findIndex(tokenWord => tokenWord.includes("नाम"));
+                if (brokenWordTokensArray[targetPivotIndexRegister + 1]) {
+                    let extractedNameValue = brokenWordTokensArray[targetPivotIndexRegister + 1].replace(/[हैं।!.]/g, '');
+                    if(extractedNameValue.length > 1) {
+                        priyaMemoryEngineDataPayload.userName = extractedNameValue;
+                        commitPriyaMemoryStateToStorageCache();
+                    }
+                }
+            }
+
+            try {
+                const activeReturnedNetworkPayloadText = await fetchSecureNeuralAIResponseStream(clearExtractedInputTextString);
+                if (DOMUI_CoreStatusTextField) {
+                    DOMUI_CoreStatusTextField.innerText = "जेमिनी nv1 लाइव डायरेक्ट ⚡";
+                    DOMUI_CoreStatusTextField.style.color = "var(--neon-cyan)";
+                }
+                
+                if (activeReturnedNetworkPayloadText) {
+                    bridgeNetworkPayloadDirectlyIntoResponseEngine(activeReturnedNetworkPayloadText);
                 } else {
-                    state.memory.lastInteractionTimestamp = today;
-                    saveMemory();
+                    throw new Error("Null matrix caught.");
                 }
-            }
-
-            // ==========================================
-            // SUB-MODULE I: MEDIAPIPE FACE MESH TRACKING
-            // ==========================================
-            function initFaceMeshTracking() {
-                const video = document.getElementById('webcam-video');
-                video.style.display = 'block';
-
-                const faceMesh = new FaceMesh({
-                    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
-                });
-
-                faceMesh.setOptions({
-                    maxNumFaces: 1, refineLandmarks: true, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5
-                });
-
-                faceMesh.onResults((results) => {
-                    if (!state.camTrackingActive || !results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) return;
-                    const landmarks = results.multiFaceLandmarks[0];
-                    const noseTip = landmarks[4];
-                    
-                    state.targetHead.y = -(noseTip.x - 0.5) * 1.25;
-                    state.targetHead.x = (noseTip.y - 0.5) * 0.85;
-                });
-
-                const camera = new Camera(video, {
-                    onFrame: async () => {
-                        if (state.camTrackingActive) await faceMesh.send({ image: video });
-                    },
-                    width: 320, height: 240
-                });
-                camera.start();
-            }
-
-            function initWeatherEngine() {
-                const count = 600;
-                const geometry = new THREE.BufferGeometry();
-                const positions = new Float32Array(count * 3);
-                
-                for (let i = 0; i < count * 3; i += 3) {
-                    positions[i] = (Math.random() - 0.5) * 12;
-                    positions[i+1] = Math.random() * 6;
-                    positions[i+2] = (Math.random() - 0.5) * 12;
+            } catch (interactionLifecycleRuntimeFaultException) {
+                console.error("Interaction Lifecycle Failure:", interactionLifecycleRuntimeFaultException);
+                if (DOMUI_CoreStatusTextField) {
+                    DOMUI_CoreStatusTextField.innerText = "सिस्टम रिकवरी मोड ⚠️";
+                    DOMUI_CoreStatusTextField.style.color = "var(--neon-pink)";
                 }
-                
-                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                const material = new THREE.PointsMaterial({ color: 0x9be2ff, size: 0.025, transparent: true, opacity: 0.55 });
-                state.weatherParticles = new THREE.Points(geometry, material);
-                state.scene.add(state.weatherParticles);
+                bridgeNetworkPayloadDirectlyIntoResponseEngine("[Halka sa sarr jhatakte hue] Uhh, lagta hai network thoda paresan kar raha hai sweety. Ek baar fir se bolna please?");
             }
+        }
 
-            function dismissLoader() {
-                const loader = document.getElementById('core-boot-loader');
-                if (loader) {
-                    loader.style.opacity = 0;
-                    setTimeout(() => { loader.style.display = 'none'; }, 650);
-                }
+        function onStructuralMeshSurfaceTouchAnalysisBypass(nativePointerEventDataPayload) {
+            if (!structuralAvatar3DModelRoot) return;
+            
+            let calculatedNormalizedTouchYCoordinate = -(nativePointerEventDataPayload.clientY / window.innerHeight) * 2 + 1;
+            automatedTouchForceOverriderTimer = 3.5; 
+
+            if (calculatedNormalizedTouchYCoordinate > 0.35) {
+                applyTargetSentimentMorphWeightMappings("shy");
+                bridgeNetworkPayloadDirectlyIntoResponseEngine("[Palkein jhapkate hue aur sharmate hue] Umh... Tum jab mujhe aise touch karte ho na, mujhe thodi sharm aa jati hai...!");
+            } else {
+                applyTargetSentimentMorphWeightMappings("happy");
+                bridgeNetworkPayloadDirectlyIntoResponseEngine("[Halka sa haste hue] Haha! Waha mat छुओ, gudhgudhi hoti hai! Batao aaj kya baatein karni hain?");
             }
+        }
 
-            // Public Entry Initializer API Launchpad
-            return {
-                boot: function () {
-                    initMemory();
-                    initGraphics();
-                    initSpeechRecognition();
-                    initWeatherEngine();
-                    runRenderLoop();
-
-                    // Event Listeners Integration Bridge Setup
-                    document.getElementById('sendBtn').addEventListener('click', executeLifecycleCycle);
-                    document.getElementById('userInput').addEventListener('keypress', (e) => {
-                        if (e.key === 'Enter') executeLifecycleCycle();
-                    });
-
-                    document.getElementById('toggle-cam-btn').addEventListener('click', function() {
-                        state.camTrackingActive = !state.camTrackingActive;
-                        this.classList.toggle('tracking-active', state.camTrackingActive);
-                        if (state.camTrackingActive) {
-                            initFaceMeshTracking();
+        function applyDynamicOutfitTextureColorBypass(colorHexCodeValue) {
+            activeSkinnedMeshSubnodesTrackArray.forEach(evaluatedSkinnedMeshNodeReference => {
+                const convertedMeshLowerNameString = evaluatedSkinnedMeshNodeReference.name.toLowerCase();
+                if (convertedMeshLowerNameString.includes('outfit') || convertedMeshLowerNameString.includes('tops') || 
+                    convertedMeshLowerNameString.includes('bottom') || convertedMeshLowerNameString.includes('footwear')) {
+                    if (evaluatedSkinnedMeshNodeReference.material) {
+                        if (Array.isArray(evaluatedSkinnedMeshNodeReference.material)) {
+                            evaluatedSkinnedMeshNodeReference.material.forEach(singleMaterialNode => {
+                                if(singleMaterialNode.color) singleMaterialNode.color.setHex(colorHexCodeValue);
+                            });
                         } else {
-                            document.getElementById('webcam-video').style.display = 'none';
+                            if(evaluatedSkinnedMeshNodeReference.material.color) evaluatedSkinnedMeshNodeReference.material.color.setHex(colorHexCodeValue);
                         }
-                    });
-
-                    setTimeout(dismissLoader, 15000); // Anti-hang safety firewall bypass guard
+                    }
                 }
-            };
-        })();
+            });
+        }
 
-        // Global Execution Initializer
-        document.addEventListener("DOMContentLoaded", () => {
-            PriyaAIApp.boot();
+        function applyTargetSentimentMorphWeightMappings(sentimentKeywordKeyString) {
+            activeSkinnedMeshSubnodesTrackArray.forEach(skinnedSubmeshComponentNodeReference => {
+                const activeMorphTargetMeshDictionaryMap = skinnedSubmeshComponentNodeReference.morphTargetDictionary;
+                const activeMorphInfluencesWeightTrackingArray = skinnedSubmeshComponentNodeReference.morphTargetInfluences;
+                
+                if (!activeMorphTargetMeshDictionaryMap || !activeMorphInfluencesWeightTrackingArray) return;
+
+                const globalSentimentTargetsList = ["mouthSmileLeft", "mouthSmileRight", "browDownLeft", "browDownRight", "browInnerUp"];
+                globalSentimentTargetsList.forEach(shapeKeyString => {
+                    let trackingSlotIndexValue = activeMorphTargetMeshDictionaryMap[shapeKeyString];
+                    if (trackingSlotIndexValue !== undefined) activeMorphInfluencesWeightTrackingArray[trackingSlotIndexValue] = 0;
+                });
+
+                if (sentimentKeywordKeyString === "happy" || sentimentKeywordKeyString === "joy") {
+                    let smileLeftSlotIndex = activeMorphTargetMeshDictionaryMap["mouthSmileLeft"];
+                    let smileRightSlotIndex = activeMorphTargetMeshDictionaryMap["mouthSmileRight"];
+                    if (smileLeftSlotIndex !== undefined) activeMorphInfluencesWeightTrackingArray[smileLeftSlotIndex] = 0.85;
+                    if (smileRightSlotIndex !== undefined) activeMorphInfluencesWeightTrackingArray[smileRightSlotIndex] = 0.85;
+                } else if (sentimentKeywordKeyString === "sad" || sentimentKeywordKeyString === "sorry") {
+                    let browDownLeftSlotIndex = activeMorphTargetMeshDictionaryMap["browDownLeft"];
+                    let browDownRightSlotIndex = activeMorphTargetMeshDictionaryMap["browDownRight"];
+                    if (browDownLeftSlotIndex !== undefined) activeMorphInfluencesWeightTrackingArray[browDownLeftSlotIndex] = 0.75;
+                    if (browDownRightSlotIndex !== undefined) activeMorphInfluencesWeightTrackingArray[browDownRightSlotIndex] = 0.75;
+                } else if (sentimentKeywordKeyString === "shy") {
+                    let browInnerUpSlotIndex = activeMorphTargetMeshDictionaryMap["browInnerUp"];
+                    let smileLeftSlotIndex = activeMorphTargetMeshDictionaryMap["mouthSmileLeft"];
+                    if (browInnerUpSlotIndex !== undefined) activeMorphInfluencesWeightTrackingArray[browInnerUpSlotIndex] = 0.65;
+                    if (smileLeftSlotIndex !== undefined) activeMorphInfluencesWeightTrackingArray[smileLeftSlotIndex] = 0.45;
+                }
+            });
+        }
+
+        function executeLongTermMemoryGreetingsSync() {
+            const standardCurrentDateStringValue = new Date().toDateString();
+            if (priyaMemoryEngineDataPayload.lastInteractionTimestamp) {
+                if (priyaMemoryEngineDataPayload.lastInteractionTimestamp !== standardCurrentDateStringValue) {
+                    setTimeout(() => {
+                        bridgeNetworkPayloadDirectlyIntoResponseEngine(`[Palkein jhapkate hue aur khush hote hue] Namaste ${priyaMemoryEngineDataPayload.userName}! Tum kuch दिन पहले मुझसे बात करने आए थे ना? आज फिर से मिलकर बहुत खुशी हुई डियर!`);
+                    }, 2500);
+                }
+            } else {
+                priyaMemoryEngineDataPayload.lastInteractionTimestamp = standardCurrentDateStringValue;
+                commitPriyaMemoryStateToStorageCache();
+            }
+        }
+
+        async function initWeatherAndSkyEngineMatrix() {
+            let activeWeatherTypeProfileString = "clear";
+            try {
+                if (OPENWEATHER_API_KEY !== "") {
+                    const weatherNetworkFetchResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${DEFAULT_CITY}&appid=${OPENWEATHER_API_KEY}`);
+                    const weatherParsedJsonPayload = await weatherNetworkFetchResponse.json();
+                    activeWeatherTypeProfileString = weatherParsedJsonPayload.weather[0].main.toLowerCase();
+                }
+            } catch (weatherException) { console.log("Weather API skipped, running default clear profile layout."); }
+
+            if (activeWeatherTypeProfileString.includes("rain") || activeWeatherTypeProfileString.includes("drizzle") || activeWeatherTypeProfileString.includes("cloud")) {
+                const totalTargetParticleCountLimit = 1200;
+                const particleGeometryClusterNode = new THREE.BufferGeometry();
+                const particlePositionsCoordinatesArray = new Float32Array(totalTargetParticleCountLimit * 3);
+                
+                for (let particleIndex = 0; particleIndex < totalTargetParticleCountLimit * 3; particleIndex += 3) {
+                    particlePositionsCoordinatesArray[particleIndex] = (Math.random() - 0.5) * 12;
+                    particlePositionsCoordinatesArray[particleIndex+1] = Math.random() * 6;
+                    particlePositionsCoordinatesArray[particleIndex+2] = (Math.random() - 0.5) * 12;
+                }
+                
+                particleGeometryClusterNode.setAttribute('position', new THREE.BufferAttribute(particlePositionsCoordinatesArray, 3));
+                const particleMaterialConfigurationObject = new THREE.PointsMaterial({
+                    color: 0x9be2ff, size: 0.025, transparent: true, opacity: 0.55
+                });
+                weatherDynamicParticlePointsSystem = new THREE.Points(particleGeometryClusterNode, particleMaterialConfigurationObject);
+                coreThreeSceneInstance.add(weatherDynamicParticlePointsSystem);
+            }
+        }
+
+        if (frameworkSpeechRecognitionProcessor) {
+            frameworkSpeechRecognitionProcessor.onstart = () => {
+                liveSpeechCapturingStateSignalActive = true;
+                DOMUI_ActionButtonMicTrigger.classList.add('listening');
+                DOMUI_TextInputElementBar.placeholder = "कमांडो मोड एक्टिव, बोलie sweetie...";
+            };
+
+            frameworkSpeechRecognitionProcessor.onerror = () => {
+                liveSpeechCapturingStateSignalActive = false;
+                DOMUI_ActionButtonMicTrigger.classList.remove('listening');
+                DOMUI_TextInputElementBar.placeholder = "प्रिया से कुछ भी पूछें...";
+            };
+
+            frameworkSpeechRecognitionProcessor.onend = () => {
+                liveSpeechCapturingStateSignalActive = false;
+                DOMUI_ActionButtonMicTrigger.classList.remove('listening');
+                DOMUI_TextInputElementBar.placeholder = "प्रिया से कुछ भी पूछें...";
+            };
+
+            frameworkSpeechRecognitionProcessor.onresult = (transcriptionOutputPayloadEvent) => {
+                const capturedTranscribedTextResultString = transcriptionOutputPayloadEvent.results[0][0].transcript;
+                DOMUI_TextInputElementBar.value = capturedTranscribedTextResultString;
+                triggerInteractionLifecycleExecutionCycle();
+            };
+
+            DOMUI_ActionButtonMicTrigger.addEventListener('click', () => {
+                if (liveSpeechCapturingStateSignalActive) {
+                    frameworkSpeechRecognitionProcessor.stop();
+                } else {
+                    if(window.speechSynthesis) window.speechSynthesis.cancel();
+                    frameworkSpeechRecognitionProcessor.start();
+                }
+            });
+        } else {
+            DOMUI_ActionButtonMicTrigger.style.display = 'none'; 
+        }
+
+        /*
+          ------------------------------------------------------------------
+          SUB-MODULE G: MEDIAPIPE FACE MESH CAM TRACK ENGINE INITIALIZER
+          ------------------------------------------------------------------
+        */
+        function initializeMediaPipeWebcamTrackingEngineGrid() {
+            const nativeDeviceVideoElementNode = document.getElementById('webcam-video');
+            nativeDeviceVideoElementNode.style.display = 'block';
+
+            const faceMeshProcessorFrameworkInstance = new FaceMesh({
+                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+            });
+
+            faceMeshProcessorFrameworkInstance.setOptions({
+                maxNumFaces: 1, refineLandmarks: true, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5
+            });
+
+            faceMeshProcessorFrameworkInstance.onResults((transcriptionResultsPayload) => {
+                if (!isCamTrackingActiveSignal || !transcriptionResultsPayload.multiFaceLandmarks || transcriptionResultsPayload.multiFaceLandmarks.length === 0) return;
+                
+                const facialCoordinatesLandmarksVectorArray = transcriptionResultsPayload.multiFaceLandmarks[0];
+                const anatomicalNoseTipIndexIndicator = facialCoordinatesLandmarksVectorArray[4];
+                
+                targetHeadRotationMatrix.y = -(anatomicalNoseTipIndexIndicator.x - 0.5) * 1.25; 
+                targetHeadRotationMatrix.x = (anatomicalNoseTipIndexIndicator.y - 0.5) * 0.85;
+            });
+
+            const deviceCameraUtilityDriverNode = new Camera(nativeDeviceVideoElementNode, {
+                onFrame: async () => { 
+                    if (isCamTrackingActiveSignal) await faceMeshProcessorFrameworkInstance.send({ image: nativeDeviceVideoElementNode }); 
+                },
+                width: 320, height: 240
+            });
+            deviceCameraUtilityDriverNode.start();
+        }
+
+        document.getElementById('toggle-cam-btn').addEventListener('click', () => {
+            isCamTrackingActiveSignal = !isCamTrackingActiveSignal;
+            const DOMUI_CamButtonElementReference = document.getElementById('toggle-cam-btn');
+            
+            if (isCamTrackingActiveSignal) {
+                DOMUI_CamButtonElementReference.classList.add('tracking-active');
+                initializeMediaPipeWebcamTrackingEngineGrid();
+            } else {
+                DOMUI_CamButtonElementReference.classList.remove('tracking-active');
+                document.getElementById('webcam-video').style.display = 'none';
+            }
         });
+
+        DOMUI_ActionButtonSendTrigger.addEventListener('click', triggerInteractionLifecycleExecutionCycle);
+        DOMUI_TextInputElementBar.addEventListener('keypress', (nativeHardwareKeyboardEvent) => { 
+            if (nativeHardwareKeyboardEvent.key === 'Enter') triggerInteractionLifecycleExecutionCycle(); 
+        });
+
+
+        /* ==========================================================================
+           MODULE 9: GEMINI RESPONSE PROCESSING & STREAM ORCHESTRATION SUBSYSTEM
+           ========================================================================== */
+        let globalLastReceivedResponsePayloadString = "";
+        let globalResponseExecutionActiveStatusFlag = false;
+        let globalTypewriterAnimationIntervalReference = null;
+        let globalTextSanitizationRegExpPattern = /\[.*?\]/g;
+
+        async function processIncomingGeminiResponsePayload(rawIncomingGeminiStreamPayload) {
+            if (!rawIncomingGeminiStreamPayload || rawIncomingGeminiStreamPayload.trim() === "") return;
+
+            if (globalResponseExecutionActiveStatusFlag) safelyAbortActiveTypewriterStreamInteractions();
+            
+            globalResponseExecutionActiveStatusFlag = true;
+            globalLastReceivedResponsePayloadString = rawIncomingGeminiStreamPayload.trim();
+
+            let extractedMicroActionExpressionString = "";
+            const expressionRegexBracketMatcher = /\[(.*?)\]/;
+            const structuralExpressionMatchResultArray = globalLastReceivedResponsePayloadString.match(expressionRegexBracketMatcher);
+
+            if (structuralExpressionMatchResultArray && structuralExpressionMatchResultArray.length > 1) {
+                extractedMicroActionExpressionString = structuralExpressionMatchResultArray[1];
+                dispatchDynamicAvatarGestureTrigger(extractedMicroActionExpressionString);
+            }
+
+            try {
+                dispatchSpeechSynthesizerVocalTrackBuffer(globalLastReceivedResponsePayloadString);
+            } catch (error) { console.error("Audio Dispatch Error:", error); }
+
+            const completelyCleanedDisplaySpeechStringText = globalLastReceivedResponsePayloadString
+                .replace(globalTextSanitizationRegExpPattern, '').trim();
+
+            await executeRealisticTypewriterSubtitleStreamStream(completelyCleanedDisplaySpeechStringText);
+            globalResponseExecutionActiveStatusFlag = false;
+        }
+
+        function executeRealisticTypewriterSubtitleStreamStream(targetSanitizedDisplayStringText) {
+            return new Promise((resolveComponentExecutionPromise) => {
+                const DOMUI_SubtitleMonitorOverlayBox = document.getElementById('subtitle-monitor-box');
+                if (!DOMUI_SubtitleMonitorOverlayBox) {
+                    resolveComponentExecutionPromise();
+                    return;
+                }
+
+                safelyAbortActiveTypewriterStreamInteractions();
+                DOMUI_SubtitleMonitorOverlayBox.innerText = "";
+
+                let currentCharacterIterationPointerIndex = 0;
+                const totalCharacterLengthLimitValue = targetSanitizedDisplayStringText.length;
+
+                globalTypewriterAnimationIntervalReference = setInterval(() => {
+                    if (currentCharacterIterationPointerIndex < totalCharacterLengthLimitValue) {
+                        DOMUI_SubtitleMonitorOverlayBox.innerText += targetSanitizedDisplayStringText.charAt(currentCharacterIterationPointerIndex);
+                        currentCharacterIterationPointerIndex++;
+                    } else {
+                        clearInterval(globalTypewriterAnimationIntervalReference);
+                        globalTypewriterAnimationIntervalReference = null;
+                        resolveComponentExecutionPromise();
+                    }
+                }, 45); 
+            });
+        }
+
+        function dispatchDynamicAvatarGestureTrigger(operationalGestureKeywordString) {
+            if (!coreAnimationMixerController || globalAnimationClipsBufferPool.length === 0) return;
+
+            const compiledLowerGestureTokenString = operationalGestureKeywordString.toLowerCase();
+            let targetedActionClipIndexValue = 0; 
+
+            if (compiledLowerGestureTokenString.includes('muskurate') || compiledLowerGestureTokenString.includes('smile') || compiledLowerGestureTokenString.includes('sharmate')) {
+                targetedActionClipIndexValue = Math.min(1, globalAnimationClipsBufferPool.length - 1);
+                applyTargetSentimentMorphWeightMappings("shy");
+            } else if (compiledLowerGestureTokenString.includes('udas') || compiledLowerGestureTokenString.includes('sad')) {
+                targetedActionClipIndexValue = Math.min(2, globalAnimationClipsBufferPool.length - 1);
+                applyTargetSentimentMorphWeightMappings("sad");
+            } else if (compiledLowerGestureTokenString.includes('khush') || compiledLowerGestureTokenString.includes('happy')) {
+                targetedActionClipIndexValue = Math.min(3, globalAnimationClipsBufferPool.length - 1);
+                applyTargetSentimentMorphWeightMappings("happy");
+            } else {
+                targetedActionClipIndexValue = Math.floor(Math.random() * Math.min(globalAnimationClipsBufferPool.length, 2));
+            }
+
+            try {
+                coreAnimationMixerController.stopAllAction();
+                let targetSelectedAnimationActionObject = coreAnimationMixerController.clipAction(globalAnimationClipsBufferPool[targetedActionClipIndexValue]);
+                targetSelectedAnimationActionObject.reset().setEffectiveWeight(1.0).fadeIn(0.35).play();
+            } catch (e) { console.error("Animation Blend Fault:", e); }
+        }
+
+        function safelyAbortActiveTypewriterStreamInteractions() {
+            if (globalTypewriterAnimationIntervalReference !== null) {
+                clearInterval(globalTypewriterAnimationIntervalReference);
+                globalTypewriterAnimationIntervalReference = null;
+            }
+        }
+
+        function bridgeNetworkPayloadDirectlyIntoResponseEngine(incomingNetworkPayloadBufferText) {
+            processIncomingGeminiResponsePayload(incomingNetworkPayloadBufferText);
+        }
+
+        window.addEventListener('beforeunload', () => {
+            safelyAbortActiveTypewriterStreamInteractions();
+            globalLastReceivedResponsePayloadString = null;
+            activeSkinnedMeshSubnodesTrackArray = [];
+        });
+
+        /*
+          ------------------------------------------------------------------
+          SUB-MODULE H: SYSTEM ENGINE MATRIX LIFECYCLE INITIALIZER LAUNCHER
+          ------------------------------------------------------------------
+        */
+        initializeDeviceHarmonizedGraphicsPipeline();
+        initWeatherAndSkyEngineMatrix();
+        masterApplicationRenderLoopExecutionCycle();
     </script>
 </body>
 </html>
