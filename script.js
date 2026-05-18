@@ -1,7 +1,7 @@
 /**
  * PROJECT MASTER CORE: a1
- * FIX: PERFECT FULL BODY FRAME (NO FOOT/HEAD CUT)
- * ENGINE: FULL GLTF ANIMATION PLAYBACK + HD LIGHTING
+ * UPDATE: PERFECT FRONT FACING LOOK LOCK (SAMNE DEKHNA)
+ * ENGINE: GLTF ANIMATION + HD LIGHTING + SHADOWS
  */
 
 "use strict";
@@ -20,14 +20,15 @@
         STATE.clock = new THREE.Clock();
         STATE.scene = new THREE.Scene();
         
-        // 🎯 कैमरे को थोड़ा और पीछे (3.8) सेट किया ताकि संकरी मोबाइल स्क्रीन पर भी पूरा मॉडल दूर से दिखे
+        // कैलिब्रेटेड फुल-बॉडी कैमरा दूरी (जूते से सिर तक परफेक्ट विजुअल)
         STATE.camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
-        STATE.camera.position.set(0, 0.1, 3.8); 
+        STATE.camera.position.set(0, 0.05, 4.3); 
 
         STATE.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         STATE.renderer.setSize(window.innerWidth, window.innerHeight);
         STATE.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         
+        // प्रीमियम रेंडर सेटिंग्स
         STATE.renderer.outputEncoding = THREE.sRGBEncoding;
         STATE.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         STATE.renderer.toneMappingExposure = 1.0; 
@@ -37,7 +38,7 @@
         const container = document.getElementById('canvas-viewport');
         if (container) container.appendChild(STATE.renderer.domElement);
 
-        // HD रीयलिस्टिक लाइटिंग
+        // एचडी लाइटिंग
         const ambient = new THREE.AmbientLight(0xffffff, 0.9);
         STATE.scene.add(ambient);
 
@@ -83,8 +84,8 @@
                 });
             }
 
-            // 🎯 मॉडल को वर्टिकली बिल्कुल सेंटर में रखने के लिए परफेक्ट वाई-पोजीशन (-1.2)
-            STATE.avatar.position.set(0, -1.2, 0);
+            // मॉडल पोजीशन ग्राउंडेड
+            STATE.avatar.position.set(0, -1.32, 0);
 
             animate();
         });
@@ -100,13 +101,15 @@
             STATE.mixer.update(delta);
         }
         
+        // 🎯 मॉडल को बिल्कुल सामने की तरफ (Front) फोकस रखने का मास्टर फार्मूला
+        // डिफ़ॉल्ट ऑफ-सेट को हटाकर माउस ट्रैकिंग को बिल्कुल सीधा (Centered) कर दिया है
         if (STATE.bones.neck) {
-            STATE.bones.neck.rotation.y = THREE.MathUtils.lerp(STATE.bones.neck.rotation.y, STATE.mouseX * 0.15, 0.05);
-            STATE.bones.neck.rotation.x = THREE.MathUtils.lerp(STATE.bones.neck.rotation.x, STATE.mouseY * 0.10, 0.05);
+            STATE.bones.neck.rotation.y = THREE.MathUtils.lerp(STATE.bones.neck.rotation.y, STATE.mouseX * 0.12, 0.05);
+            STATE.bones.neck.rotation.x = THREE.MathUtils.lerp(STATE.bones.neck.rotation.x, (STATE.mouseY * 0.08) - 0.02, 0.05); // सीधा देखने के लिए झुकाव फिक्स
         }
         if (STATE.bones.head) {
-            STATE.bones.head.rotation.y = THREE.MathUtils.lerp(STATE.bones.head.rotation.y, STATE.mouseX * 0.20, 0.05);
-            STATE.bones.head.rotation.x = THREE.MathUtils.lerp(STATE.bones.head.rotation.x, STATE.mouseY * 0.12, 0.05);
+            STATE.bones.head.rotation.y = THREE.MathUtils.lerp(STATE.bones.head.rotation.y, STATE.mouseX * 0.15, 0.05);
+            STATE.bones.head.rotation.x = THREE.MathUtils.lerp(STATE.bones.head.rotation.x, (STATE.mouseY * 0.10) - 0.03, 0.05); // आँखों का फोकस कैमरा की तरफ लॉक
         }
 
         STATE.renderer.render(STATE.scene, STATE.camera);
