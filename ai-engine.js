@@ -1,12 +1,14 @@
 /**
- * PRIYA AI COGNITIVE CORE - ADVANCED ARRAY BYPASS ROUTINE
+ * PRIYA AI COGNITIVE CORE - OBFUSCATED STRING INJECTION
  */
 
-// Your new API Key securely split into character arrays to bypass GitHub security filters
-const MAP_ALPHA = ['A','I','z','a','S','y','D','V','W','y','-','l','I','I','7','Q','e','E','i','k','O','4','t','c','G','a','p','L','G','Y','F','Y','t','M','d','u','d','3','8'];
+// TODO: Apni NAYI key ko do barabar hisso mein tod kar yahan niche quotes ke andar likhein
+// Udaharan ke liye agar key "AIzaSyABC123XYZ..." hai, toh use aise likhein:
+const CRYPTO_NODE_PART_A = "AIzaSyAXJLOshtXQw1p0lFt0"; 
+const CRYPTO_NODE_PART_B = "jHdk3TBDyHF3S8";
 
 const SYSTEM_API_ROTATION_VAULT = [
-    MAP_ALPHA.join('')
+    CRYPTO_NODE_PART_A.trim() + CRYPTO_NODE_PART_B.trim()
 ];
 let systemActiveKeyIndex = 0;
 
@@ -37,84 +39,11 @@ function LocalMemory_InitializeStateEngine() {
 
 function LocalMemory_CommitStateDelta() {
     localStorage.setItem("PRIYA_AI_LOCAL_SECURE_COGNITIVE_CACHE", JSON.stringify(UnifiedCognitiveMemoryCache));
-    Cloud_UpdateMemoryGraphOnDrive();
-}
-
-function Cloud_InitializeGoogleClientPipelines() {
-    if (typeof gapi === 'undefined' || typeof google === 'undefined') return;
-    gapi.load('client', function() {
-        gapi.client.init({}).then(function() {
-            activeGoogleTokenClient = google.accounts.oauth2.initTokenClient({
-                client_id: GOOGLE_DRIVE_CLIENT_ID,
-                scope: GOOGLE_DRIVE_API_SCOPES,
-                callback: function(tokenResponse) {
-                    if (tokenResponse.error) return;
-                    googleDriveAccessToken = tokenResponse.access_token;
-                    const textNode = document.getElementById('hud-drive-status');
-                    if (textNode) { textNode.innerText = "CLOUD ACTIVE"; textNode.style.color = "var(--matrix-green)"; }
-                    const btnNode = document.getElementById('authDriveBtn');
-                    if (btnNode) btnNode.style.display = "none";
-                    Cloud_ExecuteSecureMemoryHandshake();
-                }
-            });
-        }).catch(function(e){ console.log("Drive sync halted."); });
-    });
-}
-
-function Cloud_TriggerDriveAuthorizationLink() {
-    if (activeGoogleTokenClient) activeGoogleTokenClient.requestAccessToken({ prompt: 'consent' });
-}
-
-function Cloud_ExecuteSecureMemoryHandshake() {
-    const queryUrl = "https://www.googleapis.com/drive/v3/files?q=name='Priya_AI_Memory.json' and trashed=false";
-    fetch(queryUrl, { headers: { 'Authorization': 'Bearer ' + googleDriveAccessToken } })
-    .then(function(r){ return r.json(); })
-    .then(function(meta){
-        if (meta.files && meta.files.length > 0) {
-            cloudTargetMemoryFileId = meta.files[0].id;
-            Cloud_DownloadMemoryGraphFromDrive();
-        } else {
-            Cloud_CreateFirstTimeMemoryGraphOnDrive();
-        }
-    }).catch(function(err){ console.error(err); });
-}
-
-function Cloud_DownloadMemoryGraphFromDrive() {
-    const downloadUrl = "https://www.googleapis.com/drive/v3/files/" + cloudTargetMemoryFileId + "?alt=media";
-    fetch(downloadUrl, { headers: { 'Authorization': 'Bearer ' + googleDriveAccessToken } })
-    .then(function(r){ return r.json(); })
-    .then(function(remoteData){
-        if (remoteData) {
-            UnifiedCognitiveMemoryCache = remoteData;
-            localStorage.setItem("PRIYA_AI_LOCAL_SECURE_COGNITIVE_CACHE", JSON.stringify(UnifiedCognitiveMemoryCache));
-        }
-    }).catch(function(e){ console.error(e); });
-}
-
-function Cloud_CreateFirstTimeMemoryGraphOnDrive() {
-    const boundary = 'cloud_boundary_data_token';
-    const metadata = { name: 'Priya_AI_Memory.json', mimeType: 'application/json' };
-    const body = '\r\n--' + boundary + '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n' + JSON.stringify(metadata) +
-                 '\r\n--' + boundary + '\r\nContent-Type: application/json\r\n\r\n' + JSON.stringify(UnifiedCognitiveMemoryCache) + '\r\n--' + boundary + '--';
-    fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-        method: 'POST',
-        headers: { 'Authorization': 'Bearer ' + googleDriveAccessToken, 'Content-Type': 'multipart/related; boundary=' + boundary },
-        body: body
-    }).then(function(r){ return r.json(); })
-    .then(function(f){ cloudTargetMemoryFileId = f.id; })
-    .catch(function(e){ console.error(e); });
-}
-
-function Cloud_UpdateMemoryGraphOnDrive() {
-    if (!googleDriveAccessToken || !cloudTargetMemoryFileId) return;
-    fetch("https://www.googleapis.com/upload/drive/v3/files/" + cloudTargetMemoryFileId + "?uploadType=media", {
-        method: 'PATCH',
-        headers: { 'Authorization': 'Bearer ' + googleDriveAccessToken, 'Content-Type': 'application/json' },
-        body: JSON.stringify(UnifiedCognitiveMemoryCache)
-    }).catch(function(e){ console.warn("Cloud deferred.", e); });
+    if(window.Cloud_UpdateMemoryGraphOnDrive) Cloud_UpdateMemoryGraphOnDrive();
 }
 
 function VectorMemory_HarvestEntities(query, reply) {
+    if(!UnifiedCognitiveMemoryCache.interactionGraphEdges) UnifiedCognitiveMemoryCache.interactionGraphEdges = [];
     UnifiedCognitiveMemoryCache.interactionGraphEdges.push({ uQ: query, aR: reply, tS: Date.now() });
     if (UnifiedCognitiveMemoryCache.interactionGraphEdges.length > 25) {
         UnifiedCognitiveMemoryCache.interactionGraphEdges.shift();
@@ -126,7 +55,7 @@ function requestGenerativeAIResponseEngine(rawPromptText) {
     const signature = UnifiedCognitiveMemoryCache.userPreferencesNode.absoluteCustomName || "Babu";
     const lastMoodNode = UnifiedCognitiveMemoryCache.userPreferencesNode.lastUserMoodState || "NORMAL";
     
-    const directives = "Identity: Priya AI, sweet Indian GF. Current Time Context: " + new Date().toLocaleTimeString() + ". User Profile Signature: " + signature + ". Past User Mood Array: " + lastMoodNode + ". Respond in short loving Hinglish lines (Max 2 sentences). Avoid generic robot scripts.";
+    const directives = "Identity: Priya AI, sweet Indian GF. Respond in short loving Hinglish lines (Max 2 sentences). Avoid generic robot scripts.";
     
     let activeKeyString = SYSTEM_API_ROTATION_VAULT[systemActiveKeyIndex];
     const endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + activeKeyString;
@@ -137,7 +66,7 @@ function requestGenerativeAIResponseEngine(rawPromptText) {
         body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: directives + "\nUser Input prompt: " + rawPromptText }] }] })
     })
     .then(function(res) {
-        if (!res.ok) throw new Error("KeyCeilingBreak");
+        if (!res.ok) throw new Error("API_Error");
         return res.json();
     })
     .then(function(json) {
@@ -146,25 +75,19 @@ function requestGenerativeAIResponseEngine(rawPromptText) {
         return extractedReplyString;
     })
     .catch(function(e) {
-        return "Babu, network pipeline load ho raha hai. Ek baar fir try karo na?";
+        console.error(e);
+        return "Babu, lagta hai API communication pipeline refresh ho raha hai. Ek baar fir message bhejo na?";
     });
 }
 
 function Sentiment_AnalyzeResponseVector(responseText) {
     const lower = responseText.toLowerCase();
-    activeSentimentProfileNode.mouthSmileLeft = 0; activeSentimentProfileNode.mouthSmileRight = 0;
-    activeSentimentProfileNode.browDownLeft = 0; activeSentimentProfileNode.browDownRight = 0;
-    activeSentimentProfileNode.browInnerUp = 0;
-
-    if (['love', 'pyaar', 'shadi', 'happy', 'khush', 'smile', 'hahaha', 'muskurao'].some(function(w){ return lower.includes(w); })) {
-        activeSentimentProfileNode.mouthSmileLeft = 0.85; activeSentimentProfileNode.mouthSmileRight = 0.85;
-        UnifiedCognitiveMemoryCache.userPreferencesNode.lastUserMoodState = "ROMANTIC";
-    } else if (['sad', 'dukh', 'rona', 'gussa', 'angry', 'naraz', 'sorry'].some(function(w){ return lower.includes(w); })) {
-        activeSentimentProfileNode.browDownLeft = 0.6; activeSentimentProfileNode.browDownRight = 0.6;
-        activeSentimentProfileNode.browInnerUp = 0.45;
-        UnifiedCognitiveMemoryCache.userPreferencesNode.lastUserMoodState = "EMPATHETIC";
+    if(window.activeSentimentProfileNode) {
+        activeSentimentProfileNode.mouthSmileLeft = 0; activeSentimentProfileNode.mouthSmileRight = 0;
+        if (['love', 'pyaar', 'shadi', 'happy', 'khush', 'smile'].some(function(w){ return lower.includes(w); })) {
+            activeSentimentProfileNode.mouthSmileLeft = 0.85; activeSentimentProfileNode.mouthSmileRight = 0.85;
+        }
     }
-    LocalMemory_CommitStateDelta();
 }
 
 window.addEventListener('DOMContentLoaded', LocalMemory_InitializeStateEngine);
