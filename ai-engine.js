@@ -1,13 +1,10 @@
 /**
- * PRIYA AI COGNITIVE CORE - BASE64 OBFUSCATED ROUTINE
+ * PRIYA AI COGNITIVE CORE - PRODUCTION INJECTION
  */
 
-// Key is encoded in Base64 format to bypass GitHub automated scanner sweeps entirely
-const SECURE_VAULT_NODE_ALPHA = "QUl6YVN5QUp0TjQtWFI0VEl3eFM2dENwYkR6ck1VclJhWXBpTjFr";
-
+// This placeholder will be safely overwritten during the GitHub Actions build step
 const SYSTEM_API_ROTATION_VAULT = [
-    // Decoding at runtime safely inside the user's browser
-    atob(SECURE_VAULT_NODE_ALPHA)
+    "__GEMINI_API_KEY_PLACEHOLDER__"
 ];
 let systemActiveKeyIndex = 0;
 
@@ -38,7 +35,6 @@ function LocalMemory_InitializeStateEngine() {
 
 function LocalMemory_CommitStateDelta() {
     localStorage.setItem("PRIYA_AI_LOCAL_SECURE_COGNITIVE_CACHE", JSON.stringify(UnifiedCognitiveMemoryCache));
-    if(window.Cloud_UpdateMemoryGraphOnDrive) Cloud_UpdateMemoryGraphOnDrive();
 }
 
 function VectorMemory_HarvestEntities(query, reply) {
@@ -51,9 +47,6 @@ function VectorMemory_HarvestEntities(query, reply) {
 }
 
 function requestGenerativeAIResponseEngine(rawPromptText) {
-    const signature = UnifiedCognitiveMemoryCache.userPreferencesNode.absoluteCustomName || "Babu";
-    const lastMoodNode = UnifiedCognitiveMemoryCache.userPreferencesNode.lastUserMoodState || "NORMAL";
-    
     const directives = "Identity: Priya AI, sweet Indian GF. Respond in short loving Hinglish lines (Max 2 sentences). Avoid generic robot scripts.";
     
     let activeKeyString = SYSTEM_API_ROTATION_VAULT[systemActiveKeyIndex];
