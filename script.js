@@ -1,5 +1,5 @@
 /**
- * PRIYA AI ADVANCED GRAPHICS & BACKEND SYNC ENVIRONMENT
+ * PRIYA AI GRAPHICS CORE & CLEAN DATA PIPELINE
  */
 
 const SYSTEM_API_ROTATION_VAULT = [
@@ -23,9 +23,6 @@ let computationalSkinnedMeshes = [];
 let internalAnimationMixer = null, systemsClockEngine;
 
 let kinematicsCoordinates = { targetX: 0, targetY: 0, currentX: 0, currentY: 0 };
-let ecosystemStates = { currentSentiment: "neutral" };
-let standardMaterialsCacheMap = new Map();
-
 let flagVoiceSynthesizerIsActive = false;
 let profilingFramesCount = 0, operationalLastTimestamp = 0;
 
@@ -34,45 +31,42 @@ let UnifiedCognitiveMemoryCache = {
     interactionGraphEdges: []
 };
 
-// SAFE LAUNCH DETACHED: Call Google Cloud integration only after window completely settles
 function Cloud_InitializeGoogleClientPipelines() {
-    try {
-        if (typeof gapi === 'undefined' || typeof google === 'undefined') {
-            console.warn("Google Client Ecosystem deferred or blocked by Client Network.");
-            return;
-        }
-        gapi.load('client', async () => {
-            try {
-                await gapi.client.init({});
-                activeGoogleTokenClient = google.accounts.oauth2.initTokenClient({
-                    client_id: GOOGLE_DRIVE_CLIENT_ID,
-                    scope: GOOGLE_DRIVE_API_SCOPES,
-                    callback: async (tokenResponse) => {
-                        if (tokenResponse.error) return;
-                        googleDriveAccessToken = tokenResponse.access_token;
-                        document.getElementById('hud-drive-status').innerText = "CLOUD ACTIVE";
-                        document.getElementById('hud-drive-status').style.color = "var(--matrix-green)";
-                        document.getElementById('authDriveBtn').style.display = "none";
-                        await Cloud_ExecuteSecureMemoryHandshake();
-                    },
-                });
-            } catch (err) { console.error("Gapi structure allocation failure:", err); }
-        });
-    } catch(e) { console.error("Passive authentication crash protection caught:", e); }
+    if (typeof gapi === 'undefined' || typeof google === 'undefined') {
+        console.log("Cloud services deferred.");
+        return;
+    }
+    gapi.load('client', async () => {
+        try {
+            await gapi.client.init({});
+            activeGoogleTokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: GOOGLE_DRIVE_CLIENT_ID,
+                scope: GOOGLE_DRIVE_API_SCOPES,
+                callback: async (tokenResponse) => {
+                    if (tokenResponse.error) return;
+                    googleDriveAccessToken = tokenResponse.access_token;
+                    document.getElementById('hud-drive-status').innerText = "CLOUD ACTIVE";
+                    document.getElementById('hud-drive-status').style.color = "var(--matrix-green)";
+                    document.getElementById('authDriveBtn').style.display = "none";
+                    await Cloud_ExecuteSecureMemoryHandshake();
+                },
+            });
+        } catch (err) { console.error(err); }
+    });
 }
 
 function Cloud_TriggerDriveAuthorizationLink() {
     if (activeGoogleTokenClient) {
         activeGoogleTokenClient.requestAccessToken({ prompt: 'consent' });
     } else {
-        alert("Google Drive API Client abhi ready nahi hai, kripya thoda rukein.");
+        alert("Sync System is warming up. Try again in 2 seconds.");
     }
 }
 
 async function Cloud_ExecuteSecureMemoryHandshake() {
     try {
-        const response = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='Priya_AI_Memory.json' and trashed=false`, {
-            headers: { 'Authorization': `Bearer ${googleDriveAccessToken}` }
+        const response = await fetch("https://www.googleapis.com/drive/v3/files?q=name='Priya_AI_Memory.json' and trashed=false", {
+            headers: { 'Authorization': 'Bearer ' + googleDriveAccessToken }
         });
         const meta = await response.json();
         if (meta.files && meta.files.length > 0) {
@@ -81,34 +75,33 @@ async function Cloud_ExecuteSecureMemoryHandshake() {
         } else {
             await Cloud_CreateFirstTimeMemoryGraphOnDrive();
         }
-    } catch (err) { console.error("Cloud Handshake Failed:", err); }
+    } catch (err) { console.error(err); }
 }
 
 async function Cloud_DownloadMemoryGraphFromDrive() {
     try {
-        const fetchFile = await fetch(`https://www.googleapis.com/drive/v3/files/${cloudTargetMemoryFileId}?alt=media`, {
-            headers: { 'Authorization': `Bearer ${googleDriveAccessToken}` }
+        const fetchFile = await fetch("https://www.googleapis.com/drive/v3/files/" + cloudTargetMemoryFileId + "?alt=media", {
+            headers: { 'Authorization': 'Bearer ' + googleDriveAccessToken }
         });
         const remoteData = await fetchFile.json();
-        if (remoteData) {
-            UnifiedCognitiveMemoryCache = remoteData;
-            console.log("Memory database mirrored successfully.");
-        }
+        if (remoteData) UnifiedCognitiveMemoryCache = remoteData;
     } catch (e) { console.error(e); }
 }
 
 async function Cloud_CreateFirstTimeMemoryGraphOnDrive() {
     const boundary = 'foo_bar_baz';
     const metadata = { name: 'Priya_AI_Memory.json', mimeType: 'application/json' };
-    const multipartBody = 
-        `\r\n--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}` +
-        `\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(UnifiedCognitiveMemoryCache)}\r\n--${boundary}--`;
+    
+    // Clean string building to secure GitHub Action builds
+    let multipartBody = '\r\n--' + boundary + '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n' + JSON.stringify(metadata) +
+                        '\r\n--' + boundary + '\r\nContent-Type: application/json\r\n\r\n' + JSON.stringify(UnifiedCognitiveMemoryCache) + '\r\n--' + boundary + '--';
+
     try {
         const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${googleDriveAccessToken}`,
-                'Content-Type': `multipart/related; boundary=${boundary}`
+                'Authorization': 'Bearer ' + googleDriveAccessToken,
+                'Content-Type': 'multipart/related; boundary=' + boundary
             },
             body: multipartBody
         });
@@ -120,22 +113,18 @@ async function Cloud_CreateFirstTimeMemoryGraphOnDrive() {
 async function Cloud_UpdateMemoryGraphOnDrive() {
     if (!googleDriveAccessToken || !cloudTargetMemoryFileId) return;
     try {
-        await fetch(`https://www.googleapis.com/upload/drive/v3/files/${cloudTargetMemoryFileId}?uploadType=media`, {
+        await fetch("https://www.googleapis.com/upload/drive/v3/files/" + cloudTargetMemoryFileId + "?uploadType=media", {
             method: 'PATCH',
             headers: {
-                'Authorization': `Bearer ${googleDriveAccessToken}`,
+                'Authorization': 'Bearer ' + googleDriveAccessToken,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(UnifiedCognitiveMemoryCache)
         });
-    } catch (err) { console.warn("Cloud Sync Dropped:", err); }
+    } catch (err) { console.warn(err); }
 }
 
 function VectorMemory_HarvestEntities(query, reply) {
-    if (query.toLowerCase().includes('naam') || query.toLowerCase().includes('name')) {
-        let parts = query.split(/\s+/);
-        if(parts.length > 2) UnifiedCognitiveMemoryCache.userPreferencesNode.absoluteCustomName = parts[parts.length-1];
-    }
     UnifiedCognitiveMemoryCache.interactionGraphEdges.push({ uQ: query, aR: reply, tS: Date.now() });
     if (UnifiedCognitiveMemoryCache.interactionGraphEdges.length > 20) UnifiedCognitiveMemoryCache.interactionGraphEdges.shift();
     Cloud_UpdateMemoryGraphOnDrive();
@@ -143,16 +132,16 @@ function VectorMemory_HarvestEntities(query, reply) {
 
 async function requestGenerativeAIResponseEngine(rawPromptText) {
     const signature = UnifiedCognitiveMemoryCache.userPreferencesNode.absoluteCustomName || "Babu";
-    const directives = `Identity: Priya AI, Indian virtual girlfriend. Sweety Hinglish. Max 2 lines. Context Name: ${signature}`;
+    const directives = "Identity: Priya AI, Sweet Indian GF. Reply sweet Hinglish lines. Max 2 lines. Username context: " + signature;
     let rotationKey = SYSTEM_API_ROTATION_VAULT[systemActiveKeyIndex];
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${rotationKey}`;
+    const endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + rotationKey;
     try {
         const pipeline = await fetch(endpoint, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: `${directives}\nPrompt: ${rawPromptText}` }] }] })
+            body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: directives + "\nPrompt: " + rawPromptText }] }] })
         });
-        if (!pipeline.ok) throw new Error("Rotate");
+        if (!pipeline.ok) throw new Error("KeyFail");
         const json = await pipeline.json();
         let resText = json.candidates[0].content.parts[0].text.replace(/[*#_\-]/g, '').trim();
         VectorMemory_HarvestEntities(rawPromptText, resText);
@@ -185,12 +174,8 @@ function initializeThreeGraphicsEnvironment() {
     const dLight = new THREE.DirectionalLight(0xfff6ed, 2.0);
     dLight.position.set(2, 5, 4); globalThreeScene.add(dLight);
 
-    console.log("Starting asset load pipeline...");
     const loader = new THREE.GLTFLoader();
-    
-    // CRITICAL FIX: Ensure loader handles error gracefully to unlock screen instantly
     loader.load(CLOUD_MODEL_ENDPOINT, (gltf) => {
-        console.log("Asset load success.");
         dismissBootLoaderScreen();
         mainAvatarModel = gltf.scene;
         mainAvatarModel.position.y = -0.7; 
@@ -199,10 +184,7 @@ function initializeThreeGraphicsEnvironment() {
         mainAvatarModel.traverse((node) => {
             if (node.isMesh) {
                 node.frustumCulled = false;
-                if (node.material) {
-                    node.material.side = THREE.DoubleSide;
-                    standardMaterialsCacheMap.set(node.id, node.material.clone());
-                }
+                if (node.material) node.material.side = THREE.DoubleSide;
             }
             if (node.isBone) {
                 let name = node.name.toLowerCase();
@@ -220,12 +202,11 @@ function initializeThreeGraphicsEnvironment() {
     }, (xhr) => {
         if(xhr.total) {
             let pct = Math.round((xhr.loaded / xhr.total) * 100);
-            document.getElementById('loader-status-text').innerText = `LOADING MODEL CORE (${pct}%)...`;
+            document.getElementById('loader-status-text').innerText = "LOADING CORE (" + pct + "%)...";
         }
     }, (err) => { 
-        console.error("GLTF Loader crashed or blocked:", err); 
-        document.getElementById('loader-status-text').innerText = "LOAD ERROR! BYPASSING SYSTEM...";
-        setTimeout(dismissBootLoaderScreen, 1000); // Failover bypass
+        console.warn("Asset pipeline delayed. Bypassing screen."); 
+        setTimeout(dismissBootLoaderScreen, 1000);
     });
 
     window.addEventListener('resize', () => {
@@ -273,7 +254,7 @@ function coreRuntimeAnimationProcessingPipeline() {
 
     profilingFramesCount++;
     if (elapsed > operationalLastTimestamp + 1.0) {
-        if (document.getElementById('hud-fps-val')) document.getElementById('hud-fps-val').innerText = `${profilingFramesCount} FPS`;
+        if (document.getElementById('hud-fps-val')) document.getElementById('hud-fps-val').innerText = profilingFramesCount + " FPS";
         profilingFramesCount = 0; operationalLastTimestamp = elapsed;
     }
 
@@ -315,14 +296,13 @@ userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') triggerPr
 
 function dismissBootLoaderScreen() {
     const veil = document.getElementById('boot-loader');
-    if (veil) { veil.style.opacity = '0'; setTimeout(() => { veil.style.display = 'none'; }, 500); }
+    if (veil) { veil.style.opacity = '0'; setTimeout(() => { veil.style.display = 'none'; }, 400); }
 }
 
-// EXECUTION ORDER CONTROL
+// SECURE EXECUTION ORDER
 initializeThreeGraphicsEnvironment();
 coreRuntimeAnimationProcessingPipeline();
 
-// Drive execution happens dynamically without freezing the DOM
-window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(Cloud_InitializeGoogleClientPipelines, 1500);
+window.addEventListener('load', () => {
+    setTimeout(Cloud_InitializeGoogleClientPipelines, 1000);
 });
