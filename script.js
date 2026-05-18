@@ -1,8 +1,7 @@
 /**
  * PROJECT MASTER CORE: a1
- * DATA UPDATE: HD REALISM & SHADOW MAPPING ENGINE
- * CAMERA: FIXED FULL BODY FIT (NO HEAD CUT)
- * ENGINE: FULL GLTF ANIMATION PLAYBACK
+ * FIX: PERFECT FULL BODY FRAME (NO FOOT/HEAD CUT)
+ * ENGINE: FULL GLTF ANIMATION PLAYBACK + HD LIGHTING
  */
 
 "use strict";
@@ -21,38 +20,35 @@
         STATE.clock = new THREE.Clock();
         STATE.scene = new THREE.Scene();
         
-        // a1 कैलिब्रेटेड कैमरा सेटिंग्स (लॉक्ड डेटा)
+        // 🎯 कैमरे को थोड़ा और पीछे (3.8) सेट किया ताकि संकरी मोबाइल स्क्रीन पर भी पूरा मॉडल दूर से दिखे
         STATE.camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
-        STATE.camera.position.set(0, 0.2, 3.0); 
+        STATE.camera.position.set(0, 0.1, 3.8); 
 
         STATE.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         STATE.renderer.setSize(window.innerWidth, window.innerHeight);
         STATE.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         
-        // 🎯 न्यू एचडी डेटा: एडवांस्ड कलर और लाइटिंग रेंडरिंग एक्टिवेशन
         STATE.renderer.outputEncoding = THREE.sRGBEncoding;
-        STATE.renderer.toneMapping = THREE.ACESFilmicToneMapping; // सिनेमाई एचडी टोनमैपिंग
+        STATE.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         STATE.renderer.toneMappingExposure = 1.0; 
-        STATE.renderer.shadowMap.enabled = true; // रीयल-टाइम परछाइयां ऑन
-        STATE.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // सॉफ्ट शैडो इफ़ेक्ट
+        STATE.renderer.shadowMap.enabled = true;
+        STATE.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
         const container = document.getElementById('canvas-viewport');
         if (container) container.appendChild(STATE.renderer.domElement);
 
-        // 🎯 री-इंजीनियर्ड लाइटिंग डेटा (असली दुनिया जैसी चमक के लिए)
-        const ambient = new THREE.AmbientLight(0xffffff, 0.9); // सॉफ्ट बेस लाइट
+        // HD रीयलिस्टिक लाइटिंग
+        const ambient = new THREE.AmbientLight(0xffffff, 0.9);
         STATE.scene.add(ambient);
 
-        // मुख्य सूरज की रोशनी जो चेहरे पर परफेक्ट कट्स और परछाइयां बनाएगी
         const sunLight = new THREE.DirectionalLight(0xfff5ea, 1.4);
         sunLight.position.set(2, 4, 3);
-        sunLight.castShadow = true; // इस लाइट से परछाइयां बनेंगी
-        sunLight.shadow.mapSize.width = 2048; // हाई क्वालिटी शैडो रेजोल्यूशन
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 2048;
         sunLight.shadow.mapSize.height = 2048;
         sunLight.shadow.bias = -0.0001;
         STATE.scene.add(sunLight);
 
-        // बैकलाइट (Rim Light) बालों और कंधों को बैकग्राउंड से अलग चमकाने के लिए
         const rimLight = new THREE.DirectionalLight(0xffffff, 0.6);
         rimLight.position.set(-2, 2, -2);
         STATE.scene.add(rimLight);
@@ -62,14 +58,12 @@
             STATE.avatar = gltf.scene;
             STATE.scene.add(STATE.avatar);
 
-            // एवाटूर्न मॉडल पर शैडो को एक्टिवेट करना
             STATE.avatar.traverse(function (node) {
                 if (node.isMesh) {
                     node.castShadow = true;
                     node.receiveShadow = true;
-                    // कपड़ों और स्किन के टेक्सचर को और ज्यादा क्रिस्प (HD) करना
                     if (node.material) {
-                        node.material.roughness = 0.65; // अत्यधिक प्लास्टिक जैसी शाइन को हटाना
+                        node.material.roughness = 0.65;
                         node.material.metalness = 0.0;
                     }
                 }
@@ -80,7 +74,7 @@
                 }
             });
 
-            // एनिमेशन लूप इंजन (लॉक्ड डेटा नियम)
+            // एनिमेशन लूप इंजन
             if (gltf.animations && gltf.animations.length > 0) {
                 STATE.mixer = new THREE.AnimationMixer(STATE.avatar);
                 gltf.animations.forEach((clip) => {
@@ -89,8 +83,8 @@
                 });
             }
 
-            // मॉडल पोजीशन (लॉक्ड डेटा नियम)
-            STATE.avatar.position.set(0, -1.0, 0);
+            // 🎯 मॉडल को वर्टिकली बिल्कुल सेंटर में रखने के लिए परफेक्ट वाई-पोजीशन (-1.2)
+            STATE.avatar.position.set(0, -1.2, 0);
 
             animate();
         });
@@ -106,7 +100,6 @@
             STATE.mixer.update(delta);
         }
         
-        // गर्दन और सिर की स्मूथ माउस/टच ट्रैकिंग
         if (STATE.bones.neck) {
             STATE.bones.neck.rotation.y = THREE.MathUtils.lerp(STATE.bones.neck.rotation.y, STATE.mouseX * 0.15, 0.05);
             STATE.bones.neck.rotation.x = THREE.MathUtils.lerp(STATE.bones.neck.rotation.x, STATE.mouseY * 0.10, 0.05);
