@@ -535,5 +535,33 @@
         </div>
         <button class="action-circle-btn send-trigger-btn" id="sendBtn" title="कमांड भेजें">➔</button>
     </div>
-</body>
+</body><style>
+    /* Agar script execute na bhi ho, toh CSS directly screen ko 3 second baad open kar degi */
+    @keyframes ForceRevealUI {
+        0% { opacity: 1; visibility: visible; }
+        99% { opacity: 0; visibility: visible; }
+        100% { opacity: 0; visibility: hidden; display: none !important; pointer-events: none; }
+    }
+    #core-boot-loader {
+        animation: ForceRevealUI 3s cubic-bezier(0.25, 1, 0.25, 1) forwards;
+    }
+</style>
+
+<script>
+    // Browser dynamic hard-override to clear layout blocks instantly
+    (function() {
+        console.log("Hard watchdog initialization initiated.");
+        setTimeout(function() {
+            var coreVeil = document.getElementById('core-boot-loader');
+            if (coreVeil) {
+                coreVeil.style.opacity = '0';
+                coreVeil.style.pointerEvents = 'none';
+                setTimeout(function() {
+                    coreVeil.style.display = 'none';
+                }, 500);
+            }
+        }, 2500);
+    })();
+</script>
+
 </html>
