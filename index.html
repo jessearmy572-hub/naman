@@ -377,5 +377,34 @@
         <button class="action-circle-btn send-trigger-btn" id="sendBtn" title="कमांड भेजें">➔</button>
     </div>
 
-</body>
+</body><style>
+    /* Absolute Fail-Safe animation: Agar JS code load na bhi ho, yeh 2.5 second baad loader ko crash proof gayab karega */
+    @keyframes A1ForceReveal {
+        0% { opacity: 1; visibility: visible; }
+        90% { opacity: 0; visibility: visible; }
+        100% { opacity: 0; visibility: hidden; display: none !important; pointer-events: none; }
+    }
+    #core-boot-loader {
+        animation: A1ForceReveal 2.5s cubic-bezier(0.25, 1, 0.25, 1) forwards !important;
+    }
+</style>
+
+<script>
+    // Universal Core Override Loop
+    (function() {
+        console.log("A1 Guard: Hard watchdog initialization initiated.");
+        setTimeout(function() {
+            var coreVeil = document.getElementById('core-boot-loader');
+            if (coreVeil) {
+                coreVeil.style.opacity = '0';
+                coreVeil.style.pointerEvents = 'none';
+                setTimeout(function() {
+                    coreVeil.style.display = 'none';
+                }, 400);
+                console.log("A1 Security Strike: Loader cleared successfully.");
+            }
+        }, 2200); // 2.2 second ka hard timeout limit
+    })();
+</script>
+
 </html>
