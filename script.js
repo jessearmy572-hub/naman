@@ -1,18 +1,17 @@
 /**
  * PROJECT MASTER CORE: a1 
- * ENGINE: UNIVERSAL AVATURN AUTOMATIC FULL SCREEN FIT
- * LOOK: 100% NATURAL HUMAN POSE (ARMS DOWN)
+ * ENGINE: GLTF ANIMATION MIXER ACTIVE (NATURAL MOTION)
+ * CAMERA: FIXED FULL BODY FIT (NO HEAD CUT)
  */
 
 "use strict";
 
 (function () {
-    // a1 सेव्ड डेटा स्ट्रक्चर
+    // a1 मास्टर डेटा स्ट्रक्चर
     const STATE = {
         scene: null, camera: null, renderer: null, clock: null, avatar: null,
+        mixer: null, // 🎯 तुम्हारी फाइल का नेचुरल मोशन प्ले करने वाला प्लेयर
         bones: {
-            leftArm: null, leftForearm: null,
-            rightArm: null, rightForearm: null,
             neck: null, head: null
         },
         mouseX: 0, mouseY: 0
@@ -22,9 +21,9 @@
         STATE.clock = new THREE.Clock();
         STATE.scene = new THREE.Scene();
         
-        // डायनेमिक कैमरा (यह स्क्रीन साइज के हिसाब से खुद को एडजस्ट करेगा)
+        // 🎯 फिक्स मैनुअल कैमरा सेटिंग्स: सिर से पैर तक फुल बॉडी बिना कटे दिखाने के लिए
         STATE.camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
-        STATE.camera.position.set(0, 0, 3); 
+        STATE.camera.position.set(0, 0.15, 2.3); // परफेक्ट दूरी और ऊंचाई पर लॉक
 
         STATE.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         STATE.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -34,7 +33,7 @@
         const container = document.getElementById('canvas-viewport');
         if (container) container.appendChild(STATE.renderer.domElement);
 
-        // नेचुरल रीयलिस्टिक लाइटिंग (सॉफ्ट शैडोज के साथ)
+        // सॉफ्ट नेचुरल रीयलिस्टिक लाइटिंग
         const ambient = new THREE.AmbientLight(0xffffff, 1.4);
         STATE.scene.add(ambient);
         const sun = new THREE.DirectionalLight(0xfff5ea, 1.1);
@@ -46,25 +45,25 @@
             STATE.avatar = gltf.scene;
             STATE.scene.add(STATE.avatar);
 
-            // एवाटूर्न फुल बॉडी पार्ट नेम्स की सटीक स्कैनिंग
+            // 🎯 एनिमेशन प्लेयर चालू करना और फाइल का नेचुरल मोशन प्ले करना
+            if (gltf.animations && gltf.animations.length > 0) {
+                STATE.mixer = new THREE.AnimationMixer(STATE.avatar);
+                // फाइल के पहले एनिमेशन (जो कि नेचुरल पोज़ है) को प्ले करना
+                const action = STATE.mixer.clipAction(gltf.animations[0]);
+                action.play();
+            }
+
+            // हेड ट्रैकिंग के लिए हड्डियां ढूंढना
             STATE.avatar.traverse(function (node) {
                 if (node.isBone) {
                     let n = node.name;
                     if (n.includes('Neck')) STATE.bones.neck = node;
                     if (n.includes('Head')) STATE.bones.head = node;
-                    if (n.includes('LeftArm')) STATE.bones.leftArm = node;
-                    if (n.includes('LeftForeArm')) STATE.bones.leftForearm = node;
-                    if (n.includes('RightArm')) STATE.bones.rightArm = node;
-                    if (n.includes('RightForeArm')) STATE.bones.rightForearm = node;
                 }
             });
 
-            // हाथों को स्वाभाविक रूप से नीचे सेट करना
-            applyNaturalNormalPose();
-            
-            // कैमरा ऑटो-फिट इंजन को रन करना ताकि पूरी बॉडी स्क्रीन में समा जाए
-            STATE.avatar.position.set(0, 0, 0);
-            autoFitCameraToScreen();
+            // मॉडल को स्क्रीन के निचले हिस्से में सेट करना
+            STATE.avatar.position.set(0, -0.95, 0);
 
             animate();
         });
@@ -72,64 +71,16 @@
         setupEvents();
     }
 
-    // 🎯 मास्टर फार्मूला: हर डिवाइस पर ऑटोमैटिक फुल बॉडी स्क्रीन फिट के लिए
-    function autoFitCameraToScreen() {
-        if (!STATE.avatar || !STATE.camera) return;
-
-        const box = new THREE.Box3().setFromObject(STATE.avatar);
-        const size = box.getSize(new THREE.Vector3());
-        const center = box.getCenter(new THREE.Vector3());
-
-        const maxDim = Math.max(size.x, size.y, size.z);
-        const fov = STATE.camera.fov * (Math.PI / 180);
-        
-        // स्क्रीन रेश्यो के हिसाब से कैमरे की परफेक्ट दूरी कैलकुलेट करना
-        let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
-        
-        // मोबाइल पर्ट्रेट व्यू के लिए एक्स्ट्रा सेफ गैप देना
-        if (window.innerWidth < window.innerHeight) {
-            cameraZ *= 1.35; 
-        } else {
-            cameraZ *= 1.1;
-        }
-
-        STATE.camera.position.z = cameraZ;
-        STATE.camera.position.y = center.y; 
-        STATE.camera.lookAt(center);
-
-        // मॉडल के पैरों को ग्राउंड पर अलाइन करना
-        STATE.avatar.position.y = -size.y / 2;
-    }
-
-    // 🎯 नेचुरल नॉर्मल इंसान पोज़ लॉजिक (आर्म्स डाउन)
-    function applyNaturalNormalPose() {
-        if (STATE.bones.leftArm) {
-            STATE.bones.leftArm.rotation.set(0, 0, -1.32); // बायां हाथ नीचे झुका हुआ
-        }
-        if (STATE.bones.leftForearm) {
-            STATE.bones.leftForearm.rotation.set(0, 0, -0.1);
-        }
-
-        if (STATE.bones.rightArm) {
-            STATE.bones.rightArm.rotation.set(0, 0, 1.32); // दायां हाथ नीचे झुका हुआ
-        }
-        if (STATE.bones.rightForearm) {
-            STATE.bones.rightForearm.rotation.set(0, 0, 0.1);
-        }
-    }
-
     function animate() {
         requestAnimationFrame(animate);
-        let time = STATE.clock.getElapsedTime();
+        let delta = STATE.clock.getDelta();
         
-        // हल्का सा नेचुरल ब्रीदिंग मोशन
-        if (STATE.avatar) {
-            const baseBox = new THREE.Box3().setFromObject(STATE.avatar);
-            const size = baseBox.getSize(new THREE.Vector3());
-            STATE.avatar.position.y = (-size.y / 2) + (Math.sin(time * 1.3) * 0.003);
+        // 🎯 हर फ्रेम में एनिमेशन प्लेयर को अपडेट करना ताकि मोशन चलता रहे
+        if (STATE.mixer) {
+            STATE.mixer.update(delta);
         }
         
-        // माउस और टच के साथ गर्दन और सिर का घूमना
+        // माउस और टच के साथ गर्दन और सिर का नेचुरल घूमना
         if (STATE.bones.neck) {
             STATE.bones.neck.rotation.y = THREE.MathUtils.lerp(STATE.bones.neck.rotation.y, STATE.mouseX * 0.15, 0.05);
             STATE.bones.neck.rotation.x = THREE.MathUtils.lerp(STATE.bones.neck.rotation.x, STATE.mouseY * 0.10, 0.05);
@@ -138,9 +89,6 @@
             STATE.bones.head.rotation.y = THREE.MathUtils.lerp(STATE.bones.head.rotation.y, STATE.mouseX * 0.20, 0.05);
             STATE.bones.head.rotation.x = THREE.MathUtils.lerp(STATE.bones.head.rotation.x, STATE.mouseY * 0.12, 0.05);
         }
-
-        // हर फ्रेम में नेचुरल पोज़ को बनाए रखना
-        applyNaturalNormalPose();
 
         STATE.renderer.render(STATE.scene, STATE.camera);
     }
@@ -157,13 +105,11 @@
             }
         }, { passive: true });
         
-        // स्क्रीन का साइज बदलते ही ऑटोमैटिकली दोबारा री-कैलकुलेट करना
         window.addEventListener('resize', () => {
             if (STATE.camera && STATE.renderer) {
                 STATE.camera.aspect = window.innerWidth / window.innerHeight;
                 STATE.camera.updateProjectionMatrix();
                 STATE.renderer.setSize(window.innerWidth, window.innerHeight);
-                autoFitCameraToScreen();
             }
         });
     }
