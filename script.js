@@ -1,7 +1,7 @@
 /**
  * PROJECT MASTER CORE: a1
- * ADVANCED UPDATE: 99% HUMAN SKIN TEXTURE & NATURAL EYE BLINK ENGINE
- * ENGINE: GLTF ANIMATION + AUTOMATIC LOOK-AT TARGETING + HD LIGHTING
+ * ADVANCED UPDATE: 99% CINEMATIC HUMAN REALISM & BLINK ENGINE FIX
+ * SPEC: ULTRA-SHARP SKIN TEXTURES, REAL SHADOWS & UNIVERSAL MORPH TRACKING
  */
 
 "use strict";
@@ -14,9 +14,9 @@
             neck: null, head: null, spine: null
         },
         blink: {
-            leftMesh: null, rightMesh: null, // आँख के मेश
-            targetIndexLeft: -1, targetIndexRight: -1, // ब्लिंक शेप इंडेक्स
-            timer: 0, nextBlinkTime: 2.0, state: 'open', duration: 0.0
+            meshes: [], // उन सभी मेश की लिस्ट जिनमें ब्लिंक शेप्स हैं
+            targetIndices: [], // उनके रेस्पेक्टिव इंडेक्स
+            timer: 0, nextBlinkTime: 1.5, state: 'open', duration: 0.0
         },
         mouseX: 0, mouseY: 0
     };
@@ -25,39 +25,46 @@
         STATE.clock = new THREE.Clock();
         STATE.scene = new THREE.Scene();
         
-        // ड्रेसेस-प्रूफ कैमरा सेटिंग्स (लॉक्ड डेटा)
+        // ड्रेस-प्रूफ कैमरा सेटिंग्स (लॉक्ड डेटा - स्ट्रेट पैरेलल व्यू)
         STATE.camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
         STATE.camera.position.set(0, 0, 4.3); 
 
-        STATE.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        STATE.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
         STATE.renderer.setSize(window.innerWidth, window.innerHeight);
-        STATE.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        STATE.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // क्रिस्प और शार्प पिक्सल्स के लिए
         
-        // प्रीमियम एचडी रेंडर सेटिंग्स
+        // 🎯 99% रीयलिस्टिक इंसानी चमक के लिए री-इंजीनियर्ड रेंडरिंग सेटिंग्स
         STATE.renderer.outputEncoding = THREE.sRGBEncoding;
-        STATE.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        STATE.renderer.toneMappingExposure = 1.0; 
+        STATE.renderer.toneMapping = THREE.ACESFilmicToneMapping; // हॉलीवुड फिल्म जैसी कलर ग्रेडिंग
+        STATE.renderer.toneMappingExposure = 1.15; // चेहरे और कपड़ों पर लाइट का सही बैलेंस
         STATE.renderer.shadowMap.enabled = true;
-        STATE.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        STATE.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // अल्ट्रा-सॉफ्ट नेचुरल परछाइयां
 
         const container = document.getElementById('canvas-viewport');
         if (container) container.appendChild(STATE.renderer.domElement);
 
-        // एचडी रीयलिस्टिक लाइटिंग डेटा
-        const ambient = new THREE.AmbientLight(0xffffff, 0.85);
+        // 🎯 स्टूडियो क्वालिटी थ्री-पॉइंट लाइटिंग (चेहरे और ड्रेस को उभारने के लिए)
+        const ambient = new THREE.AmbientLight(0xffffff, 0.65); // सॉफ्ट बेस लाइट ताकि अंधेरा न रहे
         STATE.scene.add(ambient);
 
-        const sunLight = new THREE.DirectionalLight(0xfff5ea, 1.4);
-        sunLight.position.set(2, 4, 3);
+        // मुख्य प्रकाश (सूरज/की-लाइट) जो असली स्किन पोर्स और परछाइयों को विजिबल करेगा
+        const sunLight = new THREE.DirectionalLight(0xfff6ed, 1.6);
+        sunLight.position.set(1.5, 3.5, 3.5);
         sunLight.castShadow = true;
-        sunLight.shadow.mapSize.width = 2048;
+        sunLight.shadow.mapSize.width = 2048; // हाई-डेफिनिशन शैडो क्वालिटी
         sunLight.shadow.mapSize.height = 2048;
-        sunLight.shadow.bias = -0.0001;
+        sunLight.shadow.bias = -0.0002;
+        sunLight.shadow.normalBias = 0.02; // कपड़ों के कट्स पर गहरी लाइन्स रोकने के लिए
         STATE.scene.add(sunLight);
 
-        // रीम लाइट - बालों और स्किन बॉर्डर्स पर असली ग्लो देने के लिए
-        const rimLight = new THREE.DirectionalLight(0xffffff, 0.65);
-        rimLight.position.set(-2, 2, -2);
+        // फिल लाइट (चेहरे के दूसरी तरफ की शैडो को सॉफ्ट रखने के लिए)
+        const fillLight = new THREE.DirectionalLight(0xdbe9ff, 0.5);
+        fillLight.position.set(-2, 1, 2);
+        STATE.scene.add(fillLight);
+
+        // रीम लाइट (पीछे से बालों और कंधों पर चमकीली इंसानी आउटलाइन देने के लिए)
+        const rimLight = new THREE.DirectionalLight(0xffffff, 0.9);
+        rimLight.position.set(-2, 3, -3);
         STATE.scene.add(rimLight);
 
         const loader = new THREE.GLTFLoader();
@@ -70,26 +77,27 @@
                     node.castShadow = true;
                     node.receiveShadow = true;
                     
-                    // 🎯 99% इंसानों वाली स्किन और क्लॉथ टेक्सचर ट्यूनिंग
+                    // 🎯 स्किन और ड्रेस को 99% असली जैसा बनाने का मास्टर फॉर्मूला
                     if (node.material) {
-                        node.material.roughness = 0.72; // प्लास्टिक जैसी चमक खत्म, बिल्कुल नेचुरल स्किन रफनेस
-                        node.material.metalness = 0.02; // सिर्फ बहुत हल्की सी रीयलिस्टिक रिफ्लेक्शन
-                        if (node.material.map) node.material.map.anisotropy = 4; // टेक्सचर क्लेरिटी शार्प करने के लिए
+                        node.material.roughness = 0.70; // प्लास्टिक शाइन पूरी तरह खत्म, नेचुरल स्किन और क्लॉथ मैट फिनिश
+                        node.material.metalness = 0.01; // सिर्फ बहुत हल्की रीयलिस्टिक लाइट बाउंस
+                        
+                        // अगर टेक्सचर इमेज लोड हुई है, तो उसे धुंधला होने से रोककर क्रिस्टल क्लियर करना
+                        if (node.material.map) {
+                            node.material.map.anisotropy = STATE.renderer.capabilities.getMaxAnisotropy();
+                            node.material.map.needsUpdate = true;
+                        }
                     }
 
-                    // 🎯 आँख के मेश और ब्लिंक शेप्स (Morph Targets) को खोजना
+                    // 🎯 एवाटूर्न आई-ब्लिंक फिक्स (यूनिवर्सल सर्च इंजन)
                     if (node.morphTargetDictionary) {
-                        // रेडी प्लेयर मी / एवाटूर्न मॉडल्स के स्टैंडर्ड ब्लिंक नाम ट्रैक करना
-                        let leftBlink = node.morphTargetDictionary['eyeBlinkLeft'] || node.morphTargetDictionary['eyeBlink_L'] || node.morphTargetDictionary['eyesBlinkLeft'];
-                        let rightBlink = node.morphTargetDictionary['eyeBlinkRight'] || node.morphTargetDictionary['eyeBlink_R'] || node.morphTargetDictionary['eyesBlinkRight'];
-                        
-                        if (leftBlink !== undefined) {
-                            STATE.blink.leftMesh = node;
-                            STATE.blink.targetIndexLeft = leftBlink;
-                        }
-                        if (rightBlink !== undefined) {
-                            STATE.blink.rightMesh = node;
-                            STATE.blink.targetIndexRight = rightBlink;
+                        for (let key in node.morphTargetDictionary) {
+                            let lowerKey = key.toLowerCase();
+                            // 'blink' शब्द वाले सभी शेप्स को ऑटोमैटिकली ढूंढना (चाहें वो आंख के हों या पलकों के)
+                            if (lowerKey.includes('blink') && (lowerKey.includes('left') || lowerKey.includes('_l') || lowerKey.includes('right') || lowerKey.includes('_r'))) {
+                                STATE.blink.meshes.push(node);
+                                STATE.blink.targetIndices.push(node.morphTargetDictionary[key]);
+                            }
                         }
                     }
                 }
@@ -114,8 +122,8 @@
             // मॉडल पोजीशन ग्राउंडेड
             STATE.avatar.position.set(0, -1.35, 0);
 
-            // पहला ब्लिंक टाइम सेट करना
-            STATE.blink.nextBlinkTime = STATE.clock.getElapsedTime() + 2 + Math.random() * 3;
+            // पहला रैंडम ब्लिंक टाइमर इनिशियलाइज़
+            STATE.blink.nextBlinkTime = STATE.clock.getElapsedTime() + 1.5 + Math.random() * 2;
 
             animate();
         });
@@ -123,43 +131,39 @@
         setupEvents();
     }
 
-    // 🎯 नेचुरल आई ब्लिंकिंग (पलकें झपकना) का मास्टर इंजन
+    // 🎯 नेचुरल आई ब्लिंकिंग एक्ज़ीक्यूशन इंजन
     function updateBlinking(currentTime) {
-        if (!STATE.blink.leftMesh || !STATE.blink.rightMesh) return;
-
-        let leftMesh = STATE.blink.leftMesh;
-        let rightMesh = STATE.blink.rightMesh;
-        let idxL = STATE.blink.targetIndexLeft;
-        let idxR = STATE.blink.targetIndexRight;
+        if (STATE.blink.meshes.length === 0) return;
 
         if (STATE.blink.state === 'open') {
-            // अगर पलकें खुली हैं, तो चेक करो कि झपकने का समय हुआ या नहीं
             if (currentTime >= STATE.blink.nextBlinkTime) {
                 STATE.blink.state = 'closing';
                 STATE.blink.duration = 0.0;
             }
         } else if (STATE.blink.state === 'closing') {
-            // पलकें बंद हो रही हैं (स्पीड: 0.05 सेकंड)
             STATE.blink.duration += 0.016; 
-            let progress = Math.min(1.0, STATE.blink.duration / 0.05);
-            leftMesh.morphTargetInfluences[idxL] = progress;
-            rightMesh.morphTargetInfluences[idxR] = progress;
+            let progress = Math.min(1.0, STATE.blink.duration / 0.05); // पलक झपकने की इंसानी स्पीड
+            
+            for (let i = 0; i < STATE.blink.meshes.length; i++) {
+                STATE.blink.meshes[i].morphTargetInfluences[STATE.blink.targetIndices[i]] = progress;
+            }
 
             if (progress >= 1.0) {
                 STATE.blink.state = 'opening';
                 STATE.blink.duration = 0.0;
             }
         } else if (STATE.blink.state === 'opening') {
-            // पलकें वापस खुल रही हैं (स्पीड: 0.06 सेकंड)
             STATE.blink.duration += 0.016;
             let progress = Math.min(1.0, STATE.blink.duration / 0.06);
-            leftMesh.morphTargetInfluences[idxL] = 1.0 - progress;
-            rightMesh.morphTargetInfluences[idxR] = 1.0 - progress;
+            
+            for (let i = 0; i < STATE.blink.meshes.length; i++) {
+                STATE.blink.meshes[i].morphTargetInfluences[STATE.blink.targetIndices[i]] = 1.0 - progress;
+            }
 
             if (progress >= 1.0) {
                 STATE.blink.state = 'open';
-                // अगला ब्लिंक रैंडमली 3 से 5 सेकंड के बीच होगा
-                STATE.blink.nextBlinkTime = currentTime + 3.0 + Math.random() * 2.5;
+                // हर 3 से 4 सेकंड में नेचुरल आई-ब्लिंक लूप रिपीट होगा
+                STATE.blink.nextBlinkTime = currentTime + 2.5 + Math.random() * 3.0;
             }
         }
     }
@@ -173,10 +177,10 @@
             STATE.mixer.update(delta);
         }
 
-        // 🎯 ब्लिंक इंजन को हर फ्रेम में रन करना
+        // ब्लिंक रनर
         updateBlinking(time);
         
-        // सामने की तरफ कैमरा फोकस और स्मूथ माउस ट्रैकिंग
+        // 🎯 परफेक्ट हेड एंगल और फ्रंट फेसिंग ट्रैकिंग रूल (लॉक्ड)
         if (STATE.bones.neck) {
             STATE.bones.neck.rotation.y = THREE.MathUtils.lerp(STATE.bones.neck.rotation.y, STATE.mouseX * 0.12, 0.05);
             STATE.bones.neck.rotation.x = THREE.MathUtils.lerp(STATE.bones.neck.rotation.x, (STATE.mouseY * 0.08) - 0.02, 0.05);
@@ -186,7 +190,7 @@
             STATE.bones.head.rotation.x = THREE.MathUtils.lerp(STATE.bones.head.rotation.x, (STATE.mouseY * 0.10) - 0.03, 0.05);
         }
 
-        // यूनिवर्सल वेस्ट फोकस (ड्रेस-प्रूफ लॉक)
+        // यूनिवर्सल ड्रेस-प्रूफ बेल्ट सेंटर लॉक (लॉक्ड डेटा)
         if (STATE.camera && STATE.bones.spine) {
             const targetPos = new THREE.Vector3();
             STATE.bones.spine.getWorldPosition(targetPos);
@@ -204,7 +208,7 @@
         window.addEventListener('touchmove', (e) => {
             if (e.touches.length > 0) {
                 STATE.mouseX = Math.max(-0.4, Math.min(0.4, (e.touches[0].clientX / window.innerWidth) * 2 - 1));
-                STATE.mouseY = Math.max(-0.2, Math.min(0.2, -(e.clientY / window.innerHeight) * 2 + 1));
+                STATE.mouseY = Math.max(-0.2, Math.min(0.2, -(e.touches[0].clientY / window.innerHeight) * 2 + 1));
             }
         }, { passive: true });
         
