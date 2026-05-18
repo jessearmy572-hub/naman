@@ -82,4 +82,4 @@ function Sentiment_AnalyzeResponseVector(responseText) {
     }
 }
 
-window.addEventListener('DOMContentLoaded', LocalMemory_InitializeStateEngine);
+window.addEventListener('DOMContentLoaded', LocalMemory_InitializeStateEngine); 
