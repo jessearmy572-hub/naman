@@ -1,5 +1,5 @@
 /**
- * PROJECT MASTER CORE: a1 (TOTAL ARM FORCE OVERRIDE)
+ * PROJECT MASTER CORE: a1 (CAMERA ZOOM - PERFECT FIT)
  */
 
 "use strict";
@@ -7,18 +7,20 @@
 (function () {
     const STATE = {
         scene: null, camera: null, renderer: null, clock: null, avatar: null,
-        allArmBones: [], neckBone: null, headBone: null, mouseX: 0, mouseY: 0
+        neckBone: null, headBone: null, mouseX: 0, mouseY: 0
     };
 
     function init() {
         STATE.clock = new THREE.Clock();
         STATE.scene = new THREE.Scene();
         
-        STATE.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
-        STATE.camera.position.set(0, 0.45, 1.95);
+        // 🎯 कैमरे की पोजीशन (Z-axis = 0.9) को पास लाया गया है ताकि हाथ स्क्रीन से बाहर छिप जाएं
+        STATE.camera = new THREE.PerspectiveCamera(32, window.innerWidth / window.innerHeight, 0.1, 100);
+        STATE.camera.position.set(0, 0.45, 0.9); 
 
         STATE.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         STATE.renderer.setSize(window.innerWidth, window.innerHeight);
+        STATE.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         STATE.renderer.outputEncoding = THREE.sRGBEncoding;
 
         const container = document.getElementById('canvas-viewport');
@@ -35,67 +37,39 @@
             STATE.avatar = gltf.scene;
             STATE.scene.add(STATE.avatar);
 
-            // 🎯 मॉडल की पूरी रीढ़ और हाथों की हड्डियों को बिना नाम की परवाह किए पकड़ना
+            // मॉडल को छुए बिना सिर्फ सिर और गर्दन को माउस/टच ट्रैकिंग के लिए सिंक करना
             STATE.avatar.traverse(function (node) {
                 if (node.isBone) {
                     let n = node.name.toLowerCase();
-                    
                     if (n.includes('neck')) STATE.neckBone = node;
                     if (n.includes('head')) STATE.headBone = node;
-                    
-                    // अगर नाम में इनमें से कुछ भी है, तो उसे लिस्ट में डालो
-                    if (n.includes('arm') || n.includes('shoulder') || n.includes('forearm') || n.includes('hand') || n.includes('uparm')) {
-                        STATE.allArmBones.push(node);
-                    }
                 }
             });
 
-            forceHandsDown();
-            STATE.avatar.position.set(0, -1.38, 0);
+            // मॉडल को स्क्रीन के निचले हिस्से में सही तरीके से टिकाना
+            STATE.avatar.position.set(0, -1.45, 0);
             animate();
         });
 
         setupEvents();
     }
 
-    function forceHandsDown() {
-        // मिली हुई सभी हड्डियों को एक-एक करके नीचे की तरफ मोड़ना
-        STATE.allArmBones.forEach(bone => {
-            let n = bone.name.toLowerCase();
-            
-            // बाएं हाथ की पूरी चेन को नीचे और थोड़ा शरीर के पास लाओ
-            if (n.includes('left')) {
-                bone.rotation.x = 0.2;
-                bone.rotation.y = 0.1;
-                bone.rotation.z = -1.3; // यह हाथ को नीचे गिराएगा
-            }
-            
-            // दाएं हाथ की पूरी चेन को नीचे और थोड़ा शरीर के पास लाओ
-            if (n.includes('right')) {
-                bone.rotation.x = 0.2;
-                bone.rotation.y = -0.1;
-                bone.rotation.z = 1.3; // यह हाथ को नीचे गिराएगा
-            }
-        });
-    }
-
     function animate() {
         requestAnimationFrame(animate);
         let time = STATE.clock.getElapsedTime();
         
-        if (STATE.avatar) STATE.avatar.position.y = -1.38 + (Math.sin(time * 1.5) * 0.012);
+        // नेचुरल ब्रीदिंग मोशन
+        if (STATE.avatar) STATE.avatar.position.y = -1.45 + (Math.sin(time * 1.5) * 0.005);
         
+        // स्मूथ फेस ट्रैकिंग
         if (STATE.neckBone) {
-            STATE.neckBone.rotation.y = THREE.MathUtils.lerp(STATE.neckBone.rotation.y, STATE.mouseX * 0.15, 0.05);
-            STATE.neckBone.rotation.x = THREE.MathUtils.lerp(STATE.neckBone.rotation.x, STATE.mouseY * 0.10, 0.05);
+            STATE.neckBone.rotation.y = THREE.MathUtils.lerp(STATE.neckBone.rotation.y, STATE.mouseX * 0.12, 0.05);
+            STATE.neckBone.rotation.x = THREE.MathUtils.lerp(STATE.neckBone.rotation.x, STATE.mouseY * 0.08, 0.05);
         }
         if (STATE.headBone) {
-            STATE.headBone.rotation.y = THREE.MathUtils.lerp(STATE.headBone.rotation.y, STATE.mouseX * 0.25, 0.05);
-            STATE.headBone.rotation.x = THREE.MathUtils.lerp(STATE.headBone.rotation.x, STATE.mouseY * 0.15, 0.05);
+            STATE.headBone.rotation.y = THREE.MathUtils.lerp(STATE.headBone.rotation.y, STATE.mouseX * 0.20, 0.05);
+            STATE.headBone.rotation.x = THREE.MathUtils.lerp(STATE.headBone.rotation.x, STATE.mouseY * 0.12, 0.05);
         }
-
-        // 🎯 हर सिंगल फ्रेम में फ़ोर्स अप्लाई करो ताकि T-Pose वापस आ ही न सके
-        forceHandsDown();
 
         STATE.renderer.render(STATE.scene, STATE.camera);
     }
@@ -111,6 +85,14 @@
                 STATE.mouseY = Math.max(-0.2, Math.min(0.2, -(e.touches[0].clientY / window.innerHeight) * 2 + 1));
             }
         }, { passive: true });
+        
+        window.addEventListener('resize', () => {
+            if (STATE.camera && STATE.renderer) {
+                STATE.camera.aspect = window.innerWidth / window.innerHeight;
+                STATE.camera.updateProjectionMatrix();
+                STATE.renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        });
     }
 
     window.onload = init;
