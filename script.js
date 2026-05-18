@@ -1,13 +1,13 @@
 /**
- * PROJECT MASTER CORE: a1 (STABLE + EXACT BONE NAME MATCHING)
+ * PROJECT MASTER CORE: a1 (SUPER SAFE BYPASS FOR BLACK SCREEN)
  */
 
-// 🛠️ कंट्रोल पैनल - हाथों को नीचे और थोड़ा आगे रखने के लिए परफेक्ट एंगल्स
+// 🛠️ कंट्रोल पैनल (आगे से सिर्फ इसे बदलना है भाई!)
 const HAND_CONTROL_PANEL = {
-    leftArm:  { x: 0.2,  y: 0.1,  z: -1.25 }, // बायां हाथ नीचे और आगे
-    rightArm: { x: 0.2,  y: -0.1, z: 1.25  }, // दायां हाथ नीचे और आगे
-    leftForearm:  { x: 0.0, y: 0.3,  z: 0.2   }, // कोहनी हल्की सी अंदर
-    rightForearm: { x: 0.0, y: -0.3, z: -0.2  }  
+    leftArm:  { x: 0.15, y: 0.1,  z: -1.35 }, 
+    rightArm: { x: 0.15, y: -0.1, z: 1.35  }, 
+    leftForearm:  { x: 0.0, y: 0.2,  z: 0.2   }, 
+    rightForearm: { x: 0.0, y: -0.2, z: -0.2  }  
 };
 
 "use strict";
@@ -62,31 +62,36 @@ const HAND_CONTROL_PANEL = {
             STATE.avatar = gltf.scene;
             STATE.scene.add(STATE.avatar);
 
-            STATE.avatar.traverse(function (node) {
-                if (node.isBone) {
-                    let name = node.name; // बिना लोअरकेस किए असली नाम चेक कर रहे हैं
-                    let lowerName = name.toLowerCase();
-                    
-                    if (lowerName.includes('head')) STATE.bones.head = node;
-                    if (lowerName.includes('neck')) STATE.bones.neck = node;
-                    
-                    // 🎯 हड्डियों को पकड़ने का सुपर एडवांस तरीका ताकि नाम मिस न हो
-                    if (lowerName.includes('leftarm') || name === 'LeftArm') STATE.bones.leftArm = node;
-                    if (lowerName.includes('rightarm') || name === 'RightArm') STATE.bones.rightArm = node;
-                    if (lowerName.includes('leftforearm') || name === 'LeftForeArm') STATE.bones.leftForearm = node;
-                    if (lowerName.includes('rightforearm') || name === 'RightForeArm') STATE.bones.rightForearm = node;
-                }
-                if (node.isMesh && node.morphTargetDictionary) {
-                    STATE.morphs.push(node);
-                    let dict = node.morphTargetDictionary;
-                    for (let key in dict) {
-                        if (key.toLowerCase().includes('blink')) STATE.blinkIdx = dict[key];
-                        if (key.toLowerCase().includes('mouthopen') || key.toLowerCase().includes('viseme_aa')) STATE.mouthIdx = dict[key];
+            try {
+                STATE.avatar.traverse(function (node) {
+                    if (node.isBone) {
+                        let name = node.name || "";
+                        let lowerName = name.toLowerCase();
+                        
+                        if (lowerName.includes('head')) STATE.bones.head = node;
+                        if (lowerName.includes('neck')) STATE.bones.neck = node;
+                        
+                        // रेडी प्लेयर मी की सभी संभावित बोन नेम्स को चेक करना
+                        if (lowerName.includes('leftarm') || name.includes('LeftArm')) STATE.bones.leftArm = node;
+                        if (lowerName.includes('rightarm') || name.includes('RightArm')) STATE.bones.rightArm = node;
+                        if (lowerName.includes('leftforearm') || name.includes('LeftForeArm')) STATE.bones.leftForearm = node;
+                        if (lowerName.includes('rightforearm') || name.includes('RightForeArm')) STATE.bones.rightForearm = node;
                     }
-                }
-            });
+                    if (node.isMesh && node.morphTargetDictionary) {
+                        STATE.morphs.push(node);
+                        let dict = node.morphTargetDictionary;
+                        for (let key in dict) {
+                            if (key.toLowerCase().includes('blink')) STATE.blinkIdx = dict[key];
+                            if (key.toLowerCase().includes('mouthopen') || key.toLowerCase().includes('viseme_aa')) STATE.mouthIdx = dict[key];
+                        }
+                    }
+                });
 
-            applyHandPose();
+                applyHandPose();
+            } catch (boneError) {
+                console.log("Bone error bypassed to prevent black screen:", boneError);
+            }
+
             STATE.avatar.position.set(0, -1.38, 0);
             updateStatus("PROJECT a1 ENGINE ACTIVE");
             animate();
@@ -106,7 +111,7 @@ const HAND_CONTROL_PANEL = {
     }
 
     function applyHandPose() {
-        // हड्डियों पर रोटेशन वैल्यू लगाना (अगर मिल गईं तो तुरंत काम करेंगी)
+        // अगर हड्डियां मिलेंगी तभी रोटेशन लगेगा, नहीं तो कोड चुपचाप आगे बढ़ जाएगा (क्रैश नहीं होगा)
         if (STATE.bones.leftArm) STATE.bones.leftArm.rotation.set(HAND_CONTROL_PANEL.leftArm.x, HAND_CONTROL_PANEL.leftArm.y, HAND_CONTROL_PANEL.leftArm.z);
         if (STATE.bones.rightArm) STATE.bones.rightArm.rotation.set(HAND_CONTROL_PANEL.rightArm.x, HAND_CONTROL_PANEL.rightArm.y, HAND_CONTROL_PANEL.rightArm.z);
         if (STATE.bones.leftForearm) STATE.bones.leftForearm.rotation.set(HAND_CONTROL_PANEL.leftForearm.x, HAND_CONTROL_PANEL.leftForearm.y, HAND_CONTROL_PANEL.leftForearm.z);
@@ -117,11 +122,9 @@ const HAND_CONTROL_PANEL = {
         requestAnimationFrame(animate);
         let time = STATE.clock.getElapsedTime();
 
-        // नेचुरल ब्रीदिंग के साथ हाथों का हल्का मूवमेंट
         let breath = Math.sin(time * 1.5) * 0.012;
         if (STATE.avatar) STATE.avatar.position.y = -1.38 + breath;
 
-        // ट्रैकिंग
         if (STATE.bones.neck) {
             STATE.bones.neck.rotation.y = THREE.MathUtils.lerp(STATE.bones.neck.rotation.y, STATE.mouseX * 0.15, 0.05);
             STATE.bones.neck.rotation.x = THREE.MathUtils.lerp(STATE.bones.neck.rotation.x, STATE.mouseY * 0.10, 0.05);
