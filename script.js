@@ -1,7 +1,8 @@
 /**
- * PROJECT MASTER CORE: a1 
- * ENGINE: FULL GLTF ANIMATION PLAYBACK (NATURAL MOTION DRIVEN)
- * VIEW: FULL SCREEN FIT (FIXED CAMERA FOR NO HEAD CUT)
+ * PROJECT MASTER CORE: a1
+ * DATA UPDATE: HD REALISM & SHADOW MAPPING ENGINE
+ * CAMERA: FIXED FULL BODY FIT (NO HEAD CUT)
+ * ENGINE: FULL GLTF ANIMATION PLAYBACK
  */
 
 "use strict";
@@ -9,7 +10,7 @@
 (function () {
     const STATE = {
         scene: null, camera: null, renderer: null, clock: null, avatar: null,
-        mixer: null, // एनीमेशन प्लेयर
+        mixer: null,
         bones: {
             neck: null, head: null
         },
@@ -20,45 +21,58 @@
         STATE.clock = new THREE.Clock();
         STATE.scene = new THREE.Scene();
         
-        // 🎯 कैमरे को परफेक्ट दूरी (3.0) और ऊंचाई (0.2) पर सेट किया है
-        // ताकि जब एनीमेशन चले, तो प्रिया पैर से सिर तक परफेक्ट फुल स्क्रीन दिखे
+        // a1 कैलिब्रेटेड कैमरा सेटिंग्स (लॉक्ड डेटा)
         STATE.camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
         STATE.camera.position.set(0, 0.2, 3.0); 
 
         STATE.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         STATE.renderer.setSize(window.innerWidth, window.innerHeight);
         STATE.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        
+        // 🎯 न्यू एचडी डेटा: एडवांस्ड कलर और लाइटिंग रेंडरिंग एक्टिवेशन
         STATE.renderer.outputEncoding = THREE.sRGBEncoding;
+        STATE.renderer.toneMapping = THREE.ACESFilmicToneMapping; // सिनेमाई एचडी टोनमैपिंग
+        STATE.renderer.toneMappingExposure = 1.0; 
+        STATE.renderer.shadowMap.enabled = true; // रीयल-टाइम परछाइयां ऑन
+        STATE.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // सॉफ्ट शैडो इफ़ेक्ट
 
         const container = document.getElementById('canvas-viewport');
         if (container) container.appendChild(STATE.renderer.domElement);
 
-        // सॉफ्ट नेचुरल लाइटिंग
-        const ambient = new THREE.AmbientLight(0xffffff, 1.4);
+        // 🎯 री-इंजीनियर्ड लाइटिंग डेटा (असली दुनिया जैसी चमक के लिए)
+        const ambient = new THREE.AmbientLight(0xffffff, 0.9); // सॉफ्ट बेस लाइट
         STATE.scene.add(ambient);
-        const sun = new THREE.DirectionalLight(0xfff5ea, 1.1);
-        sun.position.set(1, 3, 2);
-        STATE.scene.add(sun);
+
+        // मुख्य सूरज की रोशनी जो चेहरे पर परफेक्ट कट्स और परछाइयां बनाएगी
+        const sunLight = new THREE.DirectionalLight(0xfff5ea, 1.4);
+        sunLight.position.set(2, 4, 3);
+        sunLight.castShadow = true; // इस लाइट से परछाइयां बनेंगी
+        sunLight.shadow.mapSize.width = 2048; // हाई क्वालिटी शैडो रेजोल्यूशन
+        sunLight.shadow.mapSize.height = 2048;
+        sunLight.shadow.bias = -0.0001;
+        STATE.scene.add(sunLight);
+
+        // बैकलाइट (Rim Light) बालों और कंधों को बैकग्राउंड से अलग चमकाने के लिए
+        const rimLight = new THREE.DirectionalLight(0xffffff, 0.6);
+        rimLight.position.set(-2, 2, -2);
+        STATE.scene.add(rimLight);
 
         const loader = new THREE.GLTFLoader();
         loader.load("https://raw.githubusercontent.com/jessearmy572-hub/naman/main/model.glb", function (gltf) {
             STATE.avatar = gltf.scene;
             STATE.scene.add(STATE.avatar);
 
-            // 🎯 एनीमेशन प्लेयर सेटअप - फाइल के सभी मोशन्स को चालू करना
-            if (gltf.animations && gltf.animations.length > 0) {
-                STATE.mixer = new THREE.AnimationMixer(STATE.avatar);
-                
-                // लूप चलाकर फाइल के अंदर मौजूद हर एक एनीमेशन ट्रैक को प्ले कर रहे हैं
-                // ताकि तुम्हारा नेचुरल स्टैंडिंग पोज़ वाला मोशन बिना चूके एक्टिवेट हो जाए
-                gltf.animations.forEach((clip) => {
-                    const action = STATE.mixer.clipAction(clip);
-                    action.play();
-                });
-            }
-
-            // हेड ट्रैकिंग के लिए हड्डियां ढूंढना
+            // एवाटूर्न मॉडल पर शैडो को एक्टिवेट करना
             STATE.avatar.traverse(function (node) {
+                if (node.isMesh) {
+                    node.castShadow = true;
+                    node.receiveShadow = true;
+                    // कपड़ों और स्किन के टेक्सचर को और ज्यादा क्रिस्प (HD) करना
+                    if (node.material) {
+                        node.material.roughness = 0.65; // अत्यधिक प्लास्टिक जैसी शाइन को हटाना
+                        node.material.metalness = 0.0;
+                    }
+                }
                 if (node.isBone) {
                     let n = node.name;
                     if (n.includes('Neck')) STATE.bones.neck = node;
@@ -66,7 +80,16 @@
                 }
             });
 
-            // मॉडल को स्क्रीन पर नीचे सही जगह टिकाना ताकि पैर न कटें
+            // एनिमेशन लूप इंजन (लॉक्ड डेटा नियम)
+            if (gltf.animations && gltf.animations.length > 0) {
+                STATE.mixer = new THREE.AnimationMixer(STATE.avatar);
+                gltf.animations.forEach((clip) => {
+                    const action = STATE.mixer.clipAction(clip);
+                    action.play();
+                });
+            }
+
+            // मॉडल पोजीशन (लॉक्ड डेटा नियम)
             STATE.avatar.position.set(0, -1.0, 0);
 
             animate();
@@ -79,12 +102,11 @@
         requestAnimationFrame(animate);
         let delta = STATE.clock.getDelta();
         
-        // 🎯 एनीमेशन मिक्सर को हर फ्रेम में अपडेट करना (इसके बिना मोशन काम नहीं करेगा)
         if (STATE.mixer) {
             STATE.mixer.update(delta);
         }
         
-        // माउस और टच के साथ गर्दन और सिर का स्मूथ घूमना
+        // गर्दन और सिर की स्मूथ माउस/टच ट्रैकिंग
         if (STATE.bones.neck) {
             STATE.bones.neck.rotation.y = THREE.MathUtils.lerp(STATE.bones.neck.rotation.y, STATE.mouseX * 0.15, 0.05);
             STATE.bones.neck.rotation.x = THREE.MathUtils.lerp(STATE.bones.neck.rotation.x, STATE.mouseY * 0.10, 0.05);
