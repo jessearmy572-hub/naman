@@ -1,7 +1,7 @@
 /**
- * PROJECT MASTER CORE: a1 (HINTS APPLIED - NO AUTO-SAVE)
- * FIX: FULL BODY 3D SHADER DEPTH & ANIMATION BLINK OVERRIDE
- * SPEC: ACES FILMIC GRADE, RE-BALANCED STUDIO LIGHTS, FORCED MORPH INFLUENCE
+ * PROJECT MASTER CORE: a1
+ * FORMAT STATE: FULL CORE OVERHAUL (HTML + JS SEPARATED)
+ * FEATURES: 4.3 CAMERA CONFIG, ANIMATION OVERRIDE ENGINE, 99% MATTE SHADERS
  */
 
 "use strict";
@@ -22,7 +22,7 @@
         STATE.clock = new THREE.Clock();
         STATE.scene = new THREE.Scene();
         
-        // a1 HINT LOCKED: परफेक्ट फुल बॉडी व्यू के लिए कैमरा बाउंड्स
+        // a1 MASTER RULE: Full Body View Camera Position Layer
         STATE.camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
         STATE.camera.position.set(0, 0, 4.3); 
 
@@ -30,26 +30,26 @@
         STATE.renderer.setSize(window.innerWidth, window.innerHeight);
         STATE.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         
-        // टोन मैपिंग जो स्किन के एक्स्ट्रा प्लास्टिक ग्लो को खत्म करेगी
+        // ACES Filmic Tone Mapping Configuration for Matte Surface Contrast
         STATE.renderer.outputEncoding = THREE.sRGBEncoding;
         STATE.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        STATE.renderer.toneMappingExposure = 0.95; // स्किन और कपड़ों के फीचर्स को गहराई देने के लिए एक्सपोज़र थोड़ा कम किया
+        STATE.renderer.toneMappingExposure = 0.95; 
         STATE.renderer.shadowMap.enabled = true;
         STATE.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
         const container = document.getElementById('canvas-viewport');
         if (container) container.appendChild(STATE.renderer.domElement);
 
-        // 🎯 फुल-बॉडी री-बैलेंस्ड लाइटिंग (ताकि चेहरा और ड्रेस दोनों 3D रियलिस्टिक लगें)
+        // Studio Three-Point Balance Ambient Light System
         const ambient = new THREE.AmbientLight(0xffffff, 0.4); 
         STATE.scene.add(ambient);
 
         const sunLight = new THREE.DirectionalLight(0xfff5ea, 1.5);
-        sunLight.position.set(1.5, 3.5, 3.5); // पोजीशन थोड़ी ऊपर की ताकि पूरी बॉडी पर परछाइयां पड़ें
+        sunLight.position.set(1.5, 3.5, 3.5); 
         sunLight.castShadow = true;
         sunLight.shadow.mapSize.width = 2048;
         sunLight.shadow.mapSize.height = 2048;
-        sunLight.shadow.bias = -0.0005; // कट्स पर अनचाही लाइन्स रोकने के लिए
+        sunLight.shadow.bias = -0.0005; 
         sunLight.shadow.normalBias = 0.03;
         STATE.scene.add(sunLight);
 
@@ -57,7 +57,7 @@
         fillLight.position.set(-2, 1.5, 2.5);
         STATE.scene.add(fillLight);
 
-        const rimLight = new THREE.DirectionalLight(0xffffff, 0.8); // बालों को गहराई देने के लिए पीछे से लाइट
+        const rimLight = new THREE.DirectionalLight(0xffffff, 0.8); 
         rimLight.position.set(-1, 3, -3);
         STATE.scene.add(rimLight);
 
@@ -66,23 +66,23 @@
             STATE.avatar = gltf.scene;
             STATE.scene.add(STATE.avatar);
 
-            // एवाटूर्न नोड्स को गहराई से खंगालना
+            // Deep Traversal Layer Scanner for Morph Targets & Matte Materials
             STATE.avatar.traverse(function (node) {
                 if (node.isMesh) {
                     node.castShadow = true;
                     node.receiveShadow = true;
                     
-                    // स्किन और ड्रेस को रिस्पॉन्सिव रीयलिस्टिक मटीरियल में बदलना
+                    // Skin Matte Pores Intensity Optimization
                     if (node.material) {
-                        node.material.roughness = 0.90; // चमक पूरी तरह गायब, ओरिजिनल मैट टेक्सचर विज़िबल
+                        node.material.roughness = 0.90; 
                         node.material.metalness = 0.0;
                         if (node.material.map) {
-                            node.material.map.anisotropy = 8; // ज़ूम करने पर भी स्किन पोर्स धुंधले नहीं होंगे
+                            node.material.map.anisotropy = 8; 
                             node.material.map.needsUpdate = true;
                         }
                     }
 
-                    // आई-ब्लिंक मोर्फ कीज़ को डिटेक्ट करना
+                    // Avaturn Mesh Morph Tracking Matrix
                     if (node.morphTargetDictionary && node.morphTargetInfluences) {
                         Object.keys(node.morphTargetDictionary).forEach(key => {
                             let name = key.toLowerCase();
@@ -96,7 +96,7 @@
                     }
                 }
                 
-                // a1 HINT LOCKED: बोन्स सिंक
+                // a1 MASTER HINT: Skeleton Base Bone Mapping Trackers
                 if (node.isBone) {
                     let n = node.name;
                     if (n.includes('Neck') || n.toLowerCase() === 'neck') STATE.bones.neck = node;
@@ -120,7 +120,7 @@
         setupEvents();
     }
 
-    // 🎯 एनीमेशन को ओवरराइड करने वाला फोर्सफुल ब्लिंक लूप
+    // Active Forceful Animation Override Blink Module
     function updateBlinking(currentTime) {
         if (STATE.blink.targets.length === 0) return;
 
@@ -131,7 +131,7 @@
             }
         } else if (STATE.blink.state === 'closing') {
             STATE.blink.duration += 0.016; 
-            let progress = Math.min(1.0, STATE.blink.duration / 0.05); // इंसानी पलक झपकने की रियल स्पीड
+            let progress = Math.min(1.0, STATE.blink.duration / 0.05); 
             
             STATE.blink.targets.forEach(t => {
                 t.mesh.morphTargetInfluences[t.index] = progress;
@@ -151,7 +151,7 @@
 
             if (progress >= 1.0) {
                 STATE.blink.state = 'open';
-                STATE.blink.nextBlinkTime = currentTime + 2.5 + Math.random() * 2.5; // हर 2.5 से 5 सेकंड में ब्लिंक
+                STATE.blink.nextBlinkTime = currentTime + 2.5 + Math.random() * 2.5; 
             }
         }
     }
@@ -161,15 +161,14 @@
         let delta = STATE.clock.getDelta();
         let time = STATE.clock.getElapsedTime();
         
-        // 1. पहले डिफ़ॉल्ट एनीमेशन को चलने दें (जो आँखों को खोल देता है)
         if (STATE.mixer) {
             STATE.mixer.update(delta);
         }
 
-        // 2. 🎯 एनीमेशन के ठीक बाद ब्लिंक इंजन चलाकर उसे ओवरराइड करना
+        // Post-Animation Target Sync Layer Override
         updateBlinking(time);
         
-        // हेड एंगल रोटेशन
+        // Face Track Interpolations
         if (STATE.bones.neck) {
             STATE.bones.neck.rotation.y = THREE.MathUtils.lerp(STATE.bones.neck.rotation.y, STATE.mouseX * 0.12, 0.05);
             STATE.bones.neck.rotation.x = THREE.MathUtils.lerp(STATE.bones.neck.rotation.x, (STATE.mouseY * 0.08) - 0.02, 0.05);
@@ -179,7 +178,7 @@
             STATE.bones.head.rotation.x = THREE.MathUtils.lerp(STATE.bones.head.rotation.x, (STATE.mouseY * 0.10) - 0.03, 0.05);
         }
 
-        // a1 HINT LOCKED: यूनिवर्सल बेल्ट सेंटर लॉक
+        // a1 MASTER RULE: Center Base Spine Tracking Configuration
         if (STATE.camera && STATE.bones.spine) {
             const targetPos = new THREE.Vector3();
             STATE.bones.spine.getWorldPosition(targetPos);
