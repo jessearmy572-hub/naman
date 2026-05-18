@@ -3,30 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Priya AI - Cloud Core V2</title>
+    <title>Priya AI - Cloud Matrix</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/facemesh/facemesh.js" crossorigin="anonymous"></script>
 
-    <script src="https://accounts.google.com/gsi/client" defer></script>
-    <script src="https://apis.google.com/js/api.js" defer></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js" async defer></script>
 
     <style>
         :root {
             --neon-cyan: #00ffcc;
             --neon-blue: #0099ff;
             --neon-pink: #ff416c;
-            --neon-gold: #ffd700;
             --matrix-green: #00ff33;
             --bg-deep: #010103;
-            --panel-bg: linear-gradient(135deg, rgba(3, 3, 12, 0.94) 0%, rgba(10, 4, 25, 0.9) 100%);
+            --panel-bg: rgba(3, 3, 12, 0.94);
             --font-mono: 'Courier New', Courier, monospace;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
         body, html { width: 100%; height: 100%; overflow: hidden; background: var(--bg-deep); font-family: 'Segoe UI', sans-serif; color: #ffffff; }
 
         #video-background-engine {
@@ -36,51 +33,37 @@
         }
 
         #canvas-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 3; }
-        
-        /* TELEMETRY ENGINE HUD PANEL */
+
         .telemetry-hud {
             position: absolute; top: 25px; left: 25px; z-index: 10; background: var(--panel-bg);
             padding: 20px; border-radius: 18px; border: 1px solid rgba(0, 255, 204, 0.22);
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); width: 320px;
+            backdrop-filter: blur(25px); width: 320px;
         }
         .hud-header { font-family: var(--font-mono); font-size: 12px; font-weight: 900; color: var(--neon-cyan); border-bottom: 1px solid rgba(0, 255, 204, 0.2); padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; }
         .status-dot { width: 8px; height: 8px; background: var(--neon-cyan); border-radius: 50%; margin-right: 10px; box-shadow: 0 0 10px var(--neon-cyan); }
         .hud-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 8px; color: rgba(255, 255, 255, 0.75); font-family: var(--font-mono); }
         .hud-val { font-weight: bold; color: var(--neon-blue); }
 
-        .drive-sync-banner {
-            margin-top: 10px; padding: 10px; border-radius: 8px;
-            background: rgba(255, 255, 255, 0.04); border: 1px dashed rgba(255,255,255,0.15);
-        }
-        .drive-btn {
-            background: #ffffff; color: #000000; border: none; padding: 6px 12px;
-            border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;
-            width: 100%; text-align: center; font-family: var(--font-mono);
-        }
+        .drive-sync-banner { margin-top: 10px; padding: 10px; border-radius: 8px; background: rgba(255, 255, 255, 0.04); border: 1px dashed rgba(255,255,255,0.15); }
+        .drive-btn { background: #ffffff; color: #000000; border: none; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; width: 100%; font-family: var(--font-mono); text-align: center; }
 
-        .frequency-bar-canvas-container { display: flex; align-items: flex-end; gap: 3px; height: 16px; width: 100%; margin-top: 10px; }
-        .freq-bar { flex-grow: 1; height: 2px; background: var(--neon-cyan); }
-
-        /* INTERACTION DOCK MECHANICS */
-        .matrix-dock-container { position: absolute; left: 25px; top: 325px; z-index: 50; display: flex; flex-direction: column; gap: 12px; }
+        .matrix-dock-container { position: absolute; left: 25px; top: 280px; z-index: 50; display: flex; flex-direction: column; gap: 12px; }
         .control-group { background: rgba(3, 3, 10, 0.88); padding: 12px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 6px; width: 200px; }
-        .group-title { font-family: var(--font-mono); font-size: 10px; font-weight: bold; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; }
-        .dock-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.12); color: #ffffff; padding: 8px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; text-align: left; }
+        .group-title { font-family: var(--font-mono); font-size: 10px; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; }
+        .dock-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.12); color: #ffffff; padding: 8px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; }
         .dock-btn.active { background: linear-gradient(135deg, #0055ff, var(--neon-blue)); border-color: var(--neon-cyan); font-weight: bold; }
 
         #subtitle-monitor-box { position: absolute; bottom: 125px; left: 50%; transform: translateX(-50%); background: rgba(2, 2, 6, 0.96); padding: 15px 35px; border-radius: 20px; max-width: 80%; text-align: center; z-index: 30; border: 1px solid rgba(0, 255, 204, 0.3); display: none; }
-        
-        /* INPUT STRUCTURE */
+
         .ui-dock-wrapper { position: absolute; bottom: 30px; width: 100%; display: flex; justify-content: center; align-items: center; gap: 12px; padding: 0 20px; z-index: 40; pointer-events: none; }
         .action-node-interactive { pointer-events: auto; }
         .input-box { background: rgba(3, 3, 10, 0.95); padding: 0 20px; border-radius: 30px; flex-grow: 1; max-width: 600px; height: 55px; display: flex; align-items: center; border: 1px solid rgba(255, 255, 255, 0.15); }
         input { width: 100%; background: transparent; border: none; color: #ffffff; font-size: 14px; }
 
         .circle-btn { border: none; border-radius: 50%; width: 55px; height: 55px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .mic-btn { background: linear-gradient(135deg, #ff416c, #ff4b2b); color: #ffffff; }
         .send-btn { background: #ffffff; color: #000; }
 
-        #boot-loader { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #010103; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
+        #boot-loader { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #010103; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.4s ease; }
         .spinner { width: 50px; height: 50px; border: 3px solid rgba(0, 255, 204, 0.1); border-top-color: var(--neon-cyan); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         .loader-text { color: var(--neon-cyan); font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; }
@@ -96,15 +79,9 @@
         <div class="hud-header"><span class="status-dot"></span>Priya Quantum Engine</div>
         <div class="hud-row"><span>SYSTEM SPEED:</span><span class="hud-val" id="hud-fps-val">-- FPS</span></div>
         <div class="hud-row"><span>CLOUD MEMORY:</span><span class="hud-val" id="hud-drive-status" style="color:var(--neon-pink)">NOT CONNECTED</span></div>
-        <div class="hud-row"><span>SENTIMENT MATRIX:</span><span class="hud-val" id="hud-sentiment-label">NEUTRAL</span></div>
         
         <div class="drive-sync-banner">
             <button class="drive-btn" id="authDriveBtn" onclick="Cloud_TriggerDriveAuthorizationLink()">🔑 LINK GOOGLE DRIVE</button>
-        </div>
-
-        <div class="frequency-bar-canvas-container" id="frequencyBarAnchor">
-            <div class="freq-bar"></div><div class="freq-bar"></div><div class="freq-bar"></div><div class="freq-bar"></div>
-            <div class="freq-bar"></div><div class="freq-bar"></div><div class="freq-bar"></div><div class="freq-bar"></div>
         </div>
     </div>
 
@@ -116,12 +93,11 @@
         </div>
     </div>
 
-    <div id="subtitle-monitor-box"><span class="subtitle-text" id="subtitle-internal-node">Connecting Vector Core...</span></div>
+    <div id="subtitle-monitor-box"><span class="subtitle-text" id="subtitle-internal-node">Bypassing...</span></div>
 
     <div id="canvas-container"></div>
 
     <div class="ui-dock-wrapper">
-        <button class="circle-btn mic-btn action-node-interactive" id="micBtn">🎤</button>
         <div class="input-box action-node-interactive">
             <input type="text" id="userInput" placeholder="Priya se baat karein...">
         </div>
@@ -130,7 +106,7 @@
 
     <div id="boot-loader">
         <div class="spinner"></div>
-        <div class="loader-text" id="loader-status-text">LOADING NEURAL 3D ENGINE CORE...</div>
+        <div class="loader-text" id="loader-status-text">INITIALIZING ENGINE CORES...</div>
     </div>
 
     <script src="app.js"></script>
