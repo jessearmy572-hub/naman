@@ -1,20 +1,13 @@
 /**
- * PROJECT MASTER CORE: a1 (DIRECT SKELETON FORCE POSE)
+ * PROJECT MASTER CORE: a1 (TOTAL ARM FORCE OVERRIDE)
  */
-
-// 🛠️ कंट्रोल पैनल - हाथों को परफेक्ट पोजीशन में लाने के लिए एंगल्स
-const HAND_CONTROL_PANEL = {
-    leftArm:  { x: 0.3,  y: 0.0,  z: -1.20 }, // बायां हाथ नीचे
-    rightArm: { x: 0.3,  y: 0.0,  z: 1.20  }  // दायां हाथ नीचे
-};
 
 "use strict";
 
 (function () {
     const STATE = {
         scene: null, camera: null, renderer: null, clock: null, avatar: null,
-        bones: { head: null, neck: null, leftArm: null, rightArm: null },
-        mouseX: 0, mouseY: 0
+        allArmBones: [], neckBone: null, headBone: null, mouseX: 0, mouseY: 0
     };
 
     function init() {
@@ -31,37 +24,33 @@ const HAND_CONTROL_PANEL = {
         const container = document.getElementById('canvas-viewport');
         if (container) container.appendChild(STATE.renderer.domElement);
 
-        const ambient = new THREE.AmbientLight(0xffffff, 1.4);
+        const ambient = new THREE.AmbientLight(0xffffff, 1.5);
         STATE.scene.add(ambient);
         const sun = new THREE.DirectionalLight(0xfff5ea, 1.2);
         sun.position.set(1, 3, 2);
         STATE.scene.add(sun);
 
-        // मॉडल लोड करना
         const loader = new THREE.GLTFLoader();
         loader.load("https://raw.githubusercontent.com/jessearmy572-hub/naman/main/model.glb", function (gltf) {
             STATE.avatar = gltf.scene;
             STATE.scene.add(STATE.avatar);
 
-            // 🎯 डायरेक्ट बाईपास: मॉडल के स्केलेटन में घुसकर हड्डियों को ढूंढना
+            // 🎯 मॉडल की पूरी रीढ़ और हाथों की हड्डियों को बिना नाम की परवाह किए पकड़ना
             STATE.avatar.traverse(function (node) {
                 if (node.isBone) {
-                    let name = node.name;
-                    if (name.toLowerCase().includes('head')) STATE.bones.head = node;
-                    if (name.toLowerCase().includes('neck')) STATE.bones.neck = node;
+                    let n = node.name.toLowerCase();
                     
-                    // नाम चाहे जो भी हो, अगर LeftArm या RightArm का कोई भी हिस्सा है तो पकड़ लो
-                    if (name.includes('LeftArm') || name.includes('leftArm') || name === 'LeftArm') {
-                        STATE.bones.leftArm = node;
-                    }
-                    if (name.includes('RightArm') || name.includes('rightArm') || name === 'RightArm') {
-                        STATE.bones.rightArm = node;
+                    if (n.includes('neck')) STATE.neckBone = node;
+                    if (n.includes('head')) STATE.headBone = node;
+                    
+                    // अगर नाम में इनमें से कुछ भी है, तो उसे लिस्ट में डालो
+                    if (n.includes('arm') || n.includes('shoulder') || n.includes('forearm') || n.includes('hand') || n.includes('uparm')) {
+                        STATE.allArmBones.push(node);
                     }
                 }
             });
 
-            // हाथों की पोजीशन को जबरदस्ती सेट करना
-            forcePose();
+            forceHandsDown();
             STATE.avatar.position.set(0, -1.38, 0);
             animate();
         });
@@ -69,10 +58,25 @@ const HAND_CONTROL_PANEL = {
         setupEvents();
     }
 
-    function forcePose() {
-        // अगर ट्रेवर्स से नहीं मिला, तो डायरेक्ट स्केलेटन से एंगल्स अप्लाई करना
-        if (STATE.bones.leftArm) STATE.bones.leftArm.rotation.set(HAND_CONTROL_PANEL.leftArm.x, HAND_CONTROL_PANEL.leftArm.y, HAND_CONTROL_PANEL.leftArm.z);
-        if (STATE.bones.rightArm) STATE.bones.rightArm.rotation.set(HAND_CONTROL_PANEL.rightArm.x, HAND_CONTROL_PANEL.rightArm.y, HAND_CONTROL_PANEL.rightArm.z);
+    function forceHandsDown() {
+        // मिली हुई सभी हड्डियों को एक-एक करके नीचे की तरफ मोड़ना
+        STATE.allArmBones.forEach(bone => {
+            let n = bone.name.toLowerCase();
+            
+            // बाएं हाथ की पूरी चेन को नीचे और थोड़ा शरीर के पास लाओ
+            if (n.includes('left')) {
+                bone.rotation.x = 0.2;
+                bone.rotation.y = 0.1;
+                bone.rotation.z = -1.3; // यह हाथ को नीचे गिराएगा
+            }
+            
+            // दाएं हाथ की पूरी चेन को नीचे और थोड़ा शरीर के पास लाओ
+            if (n.includes('right')) {
+                bone.rotation.x = 0.2;
+                bone.rotation.y = -0.1;
+                bone.rotation.z = 1.3; // यह हाथ को नीचे गिराएगा
+            }
+        });
     }
 
     function animate() {
@@ -81,18 +85,17 @@ const HAND_CONTROL_PANEL = {
         
         if (STATE.avatar) STATE.avatar.position.y = -1.38 + (Math.sin(time * 1.5) * 0.012);
         
-        // गर्दन और सिर की स्मूथ ट्रैकिंग
-        if (STATE.bones.neck) {
-            STATE.bones.neck.rotation.y = THREE.MathUtils.lerp(STATE.bones.neck.rotation.y, STATE.mouseX * 0.15, 0.05);
-            STATE.bones.neck.rotation.x = THREE.MathUtils.lerp(STATE.bones.neck.rotation.x, STATE.mouseY * 0.10, 0.05);
+        if (STATE.neckBone) {
+            STATE.neckBone.rotation.y = THREE.MathUtils.lerp(STATE.neckBone.rotation.y, STATE.mouseX * 0.15, 0.05);
+            STATE.neckBone.rotation.x = THREE.MathUtils.lerp(STATE.neckBone.rotation.x, STATE.mouseY * 0.10, 0.05);
         }
-        if (STATE.bones.head) {
-            STATE.bones.head.rotation.y = THREE.MathUtils.lerp(STATE.bones.head.rotation.y, STATE.mouseX * 0.25, 0.05);
-            STATE.bones.head.rotation.x = THREE.MathUtils.lerp(STATE.bones.head.rotation.x, STATE.mouseY * 0.15, 0.05);
+        if (STATE.headBone) {
+            STATE.headBone.rotation.y = THREE.MathUtils.lerp(STATE.headBone.rotation.y, STATE.mouseX * 0.25, 0.05);
+            STATE.headBone.rotation.x = THREE.MathUtils.lerp(STATE.headBone.rotation.x, STATE.mouseY * 0.15, 0.05);
         }
 
-        // 🎯 हर फ्रेम में हाथों को लॉक रखना ताकि कोई दूसरा एनीमेशन इन्हें वापस T-Pose में न ले जाए
-        forcePose();
+        // 🎯 हर सिंगल फ्रेम में फ़ोर्स अप्लाई करो ताकि T-Pose वापस आ ही न सके
+        forceHandsDown();
 
         STATE.renderer.render(STATE.scene, STATE.camera);
     }
