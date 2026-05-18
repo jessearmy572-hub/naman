@@ -3,19 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Priya AI - Core a1 Fixed</title>
+    <title>Priya AI - Screen Fit Core</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #020208; }
-        
-        /* स्मूथ स्टूडियो डार्क बैकग्राउंड */
+        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #05060f; }
         #failsafe-background-canvas {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
             background: radial-gradient(circle at center, #111424 0%, #05060f 100%);
         }
-        
         #canvas-viewport { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 2; }
-
         .hud-diagnostic-monitor {
             position: absolute; top: 20px; left: 20px; z-index: 10;
             background: rgba(7, 7, 18, 0.7); padding: 10px 15px; border-radius: 8px;
@@ -26,17 +22,11 @@
 <body>
 
     <div id="failsafe-background-canvas"></div>
-    
-    <div class="hud-diagnostic-monitor">
-        <div>PROJECT CORE: a1 LIVE</div>
-        <div style="color: #00f2ff; font-size: 10px;">POSE MATRIX: RE-CALIBRATED</div>
-    </div>
-
+    <div class="hud-diagnostic-monitor"><div>PROJECT CORE: a1 LIVE</div></div>
     <div id="canvas-viewport"></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-
+    <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
