@@ -1,21 +1,19 @@
 /**
- * PRIYA AI RE-ENGINEERED SOVEREIGN SYSTEM RUNTIME
- * HARDWARE LAYER - THREE.JS & CAMERA VISUAL SYSTEM
+ * PRIYA AI GRAPHICS ENVIRONMENT & ANIMATION CORE
  */
 
-const ELEVENLABS_VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; 
-const ELEVENLABS_API_TOKEN = "sk_7392a9b3c4d2e1f5a8b792340192eab4c7"; 
-const CLOUD_MODEL_ENDPOINT = "https://cdn.jsdelivr.net/gh/jessearmy572-hub/naman3@main/model.glb";
+// Pointing directly to your active repository model path
+const CLOUD_MODEL_ENDPOINT = "https://raw.githubusercontent.com/jessearmy572-hub/naman/main/model.glb";
 
-let localWeatherConditionNode = "CLEAR";
-let currentAtmosphericTimeCode = "DAY";
-let activeParticleSystemGroup = null;
+let globalThreeScene, globalThreeCamera, globalThreeRenderer, globalOrbitControls, mainAvatarModel, internalAnimationMixer;
+let anatomicalHeadBone = null, anatomicalNeckBone = null;
+let computationalSkinnedMeshes = [];
+let flagVoiceSynthesizerIsActive = false;
+let profilingFramesCount = 0, operationalLastTimestamp = 0, systemsClockEngine;
 
 let kinematicsCoordinates = { targetX: 0, targetY: 0, currentX: 0, currentY: 0 };
 let webcamStreamElement = null, cameraHardwareUtilsInstance = null, isWebcamPipelineRunning = false;
 let speechRecognitionEngineInstance = null, isSpeechRecognitionActive = false;
-
-let activeSentimentProfileNode = { mouthSmileLeft: 0, mouthSmileRight: 0, browDownLeft: 0, browDownRight: 0, browInnerUp: 0 };
 
 const hardwareBootTimeoutBypass = setTimeout(function() { dismissBootLoaderScreen(); }, 4000);
 
@@ -127,13 +125,13 @@ function Vision_ToggleWebcamHardwarePipeline() {
         isWebcamPipelineRunning = true;
         if(btn) { btn.innerText = "🛑 Stop Tracking"; btn.classList.add('active'); }
         if(statusVal) { statusVal.innerText = "ACTIVE"; statusVal.style.color = "var(--matrix-green)"; }
-        webcamStreamElement.style.display = "block";
+        if(webcamStreamElement) webcamStreamElement.style.display = "block";
         cameraHardwareUtilsInstance.start().catch(function(){ Vision_ToggleWebcamHardwarePipeline(); });
     } else {
         isWebcamPipelineRunning = false;
         if(btn) { btn.innerText = "📷 Enable Eye Tracking"; btn.classList.remove('active'); }
         if(statusVal) { statusVal.innerText = "OFFLINE"; statusVal.style.color = "var(--neon-pink)"; }
-        webcamStreamElement.style.display = "none";
+        if(webcamStreamElement) webcamStreamElement.style.display = "none";
         kinematicsCoordinates.targetX = 0; kinematicsCoordinates.targetY = 0;
     }
 }
@@ -142,20 +140,7 @@ function Audio_DispatchVoiceSynthesisRouter(responseText) {
     const box = document.getElementById('subtitle-monitor-box');
     const node = document.getElementById('subtitle-internal-node');
     if (box && node) { node.innerText = responseText; box.style.display = 'block'; }
-
-    const isElevenLabsEnabled = document.getElementById('elevenLabsToggle') ? document.getElementById('elevenLabsToggle').checked : false;
-    if (isElevenLabsEnabled) {
-        fetch("https://api.elevenlabs.io/v1/text-to-speech/" + ELEVENLABS_VOICE_ID + "/stream", {
-            method: "POST", headers: { "Content-Type": "application/json", "xi-api-key": ELEVENLABS_API_TOKEN },
-            body: JSON.stringify({ text: responseText, model_id: "eleven_multilingual_v2" })
-        }).then(function(r){ return r.blob(); }).then(function(blob){
-            let p = new Audio(URL.createObjectURL(blob));
-            p.onplay = function(){ flagVoiceSynthesizerIsActive = true; };
-            p.onended = function(){ flagVoiceSynthesizerIsActive = false; if(box) box.style.display='none'; }; p.play();
-        }).catch(function(){ Audio_ExecuteNativeSpeech(responseText); });
-    } else {
-        Audio_ExecuteNativeSpeech(responseText);
-    }
+    Audio_ExecuteNativeSpeech(responseText);
 }
 
 function Audio_ExecuteNativeSpeech(text) {
@@ -211,7 +196,9 @@ function coreRuntimeAnimationProcessingPipeline() {
             const d = mesh.morphTargetDictionary, inf = mesh.morphTargetInfluences; if (!d || !inf) return;
             ['mouthOpen', 'jawOpen', 'viseme_aa'].forEach(function(k) { if (d[k] !== undefined) inf[d[k]] = lip; });
             ['eyeBlinkLeft', 'eyeBlinkRight'].forEach(function(k) { if (d[k] !== undefined) inf[d[k]] = THREE.MathUtils.lerp(inf[d[k]], blink, 0.7); });
-            ['mouthSmileLeft', 'mouthSmileRight'].forEach(function(k) { if (d[k] !== undefined) inf[d[k]] = THREE.MathUtils.lerp(inf[d[k]], activeSentimentProfileNode.mouthSmileLeft, 0.1); });
+            if(window.activeSentimentProfileNode) {
+                ['mouthSmileLeft', 'mouthSmileRight'].forEach(function(k) { if (d[k] !== undefined) inf[d[k]] = THREE.MathUtils.lerp(inf[d[k]], activeSentimentProfileNode.mouthSmileLeft, 0.1); });
+            }
         });
     }
     globalThreeRenderer.render(globalThreeScene, globalThreeCamera);
