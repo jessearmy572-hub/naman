@@ -1,7 +1,7 @@
 /**
  * PROJECT MASTER CORE: a1
- * UPDATE: PERFECT FRONT FACING LOOK LOCK (SAMNE DEKHNA)
- * ENGINE: GLTF ANIMATION + HD LIGHTING + SHADOWS
+ * FIX: DRESS-CHANGE PROOF CENTER LOCK (UNIVERSAL WAIST FOCUS)
+ * ENGINE: AUTOMATIC LOOK-AT TARGETING + HD LIGHTING
  */
 
 "use strict";
@@ -11,7 +11,7 @@
         scene: null, camera: null, renderer: null, clock: null, avatar: null,
         mixer: null,
         bones: {
-            neck: null, head: null
+            neck: null, head: null, spine: null // 🎯 कमर (Spine) ट्रैक करने के लिए नई हड्डी
         },
         mouseX: 0, mouseY: 0
     };
@@ -20,15 +20,14 @@
         STATE.clock = new THREE.Clock();
         STATE.scene = new THREE.Scene();
         
-        // कैलिब्रेटेड फुल-बॉडी कैमरा दूरी (जूते से सिर तक परफेक्ट विजुअल)
+        // कैमरे को बिल्कुल सीधा रखा है (Y: 0), दूरी 4.3 परफेक्ट फुल बॉडी के लिए है
         STATE.camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
-        STATE.camera.position.set(0, 0.05, 4.3); 
+        STATE.camera.position.set(0, 0, 4.3); 
 
         STATE.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         STATE.renderer.setSize(window.innerWidth, window.innerHeight);
         STATE.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         
-        // प्रीमियम रेंडर सेटिंग्स
         STATE.renderer.outputEncoding = THREE.sRGBEncoding;
         STATE.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         STATE.renderer.toneMappingExposure = 1.0; 
@@ -38,7 +37,7 @@
         const container = document.getElementById('canvas-viewport');
         if (container) container.appendChild(STATE.renderer.domElement);
 
-        // एचडी लाइटिंग
+        // HD लाइटिंग सेटअप
         const ambient = new THREE.AmbientLight(0xffffff, 0.9);
         STATE.scene.add(ambient);
 
@@ -72,6 +71,8 @@
                     let n = node.name;
                     if (n.includes('Neck')) STATE.bones.neck = node;
                     if (n.includes('Head')) STATE.bones.head = node;
+                    // 🎯 मॉडल की मुख्य रीढ़/कमर की हड्डी को पकड़ना (गोल्डन बेल्ट एरिया)
+                    if (n.includes('Spine1') || n.includes('Spine')) STATE.bones.spine = node;
                 }
             });
 
@@ -84,8 +85,8 @@
                 });
             }
 
-            // मॉडल पोजीशन ग्राउंडेड
-            STATE.avatar.position.set(0, -1.32, 0);
+            // मॉडल को बेस ग्राउंड पोजीशन पर सेट किया
+            STATE.avatar.position.set(0, -1.35, 0);
 
             animate();
         });
@@ -101,15 +102,26 @@
             STATE.mixer.update(delta);
         }
         
-        // 🎯 मॉडल को बिल्कुल सामने की तरफ (Front) फोकस रखने का मास्टर फार्मूला
-        // डिफ़ॉल्ट ऑफ-सेट को हटाकर माउस ट्रैकिंग को बिल्कुल सीधा (Centered) कर दिया है
+        // सामने की तरफ कैमरा फोकस और स्मूथ माउस ट्रैकिंग
         if (STATE.bones.neck) {
             STATE.bones.neck.rotation.y = THREE.MathUtils.lerp(STATE.bones.neck.rotation.y, STATE.mouseX * 0.12, 0.05);
-            STATE.bones.neck.rotation.x = THREE.MathUtils.lerp(STATE.bones.neck.rotation.x, (STATE.mouseY * 0.08) - 0.02, 0.05); // सीधा देखने के लिए झुकाव फिक्स
+            STATE.bones.neck.rotation.x = THREE.MathUtils.lerp(STATE.bones.neck.rotation.x, (STATE.mouseY * 0.08) - 0.02, 0.05);
         }
         if (STATE.bones.head) {
             STATE.bones.head.rotation.y = THREE.MathUtils.lerp(STATE.bones.head.rotation.y, STATE.mouseX * 0.15, 0.05);
-            STATE.bones.head.rotation.x = THREE.MathUtils.lerp(STATE.bones.head.rotation.x, (STATE.mouseY * 0.10) - 0.03, 0.05); // आँखों का फोकस कैमरा की तरफ लॉक
+            STATE.bones.head.rotation.x = THREE.MathUtils.lerp(STATE.bones.head.rotation.x, (STATE.mouseY * 0.10) - 0.03, 0.05);
+        }
+
+        // 🎯 ड्रेस-प्रूफ मास्टर फार्मूला: कैमरा हमेशा सीधे कमर (Spine) के वर्ल्ड कोआर्डिनेट्स को देखेगा
+        if (STATE.camera) {
+            if (STATE.bones.spine) {
+                const targetPos = new THREE.Vector3();
+                STATE.bones.spine.getWorldPosition(targetPos);
+                STATE.camera.lookAt(targetPos); // ऑटो-फोकस ऑन बेल्ट सेंटर
+            } else {
+                // अगर किसी मॉडल में स्पाइन न मिले, तो सेफ डिफ़ॉल्ट मिड-बॉडी फोकस
+                STATE.camera.lookAt(new THREE.Vector3(0, -0.15, 0));
+            }
         }
 
         STATE.renderer.render(STATE.scene, STATE.camera);
