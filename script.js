@@ -1,5 +1,5 @@
 /**
- * PRIYA AI GRAPHICS CORE & CLEAN DATA PIPELINE
+ * PRIYA AI GRAPHICS ENVIRONMENT - STABLE ENGINE
  */
 
 const SYSTEM_API_ROTATION_VAULT = [
@@ -31,9 +31,14 @@ let UnifiedCognitiveMemoryCache = {
     interactionGraphEdges: []
 };
 
+// FORCE TIMEOUT BYPASS: Agar 3 seconds tak model runtime response nahi aaya, loader band ho jayega
+setTimeout(() => {
+    dismissBootLoaderScreen();
+}, 3000);
+
 function Cloud_InitializeGoogleClientPipelines() {
     if (typeof gapi === 'undefined' || typeof google === 'undefined') {
-        console.log("Cloud services deferred.");
+        console.log("Cloud framework delayed.");
         return;
     }
     gapi.load('client', async () => {
@@ -51,7 +56,7 @@ function Cloud_InitializeGoogleClientPipelines() {
                     await Cloud_ExecuteSecureMemoryHandshake();
                 },
             });
-        } catch (err) { console.error(err); }
+        } catch (err) { console.error("Identity Engine Error:", err); }
     });
 }
 
@@ -59,7 +64,7 @@ function Cloud_TriggerDriveAuthorizationLink() {
     if (activeGoogleTokenClient) {
         activeGoogleTokenClient.requestAccessToken({ prompt: 'consent' });
     } else {
-        alert("Sync System is warming up. Try again in 2 seconds.");
+        alert("Authorization pipeline is syncing. Wait a second.");
     }
 }
 
@@ -91,11 +96,8 @@ async function Cloud_DownloadMemoryGraphFromDrive() {
 async function Cloud_CreateFirstTimeMemoryGraphOnDrive() {
     const boundary = 'foo_bar_baz';
     const metadata = { name: 'Priya_AI_Memory.json', mimeType: 'application/json' };
-    
-    // Clean string building to secure GitHub Action builds
     let multipartBody = '\r\n--' + boundary + '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n' + JSON.stringify(metadata) +
                         '\r\n--' + boundary + '\r\nContent-Type: application/json\r\n\r\n' + JSON.stringify(UnifiedCognitiveMemoryCache) + '\r\n--' + boundary + '--';
-
     try {
         const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
             method: 'POST',
@@ -132,7 +134,7 @@ function VectorMemory_HarvestEntities(query, reply) {
 
 async function requestGenerativeAIResponseEngine(rawPromptText) {
     const signature = UnifiedCognitiveMemoryCache.userPreferencesNode.absoluteCustomName || "Babu";
-    const directives = "Identity: Priya AI, Sweet Indian GF. Reply sweet Hinglish lines. Max 2 lines. Username context: " + signature;
+    const directives = "Identity: Priya AI, Sweet Indian GF. Reply sweet Hinglish lines. Max 2 lines. Username: " + signature;
     let rotationKey = SYSTEM_API_ROTATION_VAULT[systemActiveKeyIndex];
     const endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + rotationKey;
     try {
@@ -153,64 +155,76 @@ async function requestGenerativeAIResponseEngine(rawPromptText) {
 }
 
 function initializeThreeGraphicsEnvironment() {
-    const container = document.getElementById('canvas-container');
-    systemsClockEngine = new THREE.Clock();
-    globalThreeScene = new THREE.Scene();
+    try {
+        const container = document.getElementById('canvas-container');
+        if (!container) return;
+        
+        systemsClockEngine = new THREE.Clock();
+        globalThreeScene = new THREE.Scene();
 
-    globalThreeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
-    globalThreeRenderer.setSize(window.innerWidth, window.innerHeight);
-    globalThreeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    globalThreeRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-    container.appendChild(globalThreeRenderer.domElement);
+        globalThreeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+        globalThreeRenderer.setSize(window.innerWidth, window.innerHeight);
+        globalThreeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        globalThreeRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+        container.appendChild(globalThreeRenderer.domElement);
 
-    globalThreeCamera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
-    globalThreeCamera.position.set(0, 0.35, 2.0);
+        globalThreeCamera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+        globalThreeCamera.position.set(0, 0.35, 2.0);
 
-    globalOrbitControls = new THREE.OrbitControls(globalThreeCamera, globalThreeRenderer.domElement);
-    globalOrbitControls.enablePan = false; globalOrbitControls.target.set(0, 0.2, 0);
-    globalOrbitControls.enableDamping = true;
+        if (THREE.OrbitControls) {
+            globalOrbitControls = new THREE.OrbitControls(globalThreeCamera, globalThreeRenderer.domElement);
+            globalOrbitControls.enablePan = false; 
+            globalOrbitControls.target.set(0, 0.2, 0);
+            globalOrbitControls.enableDamping = true;
+        }
 
-    globalThreeScene.add(new THREE.AmbientLight(0xffffff, 1.5));
-    const dLight = new THREE.DirectionalLight(0xfff6ed, 2.0);
-    dLight.position.set(2, 5, 4); globalThreeScene.add(dLight);
+        globalThreeScene.add(new THREE.AmbientLight(0xffffff, 1.5));
+        const dLight = new THREE.DirectionalLight(0xfff6ed, 2.0);
+        dLight.position.set(2, 5, 4); 
+        globalThreeScene.add(dLight);
 
-    const loader = new THREE.GLTFLoader();
-    loader.load(CLOUD_MODEL_ENDPOINT, (gltf) => {
+        if (THREE.GLTFLoader) {
+            const loader = new THREE.GLTFLoader();
+            loader.load(CLOUD_MODEL_ENDPOINT, (gltf) => {
+                dismissBootLoaderScreen();
+                mainAvatarModel = gltf.scene;
+                mainAvatarModel.position.y = -0.7; 
+                mainAvatarModel.scale.setScalar(1.55);
+
+                mainAvatarModel.traverse((node) => {
+                    if (node.isMesh) {
+                        node.frustumCulled = false;
+                        if (node.material) node.material.side = THREE.DoubleSide;
+                    }
+                    if (node.isBone) {
+                        let name = node.name.toLowerCase();
+                        if (name.includes('head')) anatomicalHeadBone = node;
+                        if (name.includes('neck')) anatomicalNeckBone = node;
+                    }
+                    if (node.morphTargetDictionary) computationalSkinnedMeshes.push(node);
+                });
+
+                globalThreeScene.add(mainAvatarModel);
+                internalAnimationMixer = new THREE.AnimationMixer(mainAvatarModel);
+                if (gltf.animations && gltf.animations.length > 0) {
+                    internalAnimationMixer.clipAction(gltf.animations[0]).play();
+                }
+            }, null, (err) => { 
+                console.warn("Loader safe bypass active.");
+                dismissBootLoaderScreen();
+            });
+        } else {
+            dismissBootLoaderScreen();
+        }
+    } catch (error) {
+        console.error("Graphics Core Interrupted:", error);
         dismissBootLoaderScreen();
-        mainAvatarModel = gltf.scene;
-        mainAvatarModel.position.y = -0.7; 
-        mainAvatarModel.scale.setScalar(1.55);
-
-        mainAvatarModel.traverse((node) => {
-            if (node.isMesh) {
-                node.frustumCulled = false;
-                if (node.material) node.material.side = THREE.DoubleSide;
-            }
-            if (node.isBone) {
-                let name = node.name.toLowerCase();
-                if (name.includes('head')) anatomicalHeadBone = node;
-                if (name.includes('neck')) anatomicalNeckBone = node;
-            }
-            if (node.morphTargetDictionary) computationalSkinnedMeshes.push(node);
-        });
-
-        globalThreeScene.add(mainAvatarModel);
-        internalAnimationMixer = new THREE.AnimationMixer(mainAvatarModel);
-        if (gltf.animations && gltf.animations.length > 0) {
-            internalAnimationMixer.clipAction(gltf.animations[0]).play();
-        }
-    }, (xhr) => {
-        if(xhr.total) {
-            let pct = Math.round((xhr.loaded / xhr.total) * 100);
-            document.getElementById('loader-status-text').innerText = "LOADING CORE (" + pct + "%)...";
-        }
-    }, (err) => { 
-        console.warn("Asset pipeline delayed. Bypassing screen."); 
-        setTimeout(dismissBootLoaderScreen, 1000);
-    });
+    }
 
     window.addEventListener('resize', () => {
-        globalThreeCamera.aspect = window.innerWidth / window.innerHeight; globalThreeCamera.updateProjectionMatrix();
+        if (!globalThreeCamera || !globalThreeRenderer) return;
+        globalThreeCamera.aspect = window.innerWidth / window.innerHeight; 
+        globalThreeCamera.updateProjectionMatrix();
         globalThreeRenderer.setSize(window.innerWidth, window.innerHeight);
     });
 
@@ -249,8 +263,10 @@ function processTextToVoiceSpeechSynthesis(text) {
 
 function coreRuntimeAnimationProcessingPipeline() {
     requestAnimationFrame(coreRuntimeAnimationProcessingPipeline);
-    const delta = systemsClockEngine.getDelta();
-    const elapsed = systemsClockEngine.getElapsedTime();
+    if (!globalThreeRenderer || !globalThreeScene || !globalThreeCamera) return;
+
+    const delta = systemsClockEngine ? systemsClockEngine.getDelta() : 0.016;
+    const elapsed = systemsClockEngine ? systemsClockEngine.getElapsedTime() : Date.now() * 0.001;
 
     profilingFramesCount++;
     if (elapsed > operationalLastTimestamp + 1.0) {
@@ -291,18 +307,24 @@ async function triggerProcessingWorkflowCycle() {
     processTextToVoiceSpeechSynthesis(reply);
 }
 
-document.getElementById('sendBtn').addEventListener('click', triggerProcessingWorkflowCycle);
-userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') triggerProcessingWorkflowCycle(); });
+if (document.getElementById('sendBtn')) {
+    document.getElementById('sendBtn').addEventListener('click', triggerProcessingWorkflowCycle);
+}
+if (userInput) {
+    userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') triggerProcessingWorkflowCycle(); });
+}
 
 function dismissBootLoaderScreen() {
     const veil = document.getElementById('boot-loader');
-    if (veil) { veil.style.opacity = '0'; setTimeout(() => { veil.style.display = 'none'; }, 400); }
+    if (veil && veil.style.display !== 'none') { 
+        veil.style.opacity = '0'; 
+        setTimeout(() => { veil.style.display = 'none'; }, 400); 
+    }
 }
 
-// SECURE EXECUTION ORDER
-initializeThreeGraphicsEnvironment();
-coreRuntimeAnimationProcessingPipeline();
-
-window.addEventListener('load', () => {
-    setTimeout(Cloud_InitializeGoogleClientPipelines, 1000);
+// SECURE RUNTIME PIPELINE
+window.addEventListener('DOMContentLoaded', () => {
+    initializeThreeGraphicsEnvironment();
+    coreRuntimeAnimationProcessingPipeline();
+    setTimeout(Cloud_InitializeGoogleClientPipelines, 1200);
 });
