@@ -1,16 +1,14 @@
 /**
  * PROJECT MASTER CORE: a1 
- * ENGINE: GLTF ANIMATION MIXER ACTIVE (NATURAL MOTION)
- * CAMERA: FIXED FULL BODY FIT (NO HEAD CUT)
+ * ENGINE: NATURAL FIXED POSE (100% IDENTITY MATCH)
+ * VIEW: FULL SCREEN FIT (NO HEAD CUT / NO T-POSE)
  */
 
 "use strict";
 
 (function () {
-    // a1 मास्टर डेटा स्ट्रक्चर
     const STATE = {
         scene: null, camera: null, renderer: null, clock: null, avatar: null,
-        mixer: null, // 🎯 तुम्हारी फाइल का नेचुरल मोशन प्ले करने वाला प्लेयर
         bones: {
             neck: null, head: null
         },
@@ -21,9 +19,10 @@
         STATE.clock = new THREE.Clock();
         STATE.scene = new THREE.Scene();
         
-        // 🎯 फिक्स मैनुअल कैमरा सेटिंग्स: सिर से पैर तक फुल बॉडी बिना कटे दिखाने के लिए
+        // 🎯 कैमरे की दूरी (3.2) और ऊंचाई (0.25) को री-कैलिब्रेट किया है 
+        // ताकि लास्ट इमेज वाला पूरा पैर से सिर तक का लुक बिना कटे मोबाइल स्क्रीन में फिट आए
         STATE.camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
-        STATE.camera.position.set(0, 0.15, 2.3); // परफेक्ट दूरी और ऊंचाई पर लॉक
+        STATE.camera.position.set(0, 0.25, 3.2); 
 
         STATE.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         STATE.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -33,11 +32,11 @@
         const container = document.getElementById('canvas-viewport');
         if (container) container.appendChild(STATE.renderer.domElement);
 
-        // सॉफ्ट नेचुरल रीयलिस्टिक लाइटिंग
-        const ambient = new THREE.AmbientLight(0xffffff, 1.4);
+        // सॉफ्ट और नेचुरल रीयलिस्टिक लाइटिंग
+        const ambient = new THREE.AmbientLight(0xffffff, 1.3);
         STATE.scene.add(ambient);
-        const sun = new THREE.DirectionalLight(0xfff5ea, 1.1);
-        sun.position.set(1, 3, 2);
+        const sun = new THREE.DirectionalLight(0xfff5ea, 1.2);
+        sun.position.set(1, 4, 3);
         STATE.scene.add(sun);
 
         const loader = new THREE.GLTFLoader();
@@ -45,15 +44,7 @@
             STATE.avatar = gltf.scene;
             STATE.scene.add(STATE.avatar);
 
-            // 🎯 एनिमेशन प्लेयर चालू करना और फाइल का नेचुरल मोशन प्ले करना
-            if (gltf.animations && gltf.animations.length > 0) {
-                STATE.mixer = new THREE.AnimationMixer(STATE.avatar);
-                // फाइल के पहले एनिमेशन (जो कि नेचुरल पोज़ है) को प्ले करना
-                const action = STATE.mixer.clipAction(gltf.animations[0]);
-                action.play();
-            }
-
-            // हेड ट्रैकिंग के लिए हड्डियां ढूंढना
+            // हेड ट्रैकिंग के लिए बोंस की मैपिंग
             STATE.avatar.traverse(function (node) {
                 if (node.isBone) {
                     let n = node.name;
@@ -62,8 +53,8 @@
                 }
             });
 
-            // मॉडल को स्क्रीन के निचले हिस्से में सेट करना
-            STATE.avatar.position.set(0, -0.95, 0);
+            // 🎯 मॉडल को स्क्रीन के नीचे के हिस्से में परफेक्ट अलाइन करना ताकि पैर न कटें
+            STATE.avatar.position.set(0, -1.05, 0);
 
             animate();
         });
@@ -73,21 +64,21 @@
 
     function animate() {
         requestAnimationFrame(animate);
-        let delta = STATE.clock.getDelta();
+        let time = STATE.clock.getElapsedTime();
         
-        // 🎯 हर फ्रेम में एनिमेशन प्लेयर को अपडेट करना ताकि मोशन चलता रहे
-        if (STATE.mixer) {
-            STATE.mixer.update(delta);
+        // स्थिर खड़े रहते हुए एक नॉर्मल इंसान का नेचुरल ब्रीदिंग मोशन
+        if (STATE.avatar) {
+            STATE.avatar.position.y = -1.05 + (Math.sin(time * 1.2) * 0.003);
         }
         
-        // माउस और टच के साथ गर्दन और सिर का नेचुरल घूमना
+        // गर्दन और सिर की स्मूथ माउस/टच ट्रैकिंग
         if (STATE.bones.neck) {
-            STATE.bones.neck.rotation.y = THREE.MathUtils.lerp(STATE.bones.neck.rotation.y, STATE.mouseX * 0.15, 0.05);
-            STATE.bones.neck.rotation.x = THREE.MathUtils.lerp(STATE.bones.neck.rotation.x, STATE.mouseY * 0.10, 0.05);
+            STATE.bones.neck.rotation.y = THREE.MathUtils.lerp(STATE.bones.neck.rotation.y, STATE.mouseX * 0.12, 0.05);
+            STATE.bones.neck.rotation.x = THREE.MathUtils.lerp(STATE.bones.neck.rotation.x, STATE.mouseY * 0.08, 0.05);
         }
         if (STATE.bones.head) {
-            STATE.bones.head.rotation.y = THREE.MathUtils.lerp(STATE.bones.head.rotation.y, STATE.mouseX * 0.20, 0.05);
-            STATE.bones.head.rotation.x = THREE.MathUtils.lerp(STATE.bones.head.rotation.x, STATE.mouseY * 0.12, 0.05);
+            STATE.bones.head.rotation.y = THREE.MathUtils.lerp(STATE.bones.head.rotation.y, STATE.mouseX * 0.18, 0.05);
+            STATE.bones.head.rotation.x = THREE.MathUtils.lerp(STATE.bones.head.rotation.x, STATE.mouseY * 0.10, 0.05);
         }
 
         STATE.renderer.render(STATE.scene, STATE.camera);
