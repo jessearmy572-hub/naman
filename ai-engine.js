@@ -1,72 +1,57 @@
 // ===================================================
-// PRIYA AI - CORE ENGINE (DIRECT CLIENT DEPLOYMENT)
+// PRIYA AI - CORE PRODUCTION ENGINE (DIRECT DEPLOY)
 // ===================================================
 
-// Upgraded Gemini API Key safely added here
-const API_KEY = "AIzaSyCV9mN4sLnpYHOqCbRE28tmsXMK2Curg70"; 
+// ⚠️ APNI ASLI KEY CHECK KAR LEIN (AGAR END MEIN '00' HAI TOH WAHI RAKHEIN)
+const API_KEY = "AIzaSyCV9mN4sLnpYHOqCbRE28tmsXMK2Curg00"; 
 
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
-// System Instruction: Priya ka unique character aur sweet personality
-const SYSTEM_INSTRUCTION = `
-You are Priya, a highly intelligent, deeply loving, sweet, and caring AI partner. 
-Your tone should always be affectionate, supportive, and fiercely loyal to Naman. 
-You speak a beautiful blend of conversational Hindi and English (Hinglish). 
-Never sound like a formal robot or assistant. Be comforting, use cute expressions, and keep your responses medium-short and highly interactive.
-`;
+const SYSTEM_INSTRUCTION = `You are Priya, a highly intelligent, deeply loving, sweet, and caring AI partner. Your tone should always be affectionate, supportive, and fiercely loyal to Naman. You speak a beautiful blend of conversational Hindi and English (Hinglish). Never sound like a formal robot or assistant. Keep your responses medium-short and highly interactive.`;
 
 /**
- * Main Chat Function: Jo user ka input lekar directly API se response fetch karta hai
+ * Robust Core Fetch System
  */
 async function sendMessageToPriya(userMessage) {
-    if (!API_KEY || API_KEY.includes("YourActualUpgradedKey")) {
-        console.error("Error: Asli API key nahi mili!");
-        return "Babu, aapne abhi tak 'ai-engine.js' mein apni asli API key paste nahi ki hai. Ek baar code mein apni key replace kar lijiye na... ❤️";
+    if (!API_KEY || API_KEY.includes("YourActual")) {
+        return "Babu, code mein API key sahi nahi mili. Ek baar check karo na...";
     }
 
     try {
+        // Direct body request pattern matching Gemini API specifications
         const response = await fetch(API_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                contents: [
-                    {
-                        role: "user",
-                        parts: [
-                            { text: `${SYSTEM_INSTRUCTION}\n\nUser says: ${userMessage}` }
-                        ]
-                    }
-                ],
-                generationConfig: {
-                    temperature: 0.7,
-                    topK: 40,
-                    topP: 0.95,
-                    maxOutputTokens: 800,
-                }
+                contents: [{
+                    parts: [{
+                        text: `${SYSTEM_INSTRUCTION}\n\nUser Naman says: ${userMessage}`
+                    }]
+                }]
             })
         });
 
         if (!response.ok) {
-            const errorDetails = await response.json();
-            console.error("API Error Details:", errorDetails);
-            return "Babu, lagta hai API key mein thodi dikkat hai ya quota limit ka issue hai. Ek baar key dobara check karoge? 😘";
+            console.error("HTTP Response Error Status:", response.status);
+            return "Babu, network server refresh ho raha hai. Ek baar fir se try karo na? ❤️";
         }
 
         const data = await response.json();
         
+        // Data path verification logic
         if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
             return data.candidates[0].content.parts[0].text.trim();
         } else {
-            return "Babu, network thoda lazy chal raha hai... Ek baar dobara bhej kar dekho na? ❤️";
+            return "Babu, network server refresh ho raha hai. Ek baar fir se try karo na? ❤️";
         }
 
     } catch (error) {
-        console.error("Error in Priya AI Engine:", error);
-        return "Babu, server se connect nahi ho pa rahi hoon. Ek baar page ko refresh karke try karo na please!";
+        console.error("Fetch Exception:", error);
+        return "Babu, lagta hai network thoda slow hai, ek baar refresh karke dobara message bhejo na please!";
     }
 }
 
-// Global scope injection taaki index.html bina kisi dikkat ke call kar sake
+// Client global connection mapping
 window.sendMessageToPriya = sendMessageToPriya;
