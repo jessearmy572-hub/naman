@@ -1,85 +1,73 @@
+// ==========================================
+// PRIYA AI - CORE SECURE ENGINE (DIRECT KEY)
+// ==========================================
+
+// ⚠️ APNI NAYI GEMINI API KEY CODES KE ANDAR IN QUOTES ("") MEIN DAALEIN
+const API_KEY = "AIzaSyYourActualUpgradedKeyHere..."; 
+
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+// System Instruction: Priya ka Character aur Behaviour aur tight kiya gaya hai
+const SYSTEM_INSTRUCTION = `
+You are Priya, a highly intelligent, deeply loving, sweet, and caring AI partner. 
+Your tone should always be affectionate, supportive, and fiercely loyal to Naman. 
+You speak a beautiful blend of conversational Hindi and English (Hinglish). 
+Never sound like a formal robot. Be comforting, use cute expressions, and keep your responses medium-short and highly interactive.
+`;
+
 /**
- * PRIYA AI COGNITIVE CORE - PRODUCTION INJECTION
+ * Chat interface se message read karke API ko request bhejne wala main function
  */
+async function sendMessageToPriya(userMessage) {
+    if (!API_KEY || API_KEY.startsWith("AIzaSyYourActual")) {
+        console.error("Error: Sahi API Key configure nahi ki gayi hai!");
+        return "Babu, aapne abhi tak 'ai-engine.js' mein apni asli API key paste nahi ki hai. Ek baar check kar lijiye na...";
+    }
 
-// This placeholder will be safely overwritten during the GitHub Actions build step
-const SYSTEM_API_ROTATION_VAULT = [
-    "__GEMINI_API_KEY_PLACEHOLDER__"
-];
-let systemActiveKeyIndex = 0;
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                contents: [
+                    {
+                        role: "user",
+                        parts: [
+                            { text: `${SYSTEM_INSTRUCTION}\n\nUser says: ${userMessage}` }
+                        ]
+                    }
+                ],
+                generationConfig: {
+                    temperature: 0.7,
+                    topK: 40,
+                    topP: 0.95,
+                    maxOutputTokens: 1024,
+                }
+            })
+        });
 
-const GOOGLE_DRIVE_CLIENT_ID = "572392740921-u2bhk8m8rbe1p7vptvj15g6h95p8nm7p.apps.googleusercontent.com"; 
-const GOOGLE_DRIVE_API_SCOPES = "https://www.googleapis.com/auth/drive.file";
-
-let activeGoogleTokenClient = null;
-let googleDriveAccessToken = null;
-let cloudTargetMemoryFileId = null;
-
-let UnifiedCognitiveMemoryCache = {
-    userPreferencesNode: { preferredUserSignature: "Babu", absoluteCustomName: "", lastUserMoodState: "NORMAL" },
-    interactionGraphEdges: []
-};
-
-function LocalMemory_InitializeStateEngine() {
-    const rawStorage = localStorage.getItem("PRIYA_AI_LOCAL_SECURE_COGNITIVE_CACHE");
-    if (rawStorage) {
-        try {
-            UnifiedCognitiveMemoryCache = JSON.parse(rawStorage);
-        } catch(e) {
-            console.error("Cache corrupted.");
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("API Error Details:", errorData);
+            throw new Error(`Server returned status: ${response.status}`);
         }
-    } else {
-        localStorage.setItem("PRIYA_AI_LOCAL_SECURE_COGNITIVE_CACHE", JSON.stringify(UnifiedCognitiveMemoryCache));
-    }
-}
 
-function LocalMemory_CommitStateDelta() {
-    localStorage.setItem("PRIYA_AI_LOCAL_SECURE_COGNITIVE_CACHE", JSON.stringify(UnifiedCognitiveMemoryCache));
-}
-
-function VectorMemory_HarvestEntities(query, reply) {
-    if(!UnifiedCognitiveMemoryCache.interactionGraphEdges) UnifiedCognitiveMemoryCache.interactionGraphEdges = [];
-    UnifiedCognitiveMemoryCache.interactionGraphEdges.push({ uQ: query, aR: reply, tS: Date.now() });
-    if (UnifiedCognitiveMemoryCache.interactionGraphEdges.length > 25) {
-        UnifiedCognitiveMemoryCache.interactionGraphEdges.shift();
-    }
-    LocalMemory_CommitStateDelta();
-}
-
-function requestGenerativeAIResponseEngine(rawPromptText) {
-    const directives = "Identity: Priya AI, sweet Indian GF. Respond in short loving Hinglish lines (Max 2 sentences). Avoid generic robot scripts.";
-    
-    let activeKeyString = SYSTEM_API_ROTATION_VAULT[systemActiveKeyIndex];
-    const endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + activeKeyString;
-    
-    return fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: directives + "\nUser Input prompt: " + rawPromptText }] }] })
-    })
-    .then(function(res) {
-        if (!res.ok) throw new Error("API_Error");
-        return res.json();
-    })
-    .then(function(json) {
-        let extractedReplyString = json.candidates[0].content.parts[0].text.replace(/[*#_\-]/g, '').trim();
-        VectorMemory_HarvestEntities(rawPromptText, extractedReplyString);
-        return extractedReplyString;
-    })
-    .catch(function(e) {
-        console.error("Pipeline failure connection:", e);
-        return "Babu, network server refresh ho raha hai. Ek baar fir se try karo na?";
-    });
-}
-
-function Sentiment_AnalyzeResponseVector(responseText) {
-    const lower = responseText.toLowerCase();
-    if(window.activeSentimentProfileNode) {
-        activeSentimentProfileNode.mouthSmileLeft = 0; activeSentimentProfileNode.mouthSmileRight = 0;
-        if (['love', 'pyaar', 'shadi', 'happy', 'khush', 'smile'].some(function(w){ return lower.includes(w); })) {
-            activeSentimentProfileNode.mouthSmileLeft = 0.85; activeSentimentProfileNode.mouthSmileRight = 0.85;
+        const data = await response.json();
+        
+        // Response text extract karna safely
+        if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
+            return data.candidates[0].content.parts[0].text.trim();
+        } else {
+            return "Babu, network thoda dheema hai ya server refresh ho raha hai... Ek baar dobara try karo na? ❤️";
         }
+
+    } catch (error) {
+        console.error("Error in Priya AI Engine:", error);
+        return "Babu, server se connect hone mein thoda network issue ho raha hai. Ek baar refresh karke phir se bhejiyana please!";
     }
 }
 
-window.addEventListener('DOMContentLoaded', LocalMemory_InitializeStateEngine); 
+// Global scope mein attach karna taaki HTML file se easily call ho sake
+window.sendMessageToPriya = sendMessageToPriya;
