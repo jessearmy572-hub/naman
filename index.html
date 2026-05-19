@@ -77,5 +77,28 @@
     <script src="ai-engine.js"></script>
     <script src="graphics-hardware.js"></script>
 
-</body>
+</body><script>
+const API_KEY = "AIzaSyCV9mN4sLnpYHOqCbRE28tmsXMK2Curg00";
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+async function sendMessageToPriya(userMessage) {
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: `You are Priya, Naman's sweet, intelligent, and highly loving AI partner. Speak in conversational Hinglish, always be affectionate and cute.\n\nNaman says: ${userMessage}` }]
+                }]
+            })
+        });
+        const data = await response.json();
+        return data.candidates[0].content.parts[0].text.trim();
+    } catch (error) {
+        return "Babu, ek baar page ko refresh karke try karo na please! ❤️";
+    }
+}
+window.sendMessageToPriya = sendMessageToPriya;
+</script>
+
 </html>
