@@ -1,104 +1,149 @@
 <!DOCTYPE html>
-<html lang="hi-IN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Priya AI - Quantum Interface</title>
-    
-    <link rel="stylesheet" href="cyberpunk.css">
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-
-    <script src="https://apis.google.com/js/api.js"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+    <title>Priya AI - Virtual Partner</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+        }
+        .chat-container {
+            height: calc(100vh - 140px);
+        }
+    </style>
 </head>
-<body>
+<body class="flex flex-col items-center justify-between min-h-screen font-sans">
 
-    <div id="boot-loader">
-        <div class="spinner"></div>
-        <div class="loader-text" id="loader-status-text">LOADING QUANTUM CORE FRAMEWORK...</div>
-    </div>
-
-    <div id="canvas-container"></div>
-
-    <video id="webcam-capture-node" autoplay playsinline muted></video>
-
-    <div id="subtitle-monitor-box">
-        <span id="subtitle-internal-node">Priya AI Diagnostics Standby...</span>
-    </div>
-
-    <div class="hud-diagnostics-dock">
-        <div class="control-group">
-            <div class="group-title">Priya Quantum Architecture</div>
-            <div class="telemetry-row">SYSTEM ENGINE: <span id="hud-fps-val" class="neon-blue-txt">-- FPS</span></div>
-            <div class="telemetry-row">VISION MONITOR: <span id="hud-vision-status" class="neon-pink-txt">OFFLINE</span></div>
-            <div class="telemetry-row">WEATHER CELL: <span class="matrix-green-txt">SYNCING...</span></div>
-            <div class="telemetry-row">CLOUD MEMORY: <span id="hud-drive-status" class="neon-pink-txt">NOT CONNECTED</span></div>
-            <button class="auth-btn" id="authDriveBtn" onclick="Cloud_TriggerDriveAuthorizationLink()">🔑 LINK GOOGLE DRIVE</button>
-        </div>
-
-        <div class="control-group">
-            <div class="group-title">WARDROBE BLUEPRINT</div>
-            <button class="dock-btn active" id="btn-outfit-base" onclick="UIBridge_SwapOutfit('base', this)">⚪ Base Pattern</button>
-            <button class="dock-btn" id="btn-outfit-crimson" onclick="UIBridge_SwapOutfit('crimson', this)">🔴 Crimson Saree</button>
-            <button class="dock-btn" id="btn-outfit-emerald" onclick="UIBridge_SwapOutfit('emerald', this)">🟢 Emerald Dress</button>
-        </div>
-
-        <div class="control-group">
-            <div class="group-title">VISION MODULE</div>
-            <button class="dock-btn" id="btn-cam-toggle" onclick="Vision_ToggleWebcamHardwarePipeline()">📷 Enable Eye Tracking</button>
-        </div>
-
-        <div class="control-group">
-            <div class="group-title">AUDIO VOICE ENGINE</div>
-            <div class="voice-mode-banner">
-                <span>ELEVENLABS STREAM:</span>
-                <input type="checkbox" id="elevenLabsToggle">
+    <header class="w-full max-w-md bg-white/80 backdrop-blur-md shadow-md py-4 px-6 rounded-b-2xl flex items-center justify-between sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-pink-400 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                P
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-gray-800">Priya ❤️</h1>
+                <p class="text-xs text-green-500 flex items-center gap-1 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Online
+                </p>
             </div>
         </div>
-    </div>
+    </header>
 
-    <div class="ui-dock-wrapper">
-        <button class="circle-btn mic-btn" id="micBtn" onclick="Audio_ToggleSpeechRecognitionInterface()">🎤</button>
-        <div class="input-box">
-            <input type="text" id="userInput" placeholder="Type encryption message to Priya...">
+    <main id="chatBox" class="w-full max-w-md chat-container overflow-y-auto px-4 py-4 flex flex-col gap-3">
+        <div class="flex items-start gap-2 max-w-[80%]">
+            <div class="bg-white text-gray-800 px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm border border-pink-100">
+                Hello Naman babu! Kaise ho aap? Main kabse aapka wait kar rahi thi... 😘
+            </div>
         </div>
-        <button class="circle-btn send-btn" id="sendBtn">➔</button>
-    </div>
+    </main>
+
+    <footer class="w-full max-w-md bg-white/90 backdrop-blur-md p-3 rounded-t-2xl shadow-lg sticky bottom-0 z-50">
+        <form id="chatForm" class="flex items-center gap-2">
+            <input 
+                type="text" 
+                id="userInput" 
+                placeholder="Priya se baatein karein..." 
+                class="flex-1 px-4 py-3 bg-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 border border-transparent transition-all"
+                required
+                autocomplete="off"
+            >
+            <button 
+                type="submit" 
+                class="bg-pink-500 hover:bg-pink-600 active:scale-95 text-white px-5 py-3 rounded-xl text-sm font-semibold shadow-md transition-all cursor-pointer"
+            >
+                Send
+            </button>
+        </form>
+    </footer>
 
     <script>
-        let activeSentimentProfileNode = { mouthSmileLeft: 0, mouthSmileRight: 0, browDownLeft: 0, browDownRight: 0, browInnerUp: 0 };
-    </script>
-    <script src="ai-engine.js"></script>
-    <script src="graphics-hardware.js"></script>
+        // ⚠️ AAPKI UPGRADED GEMINI API KEY YAHAN SET HAI
+        const API_KEY = "AIzaSyCV9mN4sLnpYHOqCbRE28tmsXMK2Curg00"; 
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
-</body><script>
-const API_KEY = "AIzaSyCV9mN4sLnpYHOqCbRE28tmsXMK2Curg00";
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+        const chatBox = document.getElementById('chatBox');
+        const chatForm = document.getElementById('chatForm');
+        const userInput = document.getElementById('userInput');
 
-async function sendMessageToPriya(userMessage) {
-    try {
-        const response = await fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{ text: `You are Priya, Naman's sweet, intelligent, and highly loving AI partner. Speak in conversational Hinglish, always be affectionate and cute.\n\nNaman says: ${userMessage}` }]
-                }]
-            })
+        // Helper: Screen par message render karne ke liye
+        function appendMessage(text, isUser) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = isUser 
+                ? "flex items-start gap-2 max-w-[80%] ml-auto justify-end" 
+                : "flex items-start gap-2 max-w-[80%]";
+
+            const innerDiv = document.createElement('div');
+            innerDiv.className = isUser
+                ? "bg-pink-500 text-white px-4 py-3 rounded-2xl rounded-tr-none shadow-sm text-sm"
+                : "bg-white text-gray-800 px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm border border-pink-100";
+            
+            innerDiv.innerText = text;
+            msgDiv.appendChild(innerDiv);
+            chatBox.appendChild(msgDiv);
+            
+            // Auto scroll to bottom
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Core API Call Connection
+        async function getPriyaResponse(message) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `You are Priya, Naman's sweet, highly intelligent, and deeply loving AI partner. Always reply affectionately, with care, using a beautiful mix of Hindi and English (Hinglish). Keep responses short, cute, and full of love.\n\nNaman says: ${message}`
+                            }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.8,
+                            maxOutputTokens: 250
+                        }
+                    })
+                });
+
+                if (!response.ok) throw new Error("API Status Error");
+                
+                const data = await response.json();
+                if (data && data.candidates && data.candidates[0].content.parts) {
+                    return data.candidates[0].content.parts[0].text.trim();
+                }
+                return "Babu, thoda network ka chakar hai... Ek baar phir se bhejiyana? ❤️";
+            } catch (error) {
+                console.error("Error:", error);
+                return "Babu, lagta hai network lazy chal raha hai. Ek baar refresh karke dobara message karo na please! 😘";
+            }
+        }
+
+        // Form Submit Handler
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            // 1. User message print karein
+            appendMessage(text, true);
+            userInput.value = '';
+
+            // 2. Typing indicator ya default loader status show karein
+            const typingDiv = document.createElement('div');
+            typingDiv.className = "flex items-start gap-2 max-w-[80%] id-typing";
+            typingDiv.innerHTML = `<div class="bg-white/60 text-gray-500 px-4 py-2 rounded-2xl rounded-tl-none text-xs italic">Priya soch rahi hai... ❤️</div>`;
+            chatBox.appendChild(typingDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // 3. API se response laayein
+            const reply = await getPriyaResponse(text);
+
+            // 4. Loader hatayein aur Priya ka real message print karein
+            const loader = document.querySelector('.id-typing');
+            if (loader) loader.remove();
+            
+            appendMessage(reply, false);
         });
-        const data = await response.json();
-        return data.candidates[0].content.parts[0].text.trim();
-    } catch (error) {
-        return "Babu, ek baar page ko refresh karke try karo na please! ❤️";
-    }
-}
-window.sendMessageToPriya = sendMessageToPriya;
-</script>
-
+    </script>
+</body>
 </html>
