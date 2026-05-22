@@ -2,57 +2,71 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Priya AI - Final Production Suite</title>
+    <title>Priya AI Core</title>
     <style>
-        /* CSS Wahi rahega jo tumne bheja tha, bas video-bg ko scene ke liye hide kar rahe hain */
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
-        #canvas-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
-        #video-bg { display: none; } /* Scene handle karega */
-        .ui-dock-wrapper { position: absolute; bottom: 50px; width: 100%; z-index: 10; display: flex; justify-content: center; }
-        /* Baaki styles tumhare code se */
+        body { margin: 0; overflow: hidden; background: #000; }
+        #canvas-container { width: 100%; height: 100vh; }
+        .ui-overlay { position: absolute; bottom: 20px; width: 100%; display: flex; justify-content: center; gap: 10px; }
+        input { padding: 10px; width: 60%; border-radius: 20px; }
+        button { padding: 10px 20px; border-radius: 20px; cursor: pointer; }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 <body>
-    <video id="video-bg" loop muted playsinline crossorigin="anonymous" src="https://github.com/jessearmy572-hub/naman/raw/refs/heads/main/Dream_Screen_22May2026_20_15_02.mp4"></video>
-    <div id="canvas-container"></div>
-    <div class="ui-dock-wrapper">
-        </div>
 
-    <script>
-        // Init Scene
+    <div id="canvas-container"></div>
+    <div class="ui-overlay">
+        <input type="text" id="userInput" placeholder="Priya se baat karein...">
+        <button onclick="sendToPriya()">Send</button>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'https://cdn.skypack.dev/three@0.136.0';
+        import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/GLTFLoader.js';
+
+        // Scene Setup
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
+        
+        scene.add(new THREE.AmbientLight(0xffffff, 2));
+        camera.position.set(0, 1.5, 3);
 
-        // Background Video Logic
-        const video = document.getElementById('video-bg');
-        video.play();
-        const videoTexture = new THREE.VideoTexture(video);
-        scene.background = videoTexture;
-
-        // Model Loader
-        const loader = new THREE.GLTFLoader();
+        const loader = new GLTFLoader();
         loader.load('https://github.com/jessearmy572-hub/naman/raw/refs/heads/main/model.glb', (gltf) => {
             scene.add(gltf.scene);
         });
-
-        // Lighting
-        const light = new THREE.AmbientLight(0xffffff, 2);
-        scene.add(light);
-
-        camera.position.z = 2;
 
         function animate() {
             requestAnimationFrame(animate);
             renderer.render(scene, camera);
         }
         animate();
+
+        // FIXED: AI Logic
+        window.sendToPriya = async () => {
+            const input = document.getElementById('userInput').value;
+            if (!input) return;
+
+            try {
+                // Yahan apni API Key daalna
+                const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=YOUR_API_KEY', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: input }] }]
+                    })
+                });
+
+                const data = await response.json();
+                const aiText = data.candidates[0].content.parts[0].text;
+                alert("Priya: " + aiText);
+            } catch (err) {
+                console.error("Error:", err);
+                alert("API Key ya Network check karo!");
+            }
+        };
     </script>
 </body>
 </html>
